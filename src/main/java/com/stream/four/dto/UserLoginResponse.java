@@ -8,11 +8,11 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserResponse
+public class UserLoginResponse
 {
     private String id;
     private String name;
     private String email;
     private Role role;
-    private boolean deleted;
+    private String token;
 }
