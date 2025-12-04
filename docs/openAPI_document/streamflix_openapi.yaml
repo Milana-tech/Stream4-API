@@ -1,0 +1,529 @@
+openapi: 3.0.3
+info:
+  title: StreamFlix Public API
+  version: 1.0.0
+  description: >
+    StreamFlix REST API for account management, profiles, content browsing,
+    subscription handling, invitations and viewing progress.  
+    All database access is performed through predefined views and stored 
+    procedures using the technical API_user_account.
+
+servers:
+  - url: #tbd
+
+security:
+  - BearerAuth: []
+
+paths:
+
+  # Account Management
+  /accounts/register:
+    post:
+      summary: Register a new account
+      tags: [Accounts]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AccountRegistration"
+      responses:
+        '201':
+          description: Account created. Verification link sent.
+        '400':
+          description: Email already exists or invalid payload.
+
+  /accounts/activate:
+    post:
+      summary: Activate account
+      tags: [Accounts]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AccountActivation"
+      responses:
+        '200':
+          description: Account activated.
+        '400':
+          description: Invalid or expired activation link.
+
+  /auth/login:
+    post:
+      summary: Log a user in and return a JWT token
+      tags: [Authentication]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        '200':
+          description: Authentication successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        '401':
+          description: Invalid credentials or account locked.
+
+  #Profile Management
+  /profiles:
+    get:
+      summary: Get all profiles for the authenticated account
+      tags: [Profiles]
+      responses:
+        '200':
+          description: List of profiles.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Profile"
+    post:
+      summary: Create a new profile
+      tags: [Profiles]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProfileCreate"
+      responses:
+        '201':
+          description: Profile created.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Profile"
+
+  /profiles/{profileId}:
+    get:
+      summary: Get profile by ID
+      tags: [Profiles]
+      parameters:
+        - $ref: "#/components/parameters/ProfileId"
+      responses:
+        '200':
+          description: Profile data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Profile"
+
+    put:
+      summary: Update profile
+      tags: [Profiles]
+      parameters:
+        - $ref: "#/components/parameters/ProfileId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProfileUpdate"
+      responses:
+        '200':
+          description: Profile updated.
+
+    delete:
+      summary: Delete profile
+      tags: [Profiles]
+      parameters:
+        - $ref: "#/components/parameters/ProfileId"
+      responses:
+        '204':
+          description: Profile removed.
+
+  #Content Browsing
+  /content:
+    get:
+      summary: Get content available for a profile (age filtered)
+      tags: [Content]
+      parameters:
+        - in: query
+          name: profileId
+          required: true
+          schema:
+            type: string
+          description: Profile to filter results for.
+      responses:
+        '200':
+          description: Available content list.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ContentItem"
+
+  /content/{contentId}:
+    get:
+      summary: Get detailed info about one movie or series
+      tags: [Content]
+      parameters:
+        - $ref: "#/components/parameters/ContentId"
+      responses:
+        '200':
+          description: Content details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ContentDetails"
+
+  #Viewing Progress
+  /profiles/{profileId}/progress:
+    get:
+      summary: Get viewing progress for a profile
+      tags: [Viewing Progress]
+      parameters:
+        - $ref: "#/components/parameters/ProfileId"
+      responses:
+        '200':
+          description: Viewing progress list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ViewingProgress"
+
+    post:
+      summary: Update or insert viewing progress
+      tags: [Viewing Progress]
+      parameters:
+        - $ref: "#/components/parameters/ProfileId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ViewingProgressUpdate"
+      responses:
+        '200':
+          description: Progress updated.
+
+  #Watchlist
+  /profiles/{profileId}/watchlist:
+    get:
+      summary: Get watchlist for profile
+      tags: [Watchlist]
+      parameters:
+        - $ref: "#/components/parameters/ProfileId"
+      responses:
+        '200':
+          description: Successful response returning the list of content items.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ContentItem"
+
+    post:
+      summary: Add content to watchlist
+      tags: [Watchlist]
+      parameters:
+        - $ref: "#/components/parameters/ProfileId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                contentId:
+                  type: string
+              required: [contentId]
+      responses:
+        '201':
+          description: Added to watchlist.
+
+  /profiles/{profileId}/watchlist/{contentId}:
+    delete:
+      summary: Remove content from watchlist
+      tags: [Watchlist]
+      parameters:
+        - $ref: "#/components/parameters/ProfileId"
+        - $ref: "#/components/parameters/ContentId"
+      responses:
+        '204':
+          description: Removed.
+
+  #Subscriptions
+  /subscriptions:
+    get:
+      summary: Get subscription types and prices
+      tags: [Subscriptions]
+      responses:
+        '200':
+          description: List of available subscriotion types and their monthly prices.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SubscriptionType"
+
+  /accounts/subscription:
+    get:
+      summary: Get subscription for current account
+      tags: [Subscriptions]
+      responses:
+        '200':
+          description: Current account subscription retrieved.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Subscription"
+
+    put:
+      summary: Change subscription plan
+      tags: [Subscriptions]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                type:
+                  type: string
+                  enum: [SD, HD, UHD]
+              required: [type]
+      responses:
+        '200':
+          description: Subscription updated.
+
+  #Invitations
+  /invitations:
+    post:
+      summary: Send an invitation link to a new user
+      tags: [Invitations]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/InvitationCreate"
+      responses:
+        '201':
+          description: Invitation sent.
+
+  /invitations/accept:
+    post:
+      summary: Accept invitation and apply discount
+      tags: [Invitations]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/InvitationAccept"
+      responses:
+        '200':
+          description: Invitation accepted and discount applied.
+
+#Components
+components:
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+
+    ProfileId:
+      name: profileId
+      in: path
+      required: true
+      schema:
+        type: string
+
+    ContentId:
+      name: contentId
+      in: path
+      required: true
+      schema:
+        type: string
+
+  schemas:
+
+#Accounts
+AccountRegistration:
+  type: object
+  properties:
+    email:
+      type: string
+      format: email
+    password:
+      type: string
+      minLength: 8
+  required: [email, password]
+
+AccountActivation:
+  type: object
+  properties:
+    activationCode:
+      type: string
+  required: [activationCode]
+
+LoginRequest:
+  type: object
+  properties:
+    email:
+      type: string
+      format: email
+    password:
+      type: string
+  required: [email, password]
+
+AuthResponse:
+  type: object
+  properties:
+    token:
+      type: string
+
+#Profiles
+Profile:
+  type: object
+  properties:
+    id:
+      type: string
+    name:
+      type: string
+    ageCategory:
+      type: string
+      enum: [kids, teen, adult]
+    imageUrl:
+      type: string
+      nullable: true
+
+ProfileCreate:
+  type: object
+  properties:
+    name:
+      type: string
+    ageCategory:
+      type: string
+      enum: [kids, teen, adult]
+    imageUrl:
+      type: string
+      nullable: true
+  required: [name, ageCategory]
+
+ProfileUpdate:
+  type: object
+  properties:
+    name:
+      type: string
+    ageCategory:
+      type: string
+      enum: [kids, teen, adult]
+    imageUrl:
+      type: string
+  nullable: true
+
+#Content
+ContentItem:
+  type: object
+  properties:
+    id: { type: string }
+    title: { type: string }
+    type:
+      type: string
+      enum: [movie, series]
+    minAge: { type: integer }
+    qualityAvailable:
+      type: array
+      items:
+        type: string
+        enum: [SD, HD, UHD]
+
+ContentDetails:
+  type: object
+  properties:
+    id: { type: string }
+    title: { type: string }
+    description: { type: string }
+    type:
+      type: string
+      enum: [movie, series]
+    seasons:
+      type: array
+      items:
+        $ref: "#/components/schemas/Season"
+    minAge: { type: integer }
+    qualityAvailable:
+      type: array
+      items:
+        type: string
+        enum: [SD, HD, UHD]
+
+Season:
+  type: object
+  properties:
+    seasonNumber:
+      type: integer
+    episodes:
+      type: array
+      items:
+        $ref: "#/components/schemas/Episode"
+
+Episode:
+  type: object
+  properties:
+    episodeNumber: { type: integer }
+    title: { type: string }
+    durationSeconds: { type: integer }
+
+#Viewing progress
+ViewingProgress:
+  type: object
+  properties:
+    contentId: { type: string }
+    positionSeconds: { type: integer }
+    completed: { type: boolean }
+
+ViewingProgressUpdate:
+  type: object
+  properties:
+    contentId: { type: string }
+    positionSeconds: { type: integer }
+    completed: { type: boolean }
+  required: [contentId]
+
+#Subscriptions
+SubscriptionType:
+  type: object
+  properties:
+    plan: { type: string, enum: [SD, HD, UHD] }
+    priceMonthly: { type: number }
+
+Subscription:
+  type: object
+  properties:
+    plan: { type: string, enum: [SD, HD, UHD] }
+    trialActive: { type: boolean }
+    discountActive: { type: boolean }
+
+#Invitations
+InvitationCreate:
+  type: object
+  properties:
+    email:
+      type: string
+      format: email
+  required: [email]
+
+InvitationAccept:
+  type: object
+  properties:
+    invitationCode:
+      type: string
+  required: [invitationCode]
