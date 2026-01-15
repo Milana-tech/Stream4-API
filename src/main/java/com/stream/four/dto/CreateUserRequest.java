@@ -27,4 +27,6 @@ public class CreateUserRequest {
 
     @NotNull(message = "Role must be set")
     private Role role;
+
+    private String invitationToken; //registration supports invitation based links
 }
