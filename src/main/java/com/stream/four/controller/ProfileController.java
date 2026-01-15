@@ -30,19 +30,19 @@ public class ProfileController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("@profileSecurity.canAccessProfile(#id, authentication.principal.username)")
+    @PreAuthorize("@profileSecurity.canAccessProfile(#id, authentication.name)")
     public ProfileResponse getProfile(@PathVariable String id) {
         return profileService.getProfile(id);
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("@profileSecurity.canAccessProfile(#id, authentication.principal.username)")
+    @PreAuthorize("@profileSecurity.canAccessProfile(#id, authentication.name)")
     public ProfileResponse updateProfile(@PathVariable String id, @Valid @RequestBody UpdateProfileRequest request) {
         return profileService.updateProfile(id, request);
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("@profileSecurity.canAccessProfile(#id, authentication.principal.username)")
+    @PreAuthorize("@profileSecurity.canAccessProfile(#id, authentication.name)")
     public void deleteProfile(@PathVariable String id) {
         profileService.deleteProfile(id);
     }

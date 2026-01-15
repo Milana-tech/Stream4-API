@@ -15,7 +15,7 @@ public class CreateEpisodeRequest {
 
     @NotBlank
     @Size(max = 200)
-    private String name;
+    private String title;
 
     @Size(max = 2000)
     private String description;

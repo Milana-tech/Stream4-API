@@ -14,7 +14,7 @@ class EpisodeMapperTest {
     @Test
     void toEntity_mapsBasicFields() {
         var req = new CreateEpisodeRequest();
-        req.setName("E1");
+        req.setTitle("E1");
 
         var entity = mapper.toEntity(req);
 
