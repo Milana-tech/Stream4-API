@@ -11,8 +11,7 @@ import lombok.*;
 @AllArgsConstructor
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-public class User extends Auditable
-{
+public class User extends Auditable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -31,4 +30,8 @@ public class User extends Auditable
     private Role role = Role.USER;
 
     private boolean deleted = false;
+
+    private int failedLoginAttempts = 0;
+
+    private boolean accountLocked = false;
 }
