@@ -20,6 +20,7 @@ public class UserController
 {
     private final UserService userService;
 
+    @PreAuthorize("hasRole('ADMINISTRATOR')")
     @GetMapping("/api/users")
     @Operation(
             summary = "Get all users",
@@ -30,7 +31,7 @@ public class UserController
         return userService.getAllUsers();
     }
 
-    @PreAuthorize("hasRole('ADMINISTRATOR') or #userId == authentication.principal.username")
+    @PreAuthorize("hasRole('ADMINISTRATOR') or #userId == authentication.name")
     @GetMapping("/api/users/{userId}")
     @Operation(
             summary = "Get user by id",
