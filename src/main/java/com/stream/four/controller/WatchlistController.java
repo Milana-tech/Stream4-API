@@ -1,8 +1,8 @@
 package com.stream.four.controller;
 
 import com.stream.four.dto.*;
-import com.stream.four.mapper.WatchlistMapper;
-import com.stream.four.repository.WatchlistRepository;
+import com.stream.four.service.WatchlistService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,45 +14,20 @@ import java.util.List;
 @RequestMapping("/watchlist")
 public class WatchlistController {
 
-    private final WatchlistRepository watchlistRepository;
-    private final WatchlistMapper watchlistMapper;
+    private final WatchlistService watchlistService;
 
     @PostMapping
-    public WatchlistItemResponse add(@RequestBody CreateWatchlistItemRequest request, Principal principal) {
-
-        var userId = principal.getName();
-
-        if (watchlistRepository.existsByUserIdAndTitleId(userId, request.getTitleId())) 
-        {
-            throw new RuntimeException("Title already in watchlist");
-        }
-
-        var item = watchlistMapper.toEntity(request);
-        item.setUserId(userId);
-        item.setAddedAt(System.currentTimeMillis());
-
-        watchlistRepository.save(item);
-
-        return watchlistMapper.toDto(item);
+    public WatchlistItemResponse add(@Valid @RequestBody CreateWatchlistItemRequest request, Principal principal) {
+        return watchlistService.add(principal.getName(), request);
     }
 
     @GetMapping
     public List<WatchlistItemResponse> getAll(Principal principal) {
-        return watchlistRepository.findByUserIdOrderByAddedAtDesc(principal.getName()).stream()
-                .map(watchlistMapper::toDto)
-                .toList();
+        return watchlistService.getAll(principal.getName());
     }
 
     @DeleteMapping("/{id}")
     public void remove(@PathVariable String id, Principal principal) {
-
-        var item = watchlistRepository.findById(id).orElseThrow(() -> new RuntimeException("Watchlist item not found"));
-
-        if (!item.getUserId().equals(principal.getName())) 
-        {
-            throw new RuntimeException("Not allowed");
-        }
-
-        watchlistRepository.delete(item);
+        watchlistService.remove(principal.getName(), id);
     }
 }

@@ -1,12 +1,12 @@
 package com.stream.four.controller;
 
 import com.stream.four.dto.*;
-import com.stream.four.mapper.ProfileMapper;
-import com.stream.four.repository.ProfileRepository;
+import com.stream.four.service.ProfileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.validation.Valid;
 import java.security.Principal;
 import java.util.List;
 
@@ -15,50 +15,35 @@ import java.util.List;
 @RequestMapping("/profiles")
 public class ProfileController {
 
-    private final ProfileRepository profileRepository;
-    private final ProfileMapper profileMapper;
+    private final ProfileService profileService;
 
     @PostMapping
-    public ProfileResponse createProfile(@RequestBody CreateProfileRequest request, Principal principal) 
+    public ProfileResponse createProfile(@Valid @RequestBody CreateProfileRequest request, Principal principal)
     {
-        var profile = profileMapper.toEntity(request);
-        profile.setUserId(principal.getName());
-        profileRepository.save(profile);
-
-        return profileMapper.toDto(profile);
+        return profileService.createProfile(principal.getName(), request);
     }
 
     @GetMapping
-    public List<ProfileResponse> getProfiles(Principal principal) 
+    public List<ProfileResponse> getProfiles(Principal principal)
     {
-        return profileRepository.findByUserIdAndDeletedFalse(principal.getName()).stream().map(profileMapper::toDto).toList();
+        return profileService.getProfiles(principal.getName());
     }
 
     @GetMapping("/{id}")
     @PreAuthorize("@profileSecurity.canAccessProfile(#id, authentication.principal.username)")
     public ProfileResponse getProfile(@PathVariable String id) {
-        var profile = profileRepository.findById(id).orElseThrow(() -> new RuntimeException("Profile not found"));
-
-        return profileMapper.toDto(profile);
+        return profileService.getProfile(id);
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("@profileSecurity.canAccessProfile(#id, authentication.principal.username)")
-    public ProfileResponse updateProfile(@PathVariable String id, @RequestBody UpdateProfileRequest request) {
-        var profile = profileRepository.findById(id).orElseThrow(() -> new RuntimeException("Profile not found"));
-
-        profileMapper.updateEntity(request, profile);
-        profileRepository.save(profile);
-
-        return profileMapper.toDto(profile);
+    public ProfileResponse updateProfile(@PathVariable String id, @Valid @RequestBody UpdateProfileRequest request) {
+        return profileService.updateProfile(id, request);
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("@profileSecurity.canAccessProfile(#id, authentication.principal.username)")
     public void deleteProfile(@PathVariable String id) {
-        var profile = profileRepository.findById(id).orElseThrow(() -> new RuntimeException("Profile not found"));
-
-        profile.setDeleted(true);
-        profileRepository.save(profile);
+        profileService.deleteProfile(id);
     }
 }
