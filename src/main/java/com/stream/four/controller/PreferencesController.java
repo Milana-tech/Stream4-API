@@ -2,12 +2,11 @@ package com.stream.four.controller;
 
 import com.stream.four.dto.PreferencesResponse;
 import com.stream.four.dto.UpdatePreferencesRequest;
-import com.stream.four.mapper.PreferencesMapper;
-import com.stream.four.model.Preferences;
-import com.stream.four.repository.PreferencesRepository;
+import com.stream.four.service.PreferencesService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.validation.Valid;
 import java.security.Principal;
 import java.util.List;
 
@@ -16,33 +15,20 @@ import java.util.List;
 @RequestMapping("/preferences")
 public class PreferencesController {
 
-    private final PreferencesRepository preferencesRepository;
-    private final PreferencesMapper preferencesMapper;
+    private final PreferencesService preferencesService;
 
     @GetMapping
     public PreferencesResponse getPreferences(Principal principal) {
-        var prefs = preferencesRepository.findByUserId(principal.getName())
-                .orElseThrow(() -> new RuntimeException("Preferences not found"));
-                
-        return preferencesMapper.toDto(prefs);
+        return preferencesService.getPreferences(principal.getName());
     }
 
     @PutMapping
-    public PreferencesResponse updatePreferences(@RequestBody UpdatePreferencesRequest request, Principal principal) {
-
-        var prefs = preferencesRepository.findByUserId(principal.getName())
-                .orElse(new Preferences());
-
-        prefs.setUserId(principal.getName());
-        preferencesMapper.updateEntity(request, prefs);
-
-        preferencesRepository.save(prefs);
-
-        return preferencesMapper.toDto(prefs);
+    public PreferencesResponse updatePreferences(@Valid @RequestBody UpdatePreferencesRequest request, Principal principal) {
+        return preferencesService.updatePreferences(principal.getName(), request);
     }
 
     @GetMapping("/filterFilters")
     public List<String> filterFilters() {
-        return List.of("language", "maturityLevel", "genres");
+        return preferencesService.filterFilters();
     }
 }

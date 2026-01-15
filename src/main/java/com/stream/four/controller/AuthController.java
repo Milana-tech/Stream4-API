@@ -34,9 +34,8 @@ public class AuthController {
             description = "Logins a user into the system"
     )
     @ApiResponse(responseCode = "200", description = "Successfully retrieved list of users")
-    public UserLoginResponse login(@RequestBody LoginRequest loginRequest) {
+    public UserLoginResponse login(@Valid @RequestBody LoginRequest loginRequest) {
         var user = loginService.login(loginRequest);
-
         if (user.isAccountLocked()) 
         {
             throw new RuntimeException("Account is locked due to too many failed login attempts.");
@@ -45,7 +44,6 @@ public class AuthController {
         var token = jwtService.generateToken(user.getId(), user.getRole().name());
         return new UserLoginResponse(user.getId(), user.getName(), user.getEmail(), user.getRole(), token);
     }
-
 
     @PostMapping("/register")
     @Operation(

@@ -9,7 +9,6 @@ import lombok.*;
 @AllArgsConstructor
 @Entity
 @Table(name = "Profile")
-
 public class Profile {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

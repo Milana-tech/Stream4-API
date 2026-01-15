@@ -2,48 +2,42 @@ package com.stream.four.controller;
 
 import java.util.List;
 
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import com.stream.four.dto.CreateTitleRequest;
 import com.stream.four.dto.TitleResponse;
-import com.stream.four.mapper.TitleMapper;
-import com.stream.four.repository.TitleRepository;
+import com.stream.four.service.TitleService;
 
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/titles")
 public class TitleController {
-    
-    private final TitleRepository titleRepository;
-    private final TitleMapper titleMapper;
+
+    private final TitleService titleService;
 
     @PostMapping
-    public TitleResponse create(@RequestBody CreateTitleRequest request)
+    public TitleResponse create(@Valid @RequestBody CreateTitleRequest request)
     {
-        var title = titleMapper.toEntity(request);
-        titleRepository.save(title);
-        
-        return titleMapper.toDto(title);
+        return titleService.createTitle(request);
     }
 
     @GetMapping
     public List<TitleResponse> getAll()
     {
-        return titleRepository.findByDeletedFalse().stream().map(titleMapper::toDto).toList();
+        return titleService.getAllTitles();
     }
 
-    @GetMapping
+    @GetMapping("/{id}")
     public TitleResponse getById(@PathVariable String id)
     {
-        var title = titleRepository.findById(id).orElseThrow(() -> new RuntimeException("Title not found"));
-
-        return titleMapper.toDto(title);
+        return titleService.getTitleById(id);
     }
 }
