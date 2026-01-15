@@ -25,31 +25,28 @@ public class ProfileController {
         var profile = profileMapper.toEntity(request);
         profile.setUserId(principal.getName());
         profileRepository.save(profile);
+
         return profileMapper.toDto(profile);
     }
 
     @GetMapping
     public List<ProfileResponse> getProfiles(Principal principal) 
     {
-        return profileRepository.findByUserIdAndDeletedFalse(principal.getName())
-                .stream()
-                .map(profileMapper::toDto)
-                .toList();
+        return profileRepository.findByUserIdAndDeletedFalse(principal.getName()).stream().map(profileMapper::toDto).toList();
     }
 
     @GetMapping("/{id}")
     @PreAuthorize("@profileSecurity.canAccessProfile(#id, authentication.principal.username)")
     public ProfileResponse getProfile(@PathVariable String id) {
-        var profile = profileRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Profile not found"));
+        var profile = profileRepository.findById(id).orElseThrow(() -> new RuntimeException("Profile not found"));
+
         return profileMapper.toDto(profile);
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("@profileSecurity.canAccessProfile(#id, authentication.principal.username)")
     public ProfileResponse updateProfile(@PathVariable String id, @RequestBody UpdateProfileRequest request) {
-        var profile = profileRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Profile not found"));
+        var profile = profileRepository.findById(id).orElseThrow(() -> new RuntimeException("Profile not found"));
 
         profileMapper.updateEntity(request, profile);
         profileRepository.save(profile);
@@ -60,8 +57,7 @@ public class ProfileController {
     @DeleteMapping("/{id}")
     @PreAuthorize("@profileSecurity.canAccessProfile(#id, authentication.principal.username)")
     public void deleteProfile(@PathVariable String id) {
-        var profile = profileRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Profile not found"));
+        var profile = profileRepository.findById(id).orElseThrow(() -> new RuntimeException("Profile not found"));
 
         profile.setDeleted(true);
         profileRepository.save(profile);
