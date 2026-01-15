@@ -39,3 +39,47 @@ CREATE TABLE Account (
     INDEX idx_email (EmailAddress),
     INDEX idx_status (Status)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE VerificationLink (
+    VerificationLinkID BIGINT AUTO_INCREMENT PRIMARY KEY,
+    AccountID VARCHAR(36) NOT NULL,
+    LinkCode VARCHAR(255) NOT NULL UNIQUE,
+    LinkType ENUM('ACCOUNT_ACTIVATION', 'PASSWORD_RESET') NOT NULL,
+    ExpiryDate DATETIME NOT NULL,
+    Used BOOLEAN NOT NULL DEFAULT FALSE,
+    CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    
+    -- Foreign keys
+    CONSTRAINT fk_verification_account 
+        FOREIGN KEY (AccountID) REFERENCES Account(AccountID) 
+        ON DELETE CASCADE,
+    
+    -- Indexes
+    INDEX idx_link_code (LinkCode),
+    INDEX idx_account_id (AccountID),
+    INDEX idx_expiry (ExpiryDate)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE Profile (
+    ProfileID BIGINT AUTO_INCREMENT PRIMARY KEY,
+    AccountID VARCHAR(36) NOT NULL,
+    Name VARCHAR(100) NOT NULL,
+    AgeCategory ENUM('KIDS', 'TEENS', 'ADULTS') NOT NULL,
+    ProfileImage VARCHAR(500),
+    IsPrimary BOOLEAN NOT NULL DEFAULT FALSE,
+    
+    CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UpdatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    -- Foreign keys
+    CONSTRAINT fk_profile_account 
+        FOREIGN KEY (AccountID) REFERENCES Account(AccountID) 
+        ON DELETE CASCADE,
+    
+    -- Constraints
+    UNIQUE KEY unique_profile_name (AccountID, Name),
+    
+    -- Indexes
+    INDEX idx_account_id (AccountID),
+    INDEX idx_age_category (AgeCategory)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
