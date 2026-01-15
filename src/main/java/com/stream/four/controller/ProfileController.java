@@ -2,7 +2,6 @@ package com.stream.four.controller;
 
 import com.stream.four.dto.*;
 import com.stream.four.mapper.ProfileMapper;
-import com.stream.four.model.Profile;
 import com.stream.four.repository.ProfileRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;

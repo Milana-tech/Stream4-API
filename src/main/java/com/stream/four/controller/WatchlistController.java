@@ -2,7 +2,6 @@ package com.stream.four.controller;
 
 import com.stream.four.dto.*;
 import com.stream.four.mapper.WatchlistMapper;
-import com.stream.four.model.WatchlistItem;
 import com.stream.four.repository.WatchlistRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
