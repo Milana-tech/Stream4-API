@@ -15,6 +15,8 @@ public interface UserMapper
     UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "failedLoginAttempts", constant = "0")    //users start with 0 failed attempts
+    @Mapping(target = "accountLocked", constant = "false")  //users start unlocked
     User toEntity(CreateUserRequest request);
 
     UserResponse toDto(User request);
