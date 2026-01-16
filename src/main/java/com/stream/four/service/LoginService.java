@@ -13,22 +13,34 @@ public class LoginService {
     private final UserRepository userRepository;
 
     public User login(LoginRequest loginRequest) {
-        if (isValidEmail(loginRequest.getLogin())) {
-            var email = loginRequest.getLogin();
-            var user = userRepository.findByEmail(email)
-                    .orElseThrow(() -> new IllegalArgumentException("User with email" + email + "not found"));
-            if (user.getPassword().equals(loginRequest.getPassword())) {
-                return user;
-            }
+        String identifier = loginRequest.getLogin();
+        User user;
+
+        if (isValidEmail(identifier)) {
+            user = userRepository.findByEmail(identifier)
+                    .orElseThrow(() -> new IllegalArgumentException("User with email " + identifier + " not found"));
         } else {
-            var username = loginRequest.getLogin();
-            var user = userRepository.findByName(username)
-                    .orElseThrow(() -> new IllegalArgumentException("User with username " + username + "not found"));
-            if (user.getPassword().equals(loginRequest.getPassword())) {
-                return user;
-            }
+            user = userRepository.findByName(identifier)
+                    .orElseThrow(() -> new IllegalArgumentException("User with username " + identifier + " not found"));
         }
-        throw new IllegalArgumentException("Incorrect credentials for the login");
+
+        if (user.getFailedLoginAttempts() >= 3) {
+            throw new IllegalStateException("Account is temporarily blocked due to 3 failed attempts.");
+        }
+
+        if (user.getPassword().equals(loginRequest.getPassword())) {
+            user.setFailedLoginAttempts(0);
+            userRepository.save(user);
+            return user;
+        } else {
+            user.setFailedLoginAttempts(user.getFailedLoginAttempts() + 1);
+            userRepository.save(user);
+
+            if (user.getFailedLoginAttempts() >= 3) {
+                throw new IllegalStateException("Incorrect password. Account has been blocked.");
+            }
+            throw new IllegalArgumentException("Incorrect credentials. Attempt " + user.getFailedLoginAttempts() + " of 3.");
+        }
     }
 
     public static boolean isValidEmail(String email) {

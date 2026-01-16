@@ -15,7 +15,9 @@ public class Subscription {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    private String userId;
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     private String plan; // BASIC, STANDARD, PREMIUM
 
