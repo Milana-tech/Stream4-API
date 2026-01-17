@@ -1,4 +1,4 @@
-package com.stream.four.dto;
+package com.stream.four.dto.requests;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;

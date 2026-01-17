@@ -1,4 +1,4 @@
-package com.stream.four.dto;
+package com.stream.four.dto.requests;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;

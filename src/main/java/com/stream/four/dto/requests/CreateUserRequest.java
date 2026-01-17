@@ -1,6 +1,6 @@
-package com.stream.four.dto;
+package com.stream.four.dto.requests;
 
-import com.stream.four.model.Role;
+import com.stream.four.model.enums.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
