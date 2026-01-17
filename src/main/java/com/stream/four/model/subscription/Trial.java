@@ -1,5 +1,7 @@
-package com.stream.four.model;
+package com.stream.four.model.subscription;
 
+import com.stream.four.model.enums.TrialStatus;
+import com.stream.four.model.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;

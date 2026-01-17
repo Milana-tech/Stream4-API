@@ -1,5 +1,8 @@
-package com.stream.four.model;
+package com.stream.four.model.user;
 
+import com.stream.four.model.Auditable;
+import com.stream.four.model.enums.Role;
+import com.stream.four.model.subscription.Subscription;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -13,7 +16,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-public class User extends Auditable {
+public class User extends Auditable
+{
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

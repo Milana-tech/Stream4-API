@@ -1,10 +1,12 @@
-package com.stream.four.model;
+package com.stream.four.model.watch;
 
+import com.stream.four.model.enums.MaturityRating;
+import com.stream.four.model.enums.TitleType;
+import com.stream.four.model.enums.VideoQuality;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -27,7 +29,7 @@ public class Title {
     private int releaseYear;
 
     @Enumerated(EnumType.STRING)
-    private TitleType type; // MOVIE or SERIES 
+    private TitleType type; // MOVIE or SERIES
     
     private String genre; 
     

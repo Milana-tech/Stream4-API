@@ -1,4 +1,4 @@
-package com.stream.four.model;
+package com.stream.four.model.watch;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -8,16 +8,21 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "seasons")
-public class Season {
+@Table(name = "episodes")
+public class Episode {
     
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    private String titleId; // parent series
+    private String seasonId;
 
-    private int seasonNumber;
+    private int episodeNumber;
+
+    private String name;
+
+    @Column(length = 2000)
+    private String description;
     
     private boolean deleted = false;
 }
