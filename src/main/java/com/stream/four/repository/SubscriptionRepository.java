@@ -1,12 +1,20 @@
 package com.stream.four.repository;
 
+import com.stream.four.model.Subscription;
+import com.stream.four.model.SubscriptionStatus;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+import com.stream.four.model.User;
+
+import java.util.List;
 import java.util.Optional;
 
-import com.stream.four.model.User;
-import org.springframework.data.jpa.repository.JpaRepository;
+@Repository
+public interface SubscriptionRepository extends JpaRepository<Subscription, Long> {
 
-import com.stream.four.model.Subscription;
+    Optional<Subscription> findByUser_UserIdAndStatus(String userId, SubscriptionStatus status);
 
-public interface SubscriptionRepository extends JpaRepository<Subscription, String> {
-    Optional<Subscription> findByUserAndActiveTrue(User user);
+    List<Subscription> findByUser_UserId(String userId); 
+
+    boolean existsByUser_UserIdAndStatus(String userId, SubscriptionStatus status);
 }
