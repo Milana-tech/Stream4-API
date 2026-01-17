@@ -25,7 +25,7 @@ public class ViewingBehaviourService {
         if (existing.isPresent()) {
             event = existing.get();
             event.setProgressSeconds(request.getProgressSeconds());
-            event.setFinished(request.isFinished());
+            event.setFinished(request.getFinished());
             event.setLastUpdated(System.currentTimeMillis());
         } else {
             event = watchEventMapper.toEntity(request);
