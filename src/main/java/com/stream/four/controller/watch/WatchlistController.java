@@ -1,6 +1,7 @@
-package com.stream.four.controller;
+package com.stream.four.controller.watch;
 
-import com.stream.four.dto.*;
+import com.stream.four.dto.requests.CreateWatchlistItemRequest;
+import com.stream.four.dto.response.watch.WatchlistItemResponse;
 import com.stream.four.service.WatchlistService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

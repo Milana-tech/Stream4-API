@@ -1,7 +1,7 @@
-package com.stream.four.controller;
+package com.stream.four.controller.watch;
 
-import com.stream.four.dto.CreateSeasonRequest;
-import com.stream.four.dto.SeasonResponse;
+import com.stream.four.dto.requests.CreateSeasonRequest;
+import com.stream.four.dto.response.watch.SeasonResponse;
 import com.stream.four.service.SeasonService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

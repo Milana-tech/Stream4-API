@@ -1,7 +1,7 @@
-package com.stream.four.controller;
+package com.stream.four.controller.watch;
 
-import com.stream.four.dto.PreferencesResponse;
-import com.stream.four.dto.UpdatePreferencesRequest;
+import com.stream.four.dto.response.watch.PreferencesResponse;
+import com.stream.four.dto.update.UpdatePreferencesRequest;
 import com.stream.four.service.PreferencesService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;

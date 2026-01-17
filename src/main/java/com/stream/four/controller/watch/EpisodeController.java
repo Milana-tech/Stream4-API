@@ -1,4 +1,4 @@
-package com.stream.four.controller;
+package com.stream.four.controller.watch;
 
 import java.util.List;
 
@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.stream.four.dto.CreateEpisodeRequest;
-import com.stream.four.dto.EpisodeResponse;
+import com.stream.four.dto.requests.CreateEpisodeRequest;
+import com.stream.four.dto.response.watch.EpisodeResponse;
 import com.stream.four.service.EpisodeService;
 
 import lombok.RequiredArgsConstructor;

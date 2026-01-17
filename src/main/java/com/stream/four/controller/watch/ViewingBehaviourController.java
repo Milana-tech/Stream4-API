@@ -1,7 +1,7 @@
-package com.stream.four.controller;
+package com.stream.four.controller.watch;
 
-import com.stream.four.dto.CreateWatchEventRequest;
-import com.stream.four.dto.WatchEventResponse;
+import com.stream.four.dto.requests.CreateWatchEventRequest;
+import com.stream.four.dto.response.watch.WatchEventResponse;
 import com.stream.four.service.ViewingBehaviourService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.RequestBody;

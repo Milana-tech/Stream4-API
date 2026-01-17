@@ -1,4 +1,4 @@
-package com.stream.four.controller;
+package com.stream.four.controller.watch;
 
 import java.util.List;
 
@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import com.stream.four.dto.CreateTitleRequest;
-import com.stream.four.dto.TitleResponse;
+import com.stream.four.dto.requests.CreateTitleRequest;
+import com.stream.four.dto.response.watch.TitleResponse;
 import com.stream.four.service.TitleService;
 
 import lombok.RequiredArgsConstructor;

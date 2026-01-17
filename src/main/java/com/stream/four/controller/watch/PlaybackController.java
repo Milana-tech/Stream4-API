@@ -1,4 +1,4 @@
-package com.stream.four.controller;
+package com.stream.four.controller.watch;
 import com.stream.four.service.PlaybackService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
