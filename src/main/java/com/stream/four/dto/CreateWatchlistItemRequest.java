@@ -7,7 +7,10 @@ import lombok.Data;
 @Data
 public class CreateWatchlistItemRequest {
 
-    @NotBlank
+    @NotBlank(message = "TitleId is required")
     @Size(max = 64)
     private String titleId;
+
+    @NotBlank(message = "ProfileId is required")
+    private String profileId;
 }
