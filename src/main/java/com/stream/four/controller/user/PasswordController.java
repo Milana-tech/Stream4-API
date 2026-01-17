@@ -1,4 +1,4 @@
-package com.stream.four.controller;
+package com.stream.four.controller.user;
 
 import com.stream.four.service.PasswordRecoveryService;
 import lombok.RequiredArgsConstructor;

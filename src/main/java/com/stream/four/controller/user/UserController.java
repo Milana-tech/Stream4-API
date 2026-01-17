@@ -1,6 +1,6 @@
-package com.stream.four.controller;
+package com.stream.four.controller.user;
 
-import com.stream.four.dto.UserResponse;
+import com.stream.four.dto.response.user.UserResponse;
 import com.stream.four.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

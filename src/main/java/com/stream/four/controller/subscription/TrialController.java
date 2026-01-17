@@ -1,6 +1,6 @@
-package com.stream.four.controller;
+package com.stream.four.controller.subscription;
 
-import com.stream.four.dto.TrialResponse;
+import com.stream.four.dto.response.subscription.TrialResponse;
 import com.stream.four.service.TrialService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;

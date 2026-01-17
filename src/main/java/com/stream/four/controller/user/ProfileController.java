@@ -1,6 +1,8 @@
-package com.stream.four.controller;
+package com.stream.four.controller.user;
 
-import com.stream.four.dto.*;
+import com.stream.four.dto.requests.CreateProfileRequest;
+import com.stream.four.dto.response.user.ProfileResponse;
+import com.stream.four.dto.update.UpdateProfileRequest;
 import com.stream.four.service.ProfileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;

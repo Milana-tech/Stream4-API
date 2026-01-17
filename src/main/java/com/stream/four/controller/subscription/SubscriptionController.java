@@ -1,7 +1,7 @@
-package com.stream.four.controller;
+package com.stream.four.controller.subscription;
 
-import com.stream.four.dto.CreateSubscriptionRequest;
-import com.stream.four.dto.SubscriptionResponse;
+import com.stream.four.dto.requests.CreateSubscriptionRequest;
+import com.stream.four.dto.response.subscription.SubscriptionResponse;
 import com.stream.four.service.SubscriptionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
