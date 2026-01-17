@@ -1,5 +1,7 @@
-package com.stream.four.model;
+package com.stream.four.model.subscription;
 
+import com.stream.four.model.user.User;
+import com.stream.four.model.enums.SubscriptionStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -10,7 +12,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "Subscription")
+@Table(name = "subscriptions")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -52,9 +54,10 @@ public class Subscription {
     @CreationTimestamp
     @Column(name = "CreatedAt")
     private LocalDateTime createdAt;
+
     @OneToOne
     @JoinColumn(name = "user_id")
-    private User user;
+    private User createdByUser;
 
     @UpdateTimestamp
     @Column(name = "UpdatedAt")
