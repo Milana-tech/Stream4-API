@@ -8,6 +8,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.chrono.ChronoLocalDate;
 
 @Entity
 @Table(name = "Subscription")
@@ -17,6 +18,10 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class Subscription {
+
+    public boolean isActive() {
+        return endDate != null && endDate.isAfter(LocalDate.now());
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -52,13 +57,13 @@ public class Subscription {
     @CreationTimestamp
     @Column(name = "CreatedAt")
     private LocalDateTime createdAt;
-    @OneToOne
-    @JoinColumn(name = "user_id")
-    private User user;
 
     @UpdateTimestamp
     @Column(name = "UpdatedAt")
     private LocalDateTime updatedAt;
+
+    @Column(name = "Plan", nullable = false)
+    private String plan = "STANDARD";
 
     @PrePersist
     public void prePersist()

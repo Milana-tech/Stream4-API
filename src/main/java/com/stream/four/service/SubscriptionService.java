@@ -1,16 +1,13 @@
 package com.stream.four.service;
 
-import com.stream.four.dto.CreateSubscriptionRequest;
+import com.stream.four.model.Subscription;
 import com.stream.four.dto.SubscriptionResponse;
+import com.stream.four.dto.CreateSubscriptionRequest;
 import com.stream.four.exception.DuplicateResourceException;
 import com.stream.four.exception.ResourceNotFoundException;
+import com.stream.four.model.SubscriptionStatus;
 import com.stream.four.repository.SubscriptionRepository;
-import com.stream.four.dto.TrialResponse;
-import com.stream.four.mapper.SubscriptionMapper;
-import com.stream.four.mapper.TrialMapper;
 import com.stream.four.model.User;
-import com.stream.four.repository.SubscriptionRepository;
-import com.stream.four.repository.TrialRepository;
 import com.stream.four.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -42,7 +39,7 @@ public class SubscriptionService {
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         // Check if user already has an active subscription
-        if (subscriptionRepository.existsByUser_UserIdAndStatus(userId, SubscriptionStatus.ACTIVE)) {
+        if (subscriptionRepository.existsByUser_IdAndStatus(userId, SubscriptionStatus.ACTIVE)) {
             throw new DuplicateResourceException("User already has an active subscription");
         }
 
@@ -71,7 +68,7 @@ public class SubscriptionService {
     @Transactional(readOnly = true)
     public SubscriptionResponse getCurrentSubscription(String userId) {  // ← Changed
         Subscription subscription = subscriptionRepository
-                .findByUser_UserIdAndStatus(userId, SubscriptionStatus.ACTIVE)  // ← Changed
+                .findByUser_IdAndStatus(userId, SubscriptionStatus.ACTIVE)  // ← Changed
                 .orElseThrow(() -> new ResourceNotFoundException("No active subscription found"));
 
         return toSubscriptionResponse(subscription);
@@ -82,7 +79,7 @@ public class SubscriptionService {
      */
     @Transactional(readOnly = true)
     public List<SubscriptionResponse> getSubscriptionHistory(String userId) {  // ← Changed
-        List<Subscription> subscriptions = subscriptionRepository.findByUser_UserId(userId);  // ← Changed
+        List<Subscription> subscriptions = subscriptionRepository.findByUser_Id(userId);  // ← Changed
 
         return subscriptions.stream()
                 .map(this::toSubscriptionResponse)
@@ -94,7 +91,7 @@ public class SubscriptionService {
      */
     public SubscriptionResponse cancelSubscription(String userId) {  // ← Changed
         Subscription subscription = subscriptionRepository
-                .findByUser_UserIdAndStatus(userId, SubscriptionStatus.ACTIVE)  // ← Changed
+                .findByUser_IdAndStatus(userId, SubscriptionStatus.ACTIVE)  // ← Changed
                 .orElseThrow(() -> new ResourceNotFoundException("No active subscription found"));
 
         subscription.setStatus(SubscriptionStatus.CANCELLED);
@@ -110,7 +107,7 @@ public class SubscriptionService {
      */
     public SubscriptionResponse changeSubscriptionPackage(String userId, Long newPackageId) {  // ← Changed
         Subscription subscription = subscriptionRepository
-                .findByUser_UserIdAndStatus(userId, SubscriptionStatus.ACTIVE)  // ← Changed
+                .findByUser_IdAndStatus(userId, SubscriptionStatus.ACTIVE)  // ← Changed
                 .orElseThrow(() -> new ResourceNotFoundException("No active subscription found"));
 
         Subscription updatedSubscription = subscriptionRepository.save(subscription);

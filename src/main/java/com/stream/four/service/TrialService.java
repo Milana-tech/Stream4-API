@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.chrono.ChronoLocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
@@ -34,7 +36,7 @@ public class TrialService {
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         // Check if trial already exists
-        if (trialRepository.existsByUser_UserId(userId)) {
+        if (trialRepository.existsByUser_Id(userId)) {
             throw new DuplicateResourceException("Trial already exists for this user");
         }
 
@@ -47,7 +49,7 @@ public class TrialService {
                 .convertedToPaid(false)
                 .build();
 
-        Trial savedTrial = trialRepository.save(trial);
+        Trial savedTrial = trialRepository.saveAndFlush(trial);
 
         return toTrialResponse(savedTrial);
     }
@@ -57,7 +59,7 @@ public class TrialService {
      */
     @Transactional(readOnly = true)
     public TrialResponse getTrial(String userId) {
-        Trial trial = trialRepository.findByUser_UserId(userId)
+        Trial trial = trialRepository.findByUser_Id(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("No trial found for this user"));
 
         return toTrialResponse(trial);
@@ -68,7 +70,7 @@ public class TrialService {
      */
     @Transactional(readOnly = true)
     public boolean hasActiveTrial(String userId) {
-        return trialRepository.findByUser_UserId(userId)
+        return trialRepository.findByUser_Id(userId)
                 .map(trial -> trial.getStatus() == TrialStatus.ACTIVE &&
                         trial.getEndDate().isAfter(LocalDate.now()))
                 .orElse(false);
@@ -78,7 +80,7 @@ public class TrialService {
      * Mark trial as converted to paid
      */
     public void markTrialAsConverted(String userId) {
-        Trial trial = trialRepository.findByUser_UserId(userId)
+        Trial trial = trialRepository.findByUser_Id(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("No trial found"));
 
         trial.setStatus(TrialStatus.CONVERTED);
@@ -120,5 +122,11 @@ public class TrialService {
                 .convertedToPaid(trial.getConvertedToPaid())
                 .convertedDate(trial.getConvertedDate())
                 .build();
+    }
+
+    public boolean isTrialValid(String userId) {
+        return trialRepository.findByUser_Id(userId)
+                .map(trial -> trial.getEndDate().isAfter(ChronoLocalDate.from(LocalDateTime.now())))
+                .orElse(false);
     }
 }

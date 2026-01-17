@@ -12,9 +12,9 @@ import java.util.Optional;
 @Repository
 public interface SubscriptionRepository extends JpaRepository<Subscription, Long> {
 
-    Optional<Subscription> findByUser_UserIdAndStatus(String userId, SubscriptionStatus status);
+    Optional<Subscription> findByUser_IdAndStatus(String userId, SubscriptionStatus status);
 
-    List<Subscription> findByUser_UserId(String userId); 
+    List<Subscription> findByUser_Id(String userId);
 
-    boolean existsByUser_UserIdAndStatus(String userId, SubscriptionStatus status);
+    boolean existsByUser_IdAndStatus(String id, SubscriptionStatus status);
 }
