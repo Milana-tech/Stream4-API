@@ -36,7 +36,7 @@ public class AuthController {
     @ApiResponse(responseCode = "200", description = "Successfully retrieved list of users")
     public UserLoginResponse login(@Valid @RequestBody LoginRequest loginRequest) {
         var user = loginService.login(loginRequest);
-        if (user.isAccountLocked()) 
+        if (user.getFailedLoginAttempts() >= 3)
         {
             throw new RuntimeException("Account is locked due to too many failed login attempts.");
         }
@@ -52,6 +52,7 @@ public class AuthController {
     )
     @ApiResponse(responseCode = "200", description = "Successfully created a user")
     public UserLoginResponse register(@Valid @RequestBody CreateUserRequest createUserRequest) {
+
         // handle invitation token if present
         if (createUserRequest.getInvitationToken() != null)
         {

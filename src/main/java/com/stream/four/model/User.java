@@ -3,6 +3,8 @@ package com.stream.four.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @Entity
@@ -25,6 +27,8 @@ public class User extends Auditable {
 
     private String password;
 
+    private int age;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role = Role.USER;
@@ -32,6 +36,15 @@ public class User extends Auditable {
     private boolean deleted = false;
 
     private int failedLoginAttempts = 0;
+    private String resetToken;
 
-    private boolean accountLocked = false;
+    public boolean isAccountLocked() {
+        return this.failedLoginAttempts >= 3;
+    }
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private Subscription subscription;
+
+    @Column(name = "created_date", nullable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    private LocalDateTime createdDate = LocalDateTime.now();
 }

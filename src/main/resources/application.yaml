@@ -12,7 +12,7 @@ spring:
     properties:
       hibernate:
         format_sql: true
-        dialect: org.hibernate.dialect.MySQL8Dialect
+      #  dialect: org.hibernate.dialect.MySQL8Dialect
 
   mail:
     host: smtp.gmail.com
@@ -41,3 +41,7 @@ app:
   verification:
     link-expiry-hours: 24
     base-url: http://localhost:8080
+
+logging:
+  level:
+    org.springframework.security: DEBUG

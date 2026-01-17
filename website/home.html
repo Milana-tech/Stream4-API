@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/style.css">
+    <title>Document</title>
+</head>
+<body>
+
+    <nav class="navbar">
+        <h1>StreamFlix</h1>
+
+        <div class="nav-right">
+            <span id="activeProfile"></span>
+            <button id="logoutBtn" class="logout-btn">Logout</button>
+        </div>
+    </nav>
+
+    <main class="home-layout">
+
+        <section class="row">
+            <h2>Continue Watching</h2>
+
+            <div class="row-wrapper">
+                <button class="arrow left" onclick="scrollRow('continueRow', -1)">❮</button>
+                <div class="row-scroll" id="continueRow"></div>
+                <button class="arrow right" onclick="scrollRow('continueRow', 1)">❯</button>
+            </div>
+        </section>
+
+        <section class="row">
+            <h2>Recommended</h2>
+
+            <div class="row-wrapper">
+                <button class="arrow left" onclick="scrollRow('recommendedRow', -1)">❮</button>
+                <div class="row-scroll" id="recommendedRow"></div>
+                <button class="arrow right" onclick="scrollRow('recommendedRow', 1)">❯</button>
+            </div>
+        </section>
+
+        <section class="row">
+            <h2>Popular</h2>
+            
+            <div class="row-wrapper">
+                <button class="arrow left" onclick="scrollRow('popularRow', -1)">❮</button>
+                <div class="row-scroll" id="popularRow"></div>
+                <button class="arrow right" onclick="scrollRow('popularRow', 1)">❯</button>
+            </div>
+        </section>
+
+    </main>
+
+    <script src="js/home.js"></script>
+
+</body>
+</html>

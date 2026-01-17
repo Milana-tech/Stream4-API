@@ -52,6 +52,9 @@ public class Subscription {
     @CreationTimestamp
     @Column(name = "CreatedAt")
     private LocalDateTime createdAt;
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @UpdateTimestamp
     @Column(name = "UpdatedAt")
