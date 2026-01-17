@@ -1,4 +1,4 @@
-package com.stream.four.model;
+package com.stream.four.model.enums;
 
 public enum Role
 {
