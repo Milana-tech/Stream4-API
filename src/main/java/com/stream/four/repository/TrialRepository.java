@@ -12,9 +12,9 @@ import java.util.Optional;
 @Repository
 public interface TrialRepository extends JpaRepository<Trial, Long> {
 
-    Optional<Trial> findByUser_UserId(String userId);  // ← Changed
+    Optional<Trial> findByUser_Id(String userId);  // ← Changed
 
-    boolean existsByUser_UserId(String userId);  // ← Changed
+    boolean existsByUser_Id(String userId);  // ← Changed
 
     List<Trial> findByStatusAndEndDateBefore(TrialStatus status, LocalDate date);
 }

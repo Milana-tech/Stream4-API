@@ -15,11 +15,13 @@ public class PlaybackService
 
     private final UserRepository userRepository;
     private final TitleRepository titleRepository;
+    private final TrialService trialService;
 
-    public PlaybackService(UserRepository userRepository, TitleRepository titleRepository)
+    public PlaybackService(TitleRepository titleRepository, UserRepository userRepository, TrialService trialService)
     {
-        this.userRepository = userRepository;
         this.titleRepository = titleRepository;
+        this.userRepository = userRepository;
+        this.trialService = trialService;
     }
 
     public VideoQuality getAvailableQuality(User user, Title title)
@@ -45,43 +47,62 @@ public class PlaybackService
         return VideoQuality.SD;
     }
 
-    public String getPlaybackQuality(String email, String titleName)
-    {
+    public String getPlaybackQuality(String email, String titleName) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         Title title = titleRepository.findByName(titleName)
                 .orElseThrow(() -> new RuntimeException("Title not found"));
 
-        if (user.getSubscription() == null || !user.getSubscription().isActive())
-        {
-            return "User " + email + " has no active subscription. Quality: SD";
+        // Calculate status first
+        boolean hasActiveSub = user.getSubscription() != null && user.getSubscription().isActive();
+        boolean hasValidTrial = trialService.hasActiveTrial(user.getId());
+
+        // If no sub, try to start/check trial
+        if (!hasActiveSub && !hasValidTrial) {
+            try {
+                trialService.createTrial(user.getId()); // This creates the 7-day row
+                hasValidTrial = true;
+            } catch (RuntimeException e) {
+                return "User " + email + " has no active subscription or trial eligibility. Quality: SD";
+            }
         }
 
-        if (!isAgeAppropriate(user.getAge(), title.getMaturityRating()))
-        {
-            return "ACCESS DENIED: This content is rated " + title.getMaturityRating() +
-                    ". Content warnings: " + String.join(", ", title.getContentWarnings());
+        // Age check
+        if (!isAgeAppropriate(user.getAge(), title.getMaturityRating())) {
+            return "ACCESS DENIED: Content rated " + title.getMaturityRating();
         }
 
-        String plan = user.getSubscription().getPlan().toUpperCase();
+        // Determine Quality (Trial users get PREMIUM/UHD access)
+        String plan = hasActiveSub ? user.getSubscription().getPlan().toUpperCase() : "PREMIUM";
 
-        if (plan.equals("PREMIUM") && title.getSupportedQualities().contains(VideoQuality.UHD))
-        {
-            return "User " + email + " is watching " + titleName + " in UHD";
+        if (plan.equals("PREMIUM") && title.getSupportedQualities().contains(VideoQuality.UHD)) {
+            String message = hasValidTrial && !hasActiveSub ? " (TRIAL ACCESS)" : "";
+            return "User " + email + " is watching " + titleName + " in UHD" + message;
         }
 
         return "User " + email + " is watching " + titleName + " in SD";
     }
 
-    private boolean isAgeAppropriate(int userAge, MaturityRating rating)
-    {
-        return switch (rating)
-        {
-            case ALL -> true;
-            case PG -> userAge >= 7;
-            case TEEN -> userAge >= 13;
-            case MATURE -> userAge >= 18;
-        };
+    private boolean isAgeAppropriate(int userAge, MaturityRating rating) {
+        return userAge >= rating.getMinAge();
+    }
+
+    public String validatePlayback(String email, String titleName) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Title title = titleRepository.findByName(titleName)
+                .orElseThrow(() -> new RuntimeException("Title not found"));
+
+        if (user.isEligibleForTrial()) {
+            return "TRIAL ACCESS GRANTED: Enjoy your first 7 days!";
+        }
+
+        if (user.getAge() < title.getMaturityRating().getMinAge()) {
+            return "ACCESS DENIED: Content is rated " + title.getMaturityRating();
+        }
+
+        return "User is watching " + titleName;
     }
 }

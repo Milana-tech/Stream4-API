@@ -3,7 +3,9 @@ package com.stream.four.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 @Getter
 @Setter
@@ -45,6 +47,11 @@ public class User extends Auditable {
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private Subscription subscription;
 
-    @Column(name = "created_date", nullable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-    private LocalDateTime createdDate = LocalDateTime.now();
+    @Column(name = "created_date")
+    private Instant createdDate = Instant.now();
+
+    public boolean isEligibleForTrial() {
+        return createdDate != null &&
+                createdDate.isAfter(Instant.now().minus(7, ChronoUnit.DAYS));
+    }
 }
