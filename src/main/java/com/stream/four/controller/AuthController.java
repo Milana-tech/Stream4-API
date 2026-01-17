@@ -1,8 +1,8 @@
 package com.stream.four.controller;
 
-import com.stream.four.dto.CreateUserRequest;
-import com.stream.four.dto.LoginRequest;
-import com.stream.four.dto.UserLoginResponse;
+import com.stream.four.dto.requests.CreateUserRequest;
+import com.stream.four.dto.response.user.LoginRequest;
+import com.stream.four.dto.response.user.UserLoginResponse;
 import com.stream.four.mapper.InvitationHelper;
 import com.stream.four.service.LoginService;
 import com.stream.four.service.UserService;

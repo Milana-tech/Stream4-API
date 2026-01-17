@@ -1,6 +1,6 @@
 package com.stream.four.mapper;
 
-import com.stream.four.dto.CreateUserRequest;
+import com.stream.four.dto.requests.CreateUserRequest;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

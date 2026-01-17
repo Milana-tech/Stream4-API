@@ -1,6 +1,6 @@
 package com.stream.four.mapper;
 
-import com.stream.four.dto.CreateSeasonRequest;
+import com.stream.four.dto.requests.CreateSeasonRequest;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 

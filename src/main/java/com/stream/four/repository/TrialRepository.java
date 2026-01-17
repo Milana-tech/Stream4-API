@@ -1,7 +1,7 @@
 package com.stream.four.repository;
 
-import com.stream.four.model.Trial;
-import com.stream.four.model.TrialStatus;
+import com.stream.four.model.subscription.Trial;
+import com.stream.four.model.enums.TrialStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

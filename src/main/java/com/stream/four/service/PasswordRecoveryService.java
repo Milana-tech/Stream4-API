@@ -1,5 +1,5 @@
 package com.stream.four.service;
-import com.stream.four.model.User;
+import com.stream.four.model.user.User;
 import com.stream.four.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

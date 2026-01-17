@@ -1,6 +1,8 @@
 package com.stream.four.service;
 
-import com.stream.four.dto.*;
+import com.stream.four.dto.requests.CreateProfileRequest;
+import com.stream.four.dto.response.user.ProfileResponse;
+import com.stream.four.dto.update.UpdateProfileRequest;
 import com.stream.four.mapper.ProfileMapper;
 import com.stream.four.repository.ProfileRepository;
 import lombok.RequiredArgsConstructor;

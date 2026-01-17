@@ -1,6 +1,6 @@
 package com.stream.four.mapper;
 
-import com.stream.four.dto.CreateTitleRequest;
+import com.stream.four.dto.requests.CreateTitleRequest;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 

@@ -1,6 +1,6 @@
 package com.stream.four.repository;
 
-import com.stream.four.model.User;
+import com.stream.four.model.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

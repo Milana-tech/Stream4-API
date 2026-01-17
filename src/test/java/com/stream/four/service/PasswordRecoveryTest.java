@@ -1,6 +1,6 @@
 package com.stream.four.service;
 
-import com.stream.four.model.User;
+import com.stream.four.model.user.User;
 import com.stream.four.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

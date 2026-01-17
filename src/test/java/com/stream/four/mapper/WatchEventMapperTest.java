@@ -1,6 +1,6 @@
 package com.stream.four.mapper;
 
-import com.stream.four.dto.CreateWatchEventRequest;
+import com.stream.four.dto.requests.CreateWatchEventRequest;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 

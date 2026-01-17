@@ -1,7 +1,7 @@
 package com.stream.four.mapper;
 
-import com.stream.four.dto.UpdatePreferencesRequest;
-import com.stream.four.model.Preferences;
+import com.stream.four.dto.update.UpdatePreferencesRequest;
+import com.stream.four.model.watch.Preferences;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 

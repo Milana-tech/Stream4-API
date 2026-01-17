@@ -1,7 +1,7 @@
 package com.stream.four.service;
 
-import com.stream.four.dto.CreateEpisodeRequest;
-import com.stream.four.dto.EpisodeResponse;
+import com.stream.four.dto.requests.CreateEpisodeRequest;
+import com.stream.four.dto.response.watch.EpisodeResponse;
 import com.stream.four.mapper.EpisodeMapper;
 import com.stream.four.repository.EpisodeRepository;
 import lombok.RequiredArgsConstructor;

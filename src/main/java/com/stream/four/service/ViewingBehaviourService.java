@@ -1,9 +1,9 @@
 package com.stream.four.service;
 
-import com.stream.four.dto.CreateWatchEventRequest;
-import com.stream.four.dto.WatchEventResponse;
+import com.stream.four.dto.requests.CreateWatchEventRequest;
+import com.stream.four.dto.response.watch.WatchEventResponse;
 import com.stream.four.mapper.WatchEventMapper;
-import com.stream.four.model.WatchEvent;
+import com.stream.four.model.watch.WatchEvent;
 import com.stream.four.repository.WatchEventRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
