@@ -1,4 +1,4 @@
-package com.stream.four.dto;
+package com.stream.four.dto.response.subscription;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

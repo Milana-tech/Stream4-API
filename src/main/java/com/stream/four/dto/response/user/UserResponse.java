@@ -1,6 +1,6 @@
-package com.stream.four.dto;
+package com.stream.four.dto.response.user;
 
-import com.stream.four.model.Role;
+import com.stream.four.model.enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,11 +8,11 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserLoginResponse
+public class UserResponse
 {
     private String id;
     private String name;
     private String email;
     private Role role;
-    private String token;
+    private boolean deleted;
 }

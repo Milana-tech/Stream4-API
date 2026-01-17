@@ -1,4 +1,4 @@
-package com.stream.four.dto;
+package com.stream.four.dto.update;
 
 import com.stream.four.validation.ValidMaturityLevel;
 

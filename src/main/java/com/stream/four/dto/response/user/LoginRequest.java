@@ -1,4 +1,4 @@
-package com.stream.four.dto;
+package com.stream.four.dto.response.user;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;

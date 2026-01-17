@@ -1,6 +1,6 @@
-package com.stream.four.dto;
+package com.stream.four.dto.response.watch;
 
-import com.stream.four.model.TitleType;
+import com.stream.four.model.enums.TitleType;
 
 import lombok.Data;
 
