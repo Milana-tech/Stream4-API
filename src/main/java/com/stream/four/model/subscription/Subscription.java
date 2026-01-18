@@ -55,13 +55,23 @@ public class Subscription {
     @Column(name = "CreatedAt")
     private LocalDateTime createdAt;
 
-    @OneToOne
-    @JoinColumn(name = "user_id")
+    @ManyToOne
+    @JoinColumn(name = "UserId")
     private User createdByUser;
 
     @UpdateTimestamp
     @Column(name = "UpdatedAt")
     private LocalDateTime updatedAt;
+
+    @Column(name = "InviteDiscountApplied")
+    private boolean referralDiscountApplied = false;
+
+    @Column(name = "InviteDiscountUsed")
+    private boolean referralDiscountUsed = false;
+
+    @Column(name = "Plan", nullable = false)
+    private String plan;
+
 
     @PrePersist
     public void prePersist()
@@ -80,5 +90,10 @@ public class Subscription {
         {
             this.status = SubscriptionStatus.ACTIVE;
         }
+    }
+
+    public boolean isActive()
+    {
+        return this.status == SubscriptionStatus.ACTIVE;
     }
 }

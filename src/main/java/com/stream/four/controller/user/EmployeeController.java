@@ -20,7 +20,7 @@ public class EmployeeController
     public ResponseEntity<EmployeeBasicInfoResponse> getBackInfo(@AuthenticationPrincipal User user)
     {
         EmployeeBasicInfoResponse response = new EmployeeBasicInfoResponse(
-                user.getId(), user.getName(), user.getEmail(), user.getRole().name()
+                user.getUserId(), user.getName(), user.getEmail(), user.getRole().name()
         );
         return ResponseEntity.ok(response);
     }

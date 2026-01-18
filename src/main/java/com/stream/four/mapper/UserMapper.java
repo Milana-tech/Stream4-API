@@ -13,7 +13,7 @@ public interface UserMapper {
 
     UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 
-    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "userId", ignore = true)
     @Mapping(target = "failedLoginAttempts", constant = "0")
     @Mapping(target = "resetToken", ignore = true) // Explicitly ignore or let it be null
     User toEntity(CreateUserRequest request);
