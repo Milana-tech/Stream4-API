@@ -66,6 +66,9 @@ public class Subscription {
     @Column(name = "InviteDiscountApplied")
     private boolean referralDiscountApplied = false;
 
+    @Column(name = "InviteDiscountUsed")
+    private boolean referralDiscountUsed = false;
+
     @PrePersist
     public void prePersist()
     {

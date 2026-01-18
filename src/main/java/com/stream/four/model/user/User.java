@@ -54,4 +54,5 @@ public class User extends Auditable
     private LocalDateTime createdDate = LocalDateTime.now();
 
     private boolean referralDiscountUsed = false;
+    private String invitedBy;
 }
