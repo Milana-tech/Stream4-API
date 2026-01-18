@@ -56,6 +56,10 @@ public class ReferralController
         inviteeSub.setReferralDiscountUsed(true);
         inviterSub.setReferralDiscountUsed(true);
 
+        //Mark accounts for using the discount
+        invitee.setReferralDiscountUsed(true);
+        inviter.setReferralDiscountUsed(true);
+
         subscriptionRepository.save(inviteeSub);
         subscriptionRepository.save(inviterSub);
         userRepository.save(invitee);
