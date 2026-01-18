@@ -63,6 +63,9 @@ public class Subscription {
     @Column(name = "UpdatedAt")
     private LocalDateTime updatedAt;
 
+    @Column(name = "InviteDiscountApplied")
+    private boolean referralDiscountApplied = false;
+
     @PrePersist
     public void prePersist()
     {
