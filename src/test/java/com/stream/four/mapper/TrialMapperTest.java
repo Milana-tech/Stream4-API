@@ -13,7 +13,7 @@ class TrialMapperTest {
     @Test
     void toDto_mapsBasicFields() {
         var trial = new Trial();
-        trial.setId("id1");
+        trial.setTrialId("id1");
         trial.setStartDate(1L);
         trial.setEndDate(2L);
         trial.setUsed(true);
@@ -21,7 +21,7 @@ class TrialMapperTest {
         var dto = mapper.toDto(trial);
 
         assertNotNull(dto);
-        assertEquals("id1", dto.getId());
+        assertEquals("id1", dto.getTrialId());
         assertEquals(1L, dto.getStartDate());
         assertEquals(2L, dto.getEndDate());
         assertTrue(dto.isUsed());
