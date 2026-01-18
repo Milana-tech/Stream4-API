@@ -1,11 +1,11 @@
 package com.stream.four.service;
 
-import com.stream.four.dto.TrialResponse;
+import com.stream.four.dto.response.subscription.TrialResponse;
 import com.stream.four.exception.DuplicateResourceException;
 import com.stream.four.exception.ResourceNotFoundException;
-import com.stream.four.model.User;
-import com.stream.four.model.Trial;
-import com.stream.four.model.TrialStatus;
+import com.stream.four.model.user.User;
+import com.stream.four.model.subscription.Trial;
+import com.stream.four.model.enums.TrialStatus;
 import com.stream.four.repository.UserRepository;
 import com.stream.four.repository.TrialRepository;
 import lombok.RequiredArgsConstructor;

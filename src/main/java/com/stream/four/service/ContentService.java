@@ -1,9 +1,9 @@
 package com.stream.four.service;
 
-import com.stream.four.model.MaturityRating;
-import com.stream.four.model.Profile;
-import com.stream.four.model.Title;
-import com.stream.four.model.VideoQuality;
+import com.stream.four.model.enums.MaturityRating;
+import com.stream.four.model.user.Profile;
+import com.stream.four.model.watch.Title;
+import com.stream.four.model.enums.VideoQuality;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

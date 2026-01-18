@@ -1,9 +1,9 @@
 package com.stream.four.service;
 
-import com.stream.four.dto.CreateSeasonRequest;
-import com.stream.four.dto.SeasonResponse;
+import com.stream.four.dto.requests.CreateSeasonRequest;
+import com.stream.four.dto.response.watch.SeasonResponse;
 import com.stream.four.mapper.SeasonMapper;
-import com.stream.four.model.Season;
+import com.stream.four.model.watch.Season;
 import com.stream.four.repository.SeasonRepository;
 import org.junit.jupiter.api.Test;
 

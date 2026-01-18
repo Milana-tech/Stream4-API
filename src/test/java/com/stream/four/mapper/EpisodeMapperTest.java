@@ -1,6 +1,6 @@
 package com.stream.four.mapper;
 
-import com.stream.four.dto.CreateEpisodeRequest;
+import com.stream.four.dto.requests.CreateEpisodeRequest;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 

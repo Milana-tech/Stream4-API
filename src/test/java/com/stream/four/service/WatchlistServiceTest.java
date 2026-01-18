@@ -1,9 +1,9 @@
 package com.stream.four.service;
 
-import com.stream.four.dto.CreateWatchlistItemRequest;
-import com.stream.four.dto.WatchlistItemResponse;
+import com.stream.four.dto.requests.CreateWatchlistItemRequest;
+import com.stream.four.dto.response.watch.WatchlistItemResponse;
 import com.stream.four.mapper.WatchlistMapper;
-import com.stream.four.model.WatchlistItem;
+import com.stream.four.model.watch.WatchlistItem;
 import com.stream.four.repository.WatchlistRepository;
 import org.junit.jupiter.api.Test;
 

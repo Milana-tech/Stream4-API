@@ -1,9 +1,9 @@
 package com.stream.four.service;
 
-import com.stream.four.model.MaturityRating;
-import com.stream.four.model.Title;
-import com.stream.four.model.User;
-import com.stream.four.model.VideoQuality;
+import com.stream.four.model.enums.MaturityRating;
+import com.stream.four.model.watch.Title;
+import com.stream.four.model.user.User;
+import com.stream.four.model.enums.VideoQuality;
 import com.stream.four.repository.TitleRepository;
 import com.stream.four.repository.UserRepository;
 import org.springframework.stereotype.Service;

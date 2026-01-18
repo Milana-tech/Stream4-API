@@ -1,6 +1,6 @@
 package com.stream.four.mapper;
 
-import com.stream.four.dto.CreateWatchlistItemRequest;
+import com.stream.four.dto.requests.CreateWatchlistItemRequest;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 

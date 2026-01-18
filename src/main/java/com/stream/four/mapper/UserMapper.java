@@ -1,8 +1,8 @@
 package com.stream.four.mapper;
 
-import com.stream.four.dto.CreateUserRequest;
-import com.stream.four.dto.UserResponse;
-import com.stream.four.model.User;
+import com.stream.four.dto.requests.CreateUserRequest;
+import com.stream.four.dto.response.user.UserResponse;
+import com.stream.four.model.user.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;

@@ -1,9 +1,9 @@
 package com.stream.four.service;
 
-import com.stream.four.dto.CreateTitleRequest;
-import com.stream.four.dto.TitleResponse;
+import com.stream.four.dto.requests.CreateTitleRequest;
+import com.stream.four.dto.response.watch.TitleResponse;
 import com.stream.four.mapper.TitleMapper;
-import com.stream.four.model.Title;
+import com.stream.four.model.watch.Title;
 import com.stream.four.repository.TitleRepository;
 import org.junit.jupiter.api.Test;
 

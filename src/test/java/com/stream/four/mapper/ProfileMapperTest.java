@@ -1,8 +1,8 @@
 package com.stream.four.mapper;
 
-import com.stream.four.dto.CreateProfileRequest;
-import com.stream.four.dto.UpdateProfileRequest;
-import com.stream.four.model.Profile;
+import com.stream.four.dto.requests.CreateProfileRequest;
+import com.stream.four.dto.update.UpdateProfileRequest;
+import com.stream.four.model.user.Profile;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 

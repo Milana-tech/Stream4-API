@@ -5,7 +5,7 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.stream.four.model.WatchEvent;
+import com.stream.four.model.watch.WatchEvent;
 
 public interface WatchEventRepository extends JpaRepository<WatchEvent, String> {
 

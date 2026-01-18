@@ -1,7 +1,7 @@
 package com.stream.four.service;
 
-import com.stream.four.dto.CreateUserRequest;
-import com.stream.four.dto.UserResponse;
+import com.stream.four.dto.requests.CreateUserRequest;
+import com.stream.four.dto.response.user.UserResponse;
 import com.stream.four.mapper.UserMapper;
 import com.stream.four.repository.UserRepository;
 import lombok.AllArgsConstructor;

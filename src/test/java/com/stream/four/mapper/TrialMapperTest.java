@@ -1,6 +1,6 @@
 package com.stream.four.mapper;
 
-import com.stream.four.model.Trial;
+import com.stream.four.model.subscription.Trial;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 
