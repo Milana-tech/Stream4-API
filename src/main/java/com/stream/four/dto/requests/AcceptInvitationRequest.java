@@ -1,4 +1,4 @@
-package com.stream.four.dto.response;
+package com.stream.four.dto.requests;
 
 import com.stream.four.validation.ValidUUID;
 
