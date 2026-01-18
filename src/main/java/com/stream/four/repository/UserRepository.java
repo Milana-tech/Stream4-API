@@ -13,7 +13,7 @@ public interface UserRepository extends JpaRepository<User, String> {
 
     Optional<User> findByResetToken(String resetToken);
 
-    boolean existsUserById(String id);
+    boolean existsUserByUserId(String id);
 
     boolean existsByEmail(String email);
 }

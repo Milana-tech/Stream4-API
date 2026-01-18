@@ -25,7 +25,7 @@ public class Subscription {
     @Column(name = "SubscriptionID")
     private Long subscriptionId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "UserID", nullable = false)
     private User user;
 
@@ -54,10 +54,6 @@ public class Subscription {
     @CreationTimestamp
     @Column(name = "CreatedAt")
     private LocalDateTime createdAt;
-
-    @ManyToOne
-    @JoinColumn(name = "UserId")
-    private User createdByUser;
 
     @UpdateTimestamp
     @Column(name = "UpdatedAt")
