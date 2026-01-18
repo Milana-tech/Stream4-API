@@ -1,4 +1,4 @@
-package com.stream.four.controller.subscription;
+package com.stream.four.controller.referral;
 
 import com.stream.four.model.enums.SubscriptionStatus;
 import com.stream.four.model.subscription.Subscription;
