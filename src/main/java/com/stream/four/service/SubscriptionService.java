@@ -4,6 +4,8 @@ import com.stream.four.dto.requests.CreateSubscriptionRequest;
 import com.stream.four.dto.response.subscription.SubscriptionResponse;
 import com.stream.four.exception.DuplicateResourceException;
 import com.stream.four.exception.ResourceNotFoundException;
+import com.stream.four.model.enums.SubscriptionStatus;
+import com.stream.four.model.subscription.Subscription;
 import com.stream.four.repository.SubscriptionRepository;
 import com.stream.four.model.user.User;
 import com.stream.four.repository.UserRepository;
