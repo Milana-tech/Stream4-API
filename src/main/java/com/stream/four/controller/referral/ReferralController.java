@@ -1,5 +1,6 @@
 package com.stream.four.controller.referral;
 
+import com.stream.four.dto.response.referral.ReferralDiscountResponse;
 import com.stream.four.model.enums.SubscriptionStatus;
 import com.stream.four.model.subscription.Subscription;
 import com.stream.four.model.user.User;
@@ -25,14 +26,19 @@ public class ReferralController
     private final SubscriptionRepository subscriptionRepository;
 
     @PostMapping("/apply-discount/{inviteeId}")
-    public ResponseEntity<String> applyReferralDiscount(@PathVariable String inviteeId)
+    public ResponseEntity<ReferralDiscountResponse> applyReferralDiscount(@PathVariable String inviteeId)
     {
         User invitee = userRepository.findById(inviteeId)
                 .orElseThrow(() -> new RuntimeException("Invitee not found"));
 
         if(invitee.getInvitedBy() == null)
         {
-            return ResponseEntity.badRequest().body("Invitee was not invited by anyone.");
+            return ResponseEntity.badRequest().body(new ReferralDiscountResponse(
+                    null,
+                    invitee.getUserId(),
+                    false,
+                    false,
+                    "Invitee was not invited by anyone."));
         }
 
         User inviter = userRepository.findById(invitee.getInvitedBy())
@@ -40,13 +46,18 @@ public class ReferralController
 
         if (invitee.isReferralDiscountUsed() || inviter.isReferralDiscountUsed())
         {
-            return ResponseEntity.badRequest().body("Discount is already used by one of the accounts");
+            return ResponseEntity.badRequest().body(new ReferralDiscountResponse(
+                    inviter.getUserId(),
+                    invitee.getUserId(),
+                    false,
+                    false,
+                    "Discount is already used by one of the accounts"));
         }
 
         Subscription inviteeSub = subscriptionRepository.findByUser_UserIdAndStatus(inviteeId, SubscriptionStatus.ACTIVE)
                 .orElseThrow(() -> new RuntimeException("Invitee subscription not found."));
 
-        Subscription inviterSub = subscriptionRepository.findByUser_UserIdAndStatus(inviter.getId(), SubscriptionStatus.ACTIVE)
+        Subscription inviterSub = subscriptionRepository.findByUser_UserIdAndStatus(inviter.getUserId(), SubscriptionStatus.ACTIVE)
                 .orElseThrow(() -> new RuntimeException("Inviter subscription not found"));
 
         //Apply discount
@@ -65,7 +76,13 @@ public class ReferralController
         userRepository.save(invitee);
         userRepository.save(inviter);
 
-        return ResponseEntity.ok("Referral discount applied to both users");
+        return ResponseEntity.ok(new ReferralDiscountResponse(
+                inviter.getUserId(),
+                invitee.getUserId(),
+                true,
+                true,
+                "Referral discount applied to both users."
+        ));
 
     }
 }
