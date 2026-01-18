@@ -41,8 +41,8 @@ public class AuthController {
             throw new RuntimeException("Account is locked due to too many failed login attempts.");
         }
         
-        var token = jwtService.generateToken(user.getId(), user.getRole().name());
-        return new UserLoginResponse(user.getId(), user.getName(), user.getEmail(), user.getRole(), token);
+        var token = jwtService.generateToken(user.getUserId(), user.getRole().name());
+        return new UserLoginResponse(user.getUserId(), user.getName(), user.getEmail(), user.getRole(), token);
     }
 
     @PostMapping("/register")

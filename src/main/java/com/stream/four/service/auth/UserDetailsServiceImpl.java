@@ -22,7 +22,7 @@ public class UserDetailsServiceImpl implements UserDetailsService
         var user = userRepository.findById(userId)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
         return new User(
-                user.getId(),
+                user.getUserId(),
                 user.getPassword(),
                 java.util.List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()))
         );

@@ -6,7 +6,7 @@ import com.stream.four.model.subscription.Subscription;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -50,9 +50,6 @@ public class User extends Auditable
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private Subscription subscription;
-
-    @Column(name = "created_date", nullable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-    private LocalDateTime createdDate = LocalDateTime.now();
 
     private boolean referralDiscountUsed = false;
     private String invitedBy;

@@ -112,7 +112,7 @@ public class TrialService {
 
         return TrialResponse.builder()
                 .trialId(trial.getTrialId())
-                .userId(trial.getUser().getId())
+                .userId(trial.getUser().getUserId())
                 .startDate(trial.getStartDate())
                 .endDate(trial.getEndDate())
                 .status(trial.getStatus().name())
