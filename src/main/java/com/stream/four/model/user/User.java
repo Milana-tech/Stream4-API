@@ -40,6 +40,7 @@ public class User extends Auditable
     private boolean deleted = false;
 
     private int failedLoginAttempts = 0;
+
     private String resetToken;
 
     public boolean isAccountLocked() {
@@ -51,4 +52,6 @@ public class User extends Auditable
 
     @Column(name = "created_date", nullable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime createdDate = LocalDateTime.now();
+
+    private boolean referralDiscountUsed = false;
 }
