@@ -44,6 +44,10 @@ public class User extends Auditable
 
     private String resetToken;
 
+    private String verificationToken;
+
+    private boolean verified = false;
+
     public boolean isAccountLocked() {
         return this.failedLoginAttempts >= 3;
     }

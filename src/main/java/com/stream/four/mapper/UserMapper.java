@@ -18,6 +18,7 @@ public interface UserMapper {
     @Mapping(target = "resetToken", ignore = true) // Explicitly ignore or let it be null
     User toEntity(CreateUserRequest request);
 
+    @Mapping(source = "userId", target = "id")
     UserResponse toDto(User user);
 
 }

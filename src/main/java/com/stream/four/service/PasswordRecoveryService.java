@@ -1,7 +1,8 @@
 package com.stream.four.service;
-import com.stream.four.model.user.User;
+import com.stream.four.exception.ResourceNotFoundException;
 import com.stream.four.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.util.UUID;
 
@@ -9,29 +10,28 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class PasswordRecoveryService {
     private final UserRepository userRepository;
+    private final EmailService emailService;
+    private final PasswordEncoder passwordEncoder;
 
     public void initiateRecovery(String email) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        var user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         String token = UUID.randomUUID().toString();
         user.setResetToken(token);
         userRepository.save(user);
 
-        String link = "https://streamflix.com/reset?token=" + token;
-        System.out.println("Link generated: " + link);
+        emailService.sendPasswordResetEmail(user.getEmail(), token);
     }
 
     public void completePasswordReset(String token, String newPassword) {
-        User user = userRepository.findByResetToken(token)
-                .orElseThrow(() -> new RuntimeException("Invalid or expired token"));
+        var user = userRepository.findByResetToken(token)
+                .orElseThrow(() -> new ResourceNotFoundException("Invalid or expired token"));
 
-        user.setPassword(newPassword);
-
+        user.setPassword(passwordEncoder.encode(newPassword));
         user.setResetToken(null);
         user.setFailedLoginAttempts(0);
 
         userRepository.save(user);
-        System.out.println("Password successfully updated for: " + user.getEmail());
     }
 }

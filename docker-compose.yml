@@ -29,11 +29,22 @@ services:
       MYSQL_USER: admin
       MYSQL_PASSWORD: password
       JWT_SECRET: QEWQEQWKLEJQEKLQWJELKQEJLKQWDQKLWNDLKASD
-      MAIL_USERNAME: ${MAIL_USERNAME}
-      MAIL_PASSWORD: ${MAIL_PASSWORD}
+      MAIL_USERNAME: "milanafrombatumi@gmail.com"
+      MAIL_PASSWORD: "dwdryofujmszyesx"
     depends_on:
       db:
         condition: service_healthy
-
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: stream4-phpmyadmin
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: db
+      PMA_USER: admin
+      PMA_PASSWORD: password
+    depends_on:
+      db:
+        condition: service_healthy
 volumes:
   mysql_data:

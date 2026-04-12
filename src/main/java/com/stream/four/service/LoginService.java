@@ -4,6 +4,7 @@ import com.stream.four.dto.response.user.LoginRequest;
 import com.stream.four.model.user.User;
 import com.stream.four.repository.UserRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 public class LoginService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public User login(LoginRequest loginRequest) {
         String identifier = loginRequest.getLogin();
@@ -24,11 +26,15 @@ public class LoginService {
                     .orElseThrow(() -> new IllegalArgumentException("User with username " + identifier + " not found"));
         }
 
+        if (!user.isVerified()) {
+            throw new IllegalStateException("Account is not verified. Please check your email for the activation link.");
+        }
+
         if (user.getFailedLoginAttempts() >= 3) {
             throw new IllegalStateException("Account is temporarily blocked due to 3 failed attempts.");
         }
 
-        if (user.getPassword().equals(loginRequest.getPassword())) {
+        if (passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
             user.setFailedLoginAttempts(0);
             userRepository.save(user);
             return user;
