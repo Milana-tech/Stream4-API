@@ -17,7 +17,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/seasons/{seasonId}/episodes")
-@Tag(name = "Episodes", description = "Manage series episodes (supports JSON, XML, CSV)")
+@Tag(name = "episodes", description = "Manage series episodes (supports JSON, XML, CSV)")
 public class EpisodeController {
 
     private final EpisodeService episodeService;

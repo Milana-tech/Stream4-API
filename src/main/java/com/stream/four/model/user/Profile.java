@@ -1,5 +1,6 @@
 package com.stream.four.model.user;
 
+import com.stream.four.model.enums.ContentWarning;
 import jakarta.persistence.*;
 import lombok.*;
 import java.util.List;
@@ -18,11 +19,12 @@ public class Profile {
     private String name;
     private String avatar;
     private int age;
-    private String maturityLevel;   //KIDS, TEENS, ADULTS
-    @ElementCollection
+    private String maturityLevel;   //KIDS, TEENS, ADULT
+    @ElementCollection(targetClass = ContentWarning.class)
     @CollectionTable(name = "profile_filters", joinColumns = @JoinColumn(name = "profile_id"))
+    @Enumerated(EnumType.STRING)
     @Column(name = "indicator")
-    private List<String> contentFilters;
+    private List<ContentWarning> contentFilters;
     private boolean deleted = false;
 
 }

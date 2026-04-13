@@ -13,11 +13,11 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(value = "/employee",
+@RequestMapping(value = "/employees",
         produces = {MediaType.APPLICATION_JSON_VALUE,
                 MediaType.APPLICATION_XML_VALUE,
                 "text/csv"})  // ← Added CSV support
-@Tag(name = "Employee", description = "Employee-specific operations (supports JSON, XML, CSV)")
+@Tag(name = "employees", description = "Employee-specific operations (supports JSON, XML, CSV)")
 public class EmployeeController {
 
     @GetMapping("/basic-info")

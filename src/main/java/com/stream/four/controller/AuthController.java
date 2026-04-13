@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
-@Tag(name = "Login", description = "Endpoints for login in login out")
+@Tag(name = "auth", description = "Endpoints for login and logout")
 public class AuthController {
 
     private final LoginService loginService;
@@ -49,7 +49,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    @Operation(summary = "Register as a user", description = "Register a user in the home automation system")
+    @Operation(summary = "Register as a user", description = "Register a user in the system")
     @ApiResponse(responseCode = "201", description = "Successfully created a user")
     public ResponseEntity<UserLoginResponse> register(@Valid @RequestBody CreateUserRequest createUserRequest) {
         if (createUserRequest.getInvitationToken() != null) {

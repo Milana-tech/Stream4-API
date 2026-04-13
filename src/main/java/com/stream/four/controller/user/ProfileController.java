@@ -20,7 +20,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/profiles")
-@Tag(name = "Profiles", description = "Endpoints to manage user profiles (supports JSON, XML, CSV)")
+@Tag(name = "profiles", description = "Endpoints to manage user profiles (supports JSON, XML, CSV)")
 public class ProfileController {
 
     private final ProfileService profileService;

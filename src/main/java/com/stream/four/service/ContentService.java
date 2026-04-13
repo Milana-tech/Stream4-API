@@ -1,5 +1,6 @@
 package com.stream.four.service;
 
+import com.stream.four.model.enums.ContentWarning;
 import com.stream.four.model.enums.MaturityRating;
 import com.stream.four.model.user.Profile;
 import com.stream.four.model.watch.Title;
@@ -16,9 +17,11 @@ public class ContentService
             return false;
         }
 
-        for (String filter : profile.getContentFilters()) {
-            if (title.getContentWarnings().contains(filter)) {
-                return false;
+        if (profile.getContentFilters() != null) {
+            for (ContentWarning filter : profile.getContentFilters()) {
+                if (title.getContentWarnings().contains(filter)) {
+                    return false;
+                }
             }
         }
         return true;
@@ -44,11 +47,13 @@ public class ContentService
 
     private boolean isAgeAllowed(String profileLevel, MaturityRating titleRating) {
         if (titleRating == null) return true;
+        if (profileLevel == null) return false;
 
-        if ("KIDS".equals(profileLevel)) {
-            // Only allow 'ALL' (G-rated) content for Kids profiles
-            return titleRating == MaturityRating.ALL;
-        }
-        return true;
+        return switch (profileLevel.toUpperCase()) {
+            case "KIDS"  -> titleRating == MaturityRating.ALL;
+            case "TEENS" -> titleRating == MaturityRating.ALL || titleRating == MaturityRating.PG || titleRating == MaturityRating.TEEN;
+            case "ADULT" -> true;
+            default      -> false;
+        };
     }
 }

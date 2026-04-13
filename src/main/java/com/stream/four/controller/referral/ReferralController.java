@@ -18,9 +18,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping ("/referral")
+@RequestMapping("/referrals")
 @RequiredArgsConstructor
-@Tag (name = "Referral Management", description = "Manage invite discounts (supports JSON, XML, CSV)")
+@Tag (name = "referral-management", description = "Manage invite discounts (supports JSON, XML, CSV)")
 @SecurityRequirement (name = "bearerAuth")
 public class ReferralController
 {

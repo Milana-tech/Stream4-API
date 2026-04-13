@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/playback")
 @RequiredArgsConstructor
 @Validated
 public class PlaybackController {
@@ -22,8 +22,9 @@ public class PlaybackController {
     @GetMapping("/test-playback")
     public ResponseEntity<String> testPlayback(
             @RequestParam @Email(message = "Must be a valid email address") @NotBlank(message = "Email is required") String email,
-            @RequestParam @NotBlank(message = "Title name is required") String titleName) {
+            @RequestParam @NotBlank(message = "Title name is required") String titleName,
+            @RequestParam @NotBlank(message = "Profile ID is required") String profileId) {
 
-        return ResponseEntity.ok(playbackService.getPlaybackQuality(email, titleName));
+        return ResponseEntity.ok(playbackService.getPlaybackQuality(email, titleName, profileId));
     }
 }

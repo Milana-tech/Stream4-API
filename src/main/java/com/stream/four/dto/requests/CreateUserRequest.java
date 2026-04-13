@@ -1,6 +1,7 @@
 package com.stream.four.dto.requests;
 
 import com.stream.four.model.enums.Role;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -28,5 +29,6 @@ public class CreateUserRequest {
     @NotNull(message = "Role must be set")
     private Role role;
 
-    private String invitationToken; //registration supports invitation based links
+    @Schema(description = "Optional. Provide only if registering via an invitation link.", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    private String invitationToken;
 }

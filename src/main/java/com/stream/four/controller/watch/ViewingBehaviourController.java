@@ -17,8 +17,8 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/")
-@Tag(name = "Viewing Behaviour", description = "Track user viewing behaviour and progress (supports JSON, XML, CSV)")
+@RequestMapping("/viewing-behaviour")
+@Tag(name = "viewing-behaviour", description = "Track user viewing behaviour and progress (supports JSON, XML, CSV)")
 public class ViewingBehaviourController {
 
     private final ViewingBehaviourService viewingBehaviourService;

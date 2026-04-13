@@ -1,5 +1,6 @@
 package com.stream.four.model.watch;
 
+import com.stream.four.model.enums.ContentWarning;
 import com.stream.four.model.enums.MaturityRating;
 import com.stream.four.model.enums.TitleType;
 import com.stream.four.model.enums.VideoQuality;
@@ -44,8 +45,9 @@ public class Title {
     @Enumerated(EnumType.STRING)
     private MaturityRating maturityRating;
 
-    @ElementCollection(targetClass = String.class)
+    @ElementCollection(targetClass = ContentWarning.class)
     @CollectionTable(name = "title_content_warnings", joinColumns = @JoinColumn(name = "title_id"))
+    @Enumerated(EnumType.STRING)
     @Column(name = "warning")
-    private Set<String> contentWarnings = new HashSet<>();
+    private Set<ContentWarning> contentWarnings = new HashSet<>();
 }

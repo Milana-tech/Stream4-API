@@ -17,7 +17,7 @@ import java.util.List;
 
 @RestController
 @AllArgsConstructor
-@Tag(name = "Users", description = "Endpoints to manage users")
+@Tag(name = "users", description = "Endpoints to manage users")
 public class UserController {
 
     private final UserService userService;

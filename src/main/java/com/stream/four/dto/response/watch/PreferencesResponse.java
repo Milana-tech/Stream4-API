@@ -5,7 +5,7 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import lombok.Data;
 
 @Data
-@JacksonXmlRootElement(localName = "Preferences")
+@JacksonXmlRootElement(localName = "preferences")
 public class PreferencesResponse {
     @JacksonXmlProperty(localName = "language")
     private String language;

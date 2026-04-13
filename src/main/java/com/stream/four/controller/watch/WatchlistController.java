@@ -17,8 +17,8 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/watchlist")
-@Tag(name = "Watchlist", description = "Manage user watchlist (supports JSON, XML, CSV)")
+@RequestMapping("/watchlists")
+@Tag(name = "watchlists", description = "Manage user watchlist (supports JSON, XML, CSV)")
 public class WatchlistController {
 
     private final WatchlistService watchlistService;

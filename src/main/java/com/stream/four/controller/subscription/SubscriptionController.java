@@ -17,9 +17,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping ("/api/subscriptions")
+@RequestMapping("/subscriptions")
 @RequiredArgsConstructor
-@Tag (name = "Subscription Management", description = "Manage paid subscriptions (supports JSON, XML, CSV)")
+@Tag (name = "subscription-management", description = "Manage paid subscriptions (supports JSON, XML, CSV)")
 @SecurityRequirement (name = "bearerAuth")
 public class SubscriptionController
 {

@@ -17,7 +17,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/preferences")
-@Tag(name = "Preferences", description = "Manage user viewing preferences (supports JSON, XML, CSV)")
+@Tag(name = "preferences", description = "Manage user viewing preferences (supports JSON, XML, CSV)")
 public class PreferencesController {
 
     private final PreferencesService preferencesService;

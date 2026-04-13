@@ -12,9 +12,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping ("/api/trial")
+@RequestMapping("/trials")
 @RequiredArgsConstructor
-@Tag (name = "Trial Management", description = "Manage 7-day trial period (supports JSON, XML, CSV)")
+@Tag (name = "trial-management", description = "Manage 7-day trial period (supports JSON, XML, CSV)")
 @SecurityRequirement (name = "bearerAuth")
 public class TrialController
 {

@@ -17,7 +17,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/titles")
-@Tag(name = "Titles", description = "Endpoints to manage movies and series (supports JSON, XML, CSV)")
+@Tag(name = "titles", description = "Endpoints to manage movies and series (supports JSON, XML, CSV)")
 public class TitleController {
 
     private final TitleService titleService;
