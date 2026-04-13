@@ -8,6 +8,7 @@ import com.stream.four.model.enums.SubscriptionPlan;
 import com.stream.four.model.enums.SubscriptionStatus;
 import com.stream.four.model.subscription.Subscription;
 import com.stream.four.model.user.User;
+import com.stream.four.repository.InvitationRepository;
 import com.stream.four.repository.SubscriptionRepository;
 import com.stream.four.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,7 @@ public class SubscriptionService {
     private final SubscriptionRepository subscriptionRepository;
     private final UserRepository userRepository;
     private final TrialService trialService;
+    private final InvitationRepository invitationRepository;
 
     public SubscriptionResponse createSubscription(String userId, CreateSubscriptionRequest request) {
         User user = userRepository.findById(userId)
@@ -119,6 +121,14 @@ public class SubscriptionService {
         invitee.setReferralDiscountUsed(true);
         inviter.setReferralDiscountUsed(true);
         userRepository.save(inviter);
+
+        // Record discount status centrally on the invitation
+        invitationRepository.findByInviteeUserId(invitee.getUserId())
+                .ifPresent(invitation -> {
+                    invitation.setDiscountApplied(true);
+                    invitation.setDiscountAppliedAt(LocalDate.now());
+                    invitationRepository.save(invitation);
+                });
     }
 
     private SubscriptionResponse toSubscriptionResponse(Subscription subscription) {
