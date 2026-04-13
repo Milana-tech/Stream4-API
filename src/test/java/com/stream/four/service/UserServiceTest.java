@@ -4,6 +4,7 @@ import com.stream.four.dto.requests.CreateUserRequest;
 import com.stream.four.dto.response.user.UserResponse;
 import com.stream.four.mapper.UserMapper;
 import com.stream.four.model.user.User;
+import com.stream.four.repository.InvitationRepository;
 import com.stream.four.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,8 +22,9 @@ class UserServiceTest {
     private final EmailService emailService = mock(EmailService.class);
     private final PasswordEncoder passwordEncoder = mock(PasswordEncoder.class);
     private final TrialService trialService = mock(TrialService.class);
+    private final InvitationRepository invitationRepository = mock(InvitationRepository.class);
 
-    private final UserService userService = new UserService(userRepository, userMapper, emailService, passwordEncoder, trialService);
+    private final UserService userService = new UserService(userRepository, userMapper, emailService, passwordEncoder, trialService, invitationRepository);
 
     @Test
     void getAllUsers_mapsEntitiesToDtos() {

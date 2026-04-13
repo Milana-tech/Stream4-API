@@ -5,6 +5,7 @@ import com.stream.four.exception.ResourceNotFoundException;
 import com.stream.four.model.enums.SubscriptionStatus;
 import com.stream.four.model.subscription.Subscription;
 import com.stream.four.model.user.User;
+import com.stream.four.repository.InvitationRepository;
 import com.stream.four.repository.SubscriptionRepository;
 import com.stream.four.repository.UserRepository;
 import org.junit.jupiter.api.Test;
@@ -22,9 +23,10 @@ class SubscriptionServiceTest {
     private final SubscriptionRepository subscriptionRepository = mock(SubscriptionRepository.class);
     private final UserRepository userRepository = mock(UserRepository.class);
     private final TrialService trialService = mock(TrialService.class);
+    private final InvitationRepository invitationRepository = mock(InvitationRepository.class);
 
     private final SubscriptionService subscriptionService =
-            new SubscriptionService(subscriptionRepository, userRepository, trialService);
+            new SubscriptionService(subscriptionRepository, userRepository, trialService, invitationRepository);
 
     @Test
     void getCurrentSubscription_existing_returnsResponse() {
