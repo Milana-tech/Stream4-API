@@ -4,10 +4,11 @@ import com.stream.four.dto.requests.CreateSubscriptionRequest;
 import com.stream.four.dto.response.subscription.SubscriptionResponse;
 import com.stream.four.exception.DuplicateResourceException;
 import com.stream.four.exception.ResourceNotFoundException;
+import com.stream.four.model.enums.SubscriptionPlan;
 import com.stream.four.model.enums.SubscriptionStatus;
 import com.stream.four.model.subscription.Subscription;
-import com.stream.four.repository.SubscriptionRepository;
 import com.stream.four.model.user.User;
+import com.stream.four.repository.SubscriptionRepository;
 import com.stream.four.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,97 +26,100 @@ import java.util.stream.Collectors;
 @Transactional
 public class SubscriptionService {
 
+    private static final BigDecimal REFERRAL_DISCOUNT_PERCENTAGE = new BigDecimal("10.00");
+
     private final SubscriptionRepository subscriptionRepository;
     private final UserRepository userRepository;
     private final TrialService trialService;
 
-    /**
-     * Create paid subscription
-     * Can be called after trial or directly
-     */
     public SubscriptionResponse createSubscription(String userId, CreateSubscriptionRequest request) {
-        // Get user
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        // Check if user already has an active subscription
         if (subscriptionRepository.existsByUser_UserIdAndStatus(userId, SubscriptionStatus.ACTIVE)) {
             throw new DuplicateResourceException("User already has an active subscription");
         }
 
-        // Create subscription
+        SubscriptionPlan plan = request.getPlan();
+
         Subscription subscription = Subscription.builder()
                 .user(user)
                 .status(SubscriptionStatus.ACTIVE)
+                .plan(plan.name())
+                .totalPrice(plan.getMonthlyPrice())
                 .startDate(LocalDate.now())
                 .endDate(LocalDate.now().plusMonths(1))
                 .autoRenew(true)
                 .build();
 
-        Subscription savedSubscription = subscriptionRepository.save(subscription);
+        // Auto-apply referral discount if user was invited and discount not yet used
+        if (user.getInvitedBy() != null && !user.isReferralDiscountUsed()) {
+            User inviter = userRepository.findById(user.getInvitedBy()).orElse(null);
+            if (inviter != null && !inviter.isReferralDiscountUsed()) {
+                applyReferralDiscount(subscription, user, inviter);
+            }
+        }
 
-        // If user had trial, mark it as converted
-        if (trialService.hasActiveTrial(userId)) {  // ← Changed
+        Subscription saved = subscriptionRepository.save(subscription);
+
+        if (trialService.hasActiveTrial(userId)) {
             trialService.markTrialAsConverted(userId);
         }
 
-        return toSubscriptionResponse(savedSubscription);
+        return toSubscriptionResponse(saved);
     }
 
-    /**
-     * Get current subscription for user
-     */
     @Transactional(readOnly = true)
-    public SubscriptionResponse getCurrentSubscription(String userId) {  // ← Changed
+    public SubscriptionResponse getCurrentSubscription(String userId) {
         Subscription subscription = subscriptionRepository
-                .findByUser_UserIdAndStatus(userId, SubscriptionStatus.ACTIVE)  // ← Changed
+                .findByUser_UserIdAndStatus(userId, SubscriptionStatus.ACTIVE)
                 .orElseThrow(() -> new ResourceNotFoundException("No active subscription found"));
 
         return toSubscriptionResponse(subscription);
     }
 
-    /**
-     * Get all subscription history for user
-     */
     @Transactional(readOnly = true)
-    public List<SubscriptionResponse> getSubscriptionHistory(String userId) {  // ← Changed
-        List<Subscription> subscriptions = subscriptionRepository.findByUser_UserId(userId);  // ← Changed
-
-        return subscriptions.stream()
+    public List<SubscriptionResponse> getSubscriptionHistory(String userId) {
+        return subscriptionRepository.findByUser_UserId(userId)
+                .stream()
                 .map(this::toSubscriptionResponse)
                 .collect(Collectors.toList());
     }
 
-    /**
-     * Cancel subscription
-     */
-    public SubscriptionResponse cancelSubscription(String userId) {  // ← Changed
+    public SubscriptionResponse cancelSubscription(String userId) {
         Subscription subscription = subscriptionRepository
-                .findByUser_UserIdAndStatus(userId, SubscriptionStatus.ACTIVE)  // ← Changed
+                .findByUser_UserIdAndStatus(userId, SubscriptionStatus.ACTIVE)
                 .orElseThrow(() -> new ResourceNotFoundException("No active subscription found"));
 
         subscription.setStatus(SubscriptionStatus.CANCELLED);
         subscription.setAutoRenew(false);
 
-        Subscription cancelledSubscription = subscriptionRepository.save(subscription);
-
-        return toSubscriptionResponse(cancelledSubscription);
+        return toSubscriptionResponse(subscriptionRepository.save(subscription));
     }
 
-    /**
-     * Upgrade/Downgrade subscription
-     */
-    public SubscriptionResponse changeSubscriptionPackage(String userId, Long newPackageId) {  // ← Changed
-        Subscription subscription = subscriptionRepository
-                .findByUser_UserIdAndStatus(userId, SubscriptionStatus.ACTIVE)  // ← Changed
-                .orElseThrow(() -> new ResourceNotFoundException("No active subscription found"));
+    // ========== PRIVATE HELPERS ==========
 
-        Subscription updatedSubscription = subscriptionRepository.save(subscription);
+    private void applyReferralDiscount(Subscription newSubscription, User invitee, User inviter) {
+        // Apply discount to the new subscription
+        newSubscription.setReferralDiscountApplied(true);
+        newSubscription.setDiscountPercentage(REFERRAL_DISCOUNT_PERCENTAGE);
+        newSubscription.setDiscountEndDate(LocalDate.now().plusMonths(1));
 
-        return toSubscriptionResponse(updatedSubscription);
+        // Apply discount to inviter's active subscription if they have one
+        subscriptionRepository.findByUser_UserIdAndStatus(inviter.getUserId(), SubscriptionStatus.ACTIVE)
+                .ifPresent(inviterSub -> {
+                    inviterSub.setReferralDiscountApplied(true);
+                    inviterSub.setDiscountPercentage(REFERRAL_DISCOUNT_PERCENTAGE);
+                    inviterSub.setDiscountEndDate(LocalDate.now().plusMonths(1));
+                    inviterSub.setReferralDiscountUsed(true);
+                    subscriptionRepository.save(inviterSub);
+                });
+
+        // Mark both accounts as having used the discount
+        invitee.setReferralDiscountUsed(true);
+        inviter.setReferralDiscountUsed(true);
+        userRepository.save(inviter);
     }
-
-    // ========== HELPER METHODS ==========
 
     private SubscriptionResponse toSubscriptionResponse(Subscription subscription) {
         BigDecimal discountedPrice = subscription.getTotalPrice();
