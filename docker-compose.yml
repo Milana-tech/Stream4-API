@@ -3,16 +3,16 @@ services:
     image: mysql:8
     container_name: stream4-db
     environment:
-      MYSQL_DATABASE: stream4
-      MYSQL_USER: admin
-      MYSQL_PASSWORD: password
-      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     ports:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "admin", "-ppassword"]
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u${MYSQL_USER} -p${MYSQL_PASSWORD}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -25,12 +25,12 @@ services:
     environment:
       DB_HOST: db
       DB_PORT: 3306
-      MYSQL_DATABASE: stream4
-      MYSQL_USER: admin
-      MYSQL_PASSWORD: password
-      JWT_SECRET: QEWQEQWKLEJQEKLQWJELKQEJLKQWDQKLWNDLKASD
-      MAIL_USERNAME: "milanafrombatumi@gmail.com"
-      MAIL_PASSWORD: "dwdryofujmszyesx"
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      MAIL_USERNAME: ${MAIL_USERNAME}
+      MAIL_PASSWORD: ${MAIL_PASSWORD}
     depends_on:
       db:
         condition: service_healthy
@@ -41,8 +41,8 @@ services:
       - "8081:80"
     environment:
       PMA_HOST: db
-      PMA_USER: admin
-      PMA_PASSWORD: password
+      PMA_USER: ${MYSQL_USER}
+      PMA_PASSWORD: ${MYSQL_PASSWORD}
     depends_on:
       db:
         condition: service_healthy
