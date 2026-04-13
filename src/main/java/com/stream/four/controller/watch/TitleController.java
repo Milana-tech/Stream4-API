@@ -45,4 +45,12 @@ public class TitleController {
     public ResponseEntity<TitleResponse> getById(@PathVariable String id) {
         return ResponseEntity.ok(titleService.getTitleById(id));
     }
+
+    @GetMapping(value = "/for-profile/{profileId}", produces = {
+            MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE, "text/csv"
+    })
+    @Operation(summary = "Get titles for profile", description = "Get titles filtered by profile age restrictions and viewing preferences.")
+    public ResponseEntity<List<TitleResponse>> getForProfile(@PathVariable String profileId) {
+        return ResponseEntity.ok(titleService.getTitlesForProfile(profileId));
+    }
 }

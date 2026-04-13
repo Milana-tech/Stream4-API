@@ -2,7 +2,10 @@ package com.stream.four.service;
 
 import com.stream.four.dto.requests.CreateTitleRequest;
 import com.stream.four.dto.response.watch.TitleResponse;
+import com.stream.four.exception.ResourceNotFoundException;
 import com.stream.four.mapper.TitleMapper;
+import com.stream.four.repository.PreferencesRepository;
+import com.stream.four.repository.ProfileRepository;
 import com.stream.four.repository.TitleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,6 +18,9 @@ public class TitleService {
 
     private final TitleRepository titleRepository;
     private final TitleMapper titleMapper;
+    private final ProfileRepository profileRepository;
+    private final PreferencesRepository preferencesRepository;
+    private final ContentService contentService;
 
     public TitleResponse createTitle(CreateTitleRequest request) {
         var title = titleMapper.toEntity(request);
@@ -33,6 +39,19 @@ public class TitleService {
         var title = titleRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Title not found"));
         return titleMapper.toDto(title);
+    }
+
+    public List<TitleResponse> getTitlesForProfile(String profileId) {
+        var profile = profileRepository.findById(profileId)
+                .orElseThrow(() -> new ResourceNotFoundException("Profile not found"));
+
+        var preferences = preferencesRepository.findByProfileId(profileId).orElse(null);
+        var allTitles = titleRepository.findByDeletedFalse();
+
+        return contentService.filterForProfile(allTitles, profile, preferences)
+                .stream()
+                .map(titleMapper::toDto)
+                .toList();
     }
 }
 

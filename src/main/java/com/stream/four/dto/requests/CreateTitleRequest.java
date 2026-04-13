@@ -1,6 +1,7 @@
 package com.stream.four.dto.requests;
 
 import com.stream.four.model.enums.ContentWarning;
+import com.stream.four.model.enums.Genre;
 import com.stream.four.model.enums.MaturityRating;
 import com.stream.four.model.enums.TitleType;
 import jakarta.validation.constraints.Min;
@@ -25,7 +26,7 @@ public class CreateTitleRequest {
     @NotNull(message = "Type is required")
     private TitleType type;
 
-    private String genre;
+    private Genre genre;
 
     private MaturityRating maturityRating;
 

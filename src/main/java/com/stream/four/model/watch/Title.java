@@ -1,6 +1,7 @@
 package com.stream.four.model.watch;
 
 import com.stream.four.model.enums.ContentWarning;
+import com.stream.four.model.enums.Genre;
 import com.stream.four.model.enums.MaturityRating;
 import com.stream.four.model.enums.TitleType;
 import com.stream.four.model.enums.VideoQuality;
@@ -32,7 +33,8 @@ public class Title {
     @Enumerated(EnumType.STRING)
     private TitleType type; // MOVIE or SERIES
     
-    private String genre; 
+    @Enumerated(EnumType.STRING)
+    private Genre genre;
     
     private boolean deleted = false;
 

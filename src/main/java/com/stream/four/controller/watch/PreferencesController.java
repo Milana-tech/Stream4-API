@@ -11,13 +11,10 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
-import java.util.List;
-
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/preferences")
-@Tag(name = "preferences", description = "Manage user viewing preferences (supports JSON, XML, CSV)")
+@RequestMapping("/profiles/{profileId}/preferences")
+@Tag(name = "preferences", description = "Manage profile viewing preferences (supports JSON, XML, CSV)")
 public class PreferencesController {
 
     private final PreferencesService preferencesService;
@@ -25,24 +22,17 @@ public class PreferencesController {
     @GetMapping(produces = {
             MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE, "text/csv"
     })
-    @Operation(summary = "Get preferences", description = "Get user's viewing preferences. Supports JSON, XML, CSV.")
-    public ResponseEntity<PreferencesResponse> getPreferences(Principal principal) {
-        return ResponseEntity.ok(preferencesService.getPreferences(principal.getName()));
+    @Operation(summary = "Get preferences", description = "Get viewing preferences for a profile. Supports JSON, XML, CSV.")
+    public ResponseEntity<PreferencesResponse> getPreferences(@PathVariable String profileId) {
+        return ResponseEntity.ok(preferencesService.getPreferences(profileId));
     }
 
     @PutMapping(produces = {
             MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE, "text/csv"
     })
-    @Operation(summary = "Update preferences", description = "Update user's viewing preferences. Supports JSON, XML, CSV.")
-    public ResponseEntity<PreferencesResponse> updatePreferences(@Valid @RequestBody UpdatePreferencesRequest request, Principal principal) {
-        return ResponseEntity.ok(preferencesService.updatePreferences(principal.getName(), request));
-    }
-
-    @GetMapping(value = "/filterFilters", produces = {
-            MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE, "text/csv"
-    })
-    @Operation(summary = "Get available filters", description = "Get list of available content filters. Supports JSON, XML, CSV.")
-    public ResponseEntity<List<String>> filterFilters() {
-        return ResponseEntity.ok(preferencesService.filterFilters());
+    @Operation(summary = "Update preferences", description = "Update viewing preferences for a profile. Supports JSON, XML, CSV.")
+    public ResponseEntity<PreferencesResponse> updatePreferences(@PathVariable String profileId,
+                                                                  @Valid @RequestBody UpdatePreferencesRequest request) {
+        return ResponseEntity.ok(preferencesService.updatePreferences(profileId, request));
     }
 }

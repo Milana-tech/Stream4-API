@@ -1,7 +1,12 @@
 package com.stream.four.model.watch;
 
+import com.stream.four.model.enums.Genre;
+import com.stream.four.model.enums.MaturityRating;
+import com.stream.four.model.enums.TitleType;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.Set;
 
 @Getter
 @Setter
@@ -15,11 +20,17 @@ public class Preferences {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    private String userId;
+    private String profileId;
 
-    private String language;
+    @ElementCollection(targetClass = Genre.class)
+    @CollectionTable(name = "preferences_genres", joinColumns = @JoinColumn(name = "preferences_id"))
+    @Enumerated(EnumType.STRING)
+    @Column(name = "genre")
+    private Set<Genre> preferredGenres;
 
-    private String maturityLevel;
+    @Enumerated(EnumType.STRING)
+    private TitleType preferredType; // null means no preference (both movies and series)
 
-    private String genres; // comma-separated list
+    @Enumerated(EnumType.STRING)
+    private MaturityRating minimumMaturityRating; // null means no minimum
 }
