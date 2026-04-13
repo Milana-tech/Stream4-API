@@ -1,16 +1,17 @@
 package com.stream.four.service;
 
-import com.stream.four.dto.requests.CreateSubscriptionRequest;
 import com.stream.four.dto.response.subscription.SubscriptionResponse;
-import com.stream.four.dto.response.subscription.TrialResponse;
-import com.stream.four.mapper.SubscriptionMapper;
-import com.stream.four.mapper.TrialMapper;
+import com.stream.four.exception.ResourceNotFoundException;
+import com.stream.four.model.enums.SubscriptionStatus;
 import com.stream.four.model.subscription.Subscription;
-import com.stream.four.model.subscription.Trial;
+import com.stream.four.model.user.User;
 import com.stream.four.repository.SubscriptionRepository;
-import com.stream.four.repository.TrialRepository;
+import com.stream.four.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -19,42 +20,96 @@ import static org.mockito.Mockito.*;
 class SubscriptionServiceTest {
 
     private final SubscriptionRepository subscriptionRepository = mock(SubscriptionRepository.class);
-    private final TrialRepository trialRepository = mock(TrialRepository.class);
-    private final SubscriptionMapper subscriptionMapper = mock(SubscriptionMapper.class);
-    private final TrialMapper trialMapper = mock(TrialMapper.class);
+    private final UserRepository userRepository = mock(UserRepository.class);
+    private final TrialService trialService = mock(TrialService.class);
 
-    private final SubscriptionService subscriptionService = new SubscriptionService(subscriptionRepository, trialRepository, subscriptionMapper, trialMapper);
+    private final SubscriptionService subscriptionService =
+            new SubscriptionService(subscriptionRepository, userRepository, trialService);
 
     @Test
-    void subscribe_deactivatesExistingActiveSubscription() {
-        var existing = new Subscription();
-        existing.setActive(true);
+    void getCurrentSubscription_existing_returnsResponse() {
+        var user = new User();
+        user.setUserId("u");
 
-        when(subscriptionRepository.findByUserIdAndActiveTrue("u")).thenReturn(Optional.of(existing));
-        when(subscriptionMapper.toEntity(any(CreateSubscriptionRequest.class))).thenReturn(new Subscription());
-        when(subscriptionMapper.toDto(any(Subscription.class))).thenReturn(new SubscriptionResponse());
+        var sub = Subscription.builder()
+                .subscriptionId(1L)
+                .user(user)
+                .status(SubscriptionStatus.ACTIVE)
+                .totalPrice(BigDecimal.TEN)
+                .discountPercentage(BigDecimal.ZERO)
+                .startDate(LocalDate.now())
+                .endDate(LocalDate.now().plusMonths(1))
+                .autoRenew(true)
+                .plan("STANDARD")
+                .build();
 
-        subscriptionService.subscribe("u", new CreateSubscriptionRequest());
+        when(subscriptionRepository.findByUser_UserIdAndStatus("u", SubscriptionStatus.ACTIVE))
+                .thenReturn(Optional.of(sub));
 
-        assertFalse(existing.isActive());
-        verify(subscriptionRepository).save(existing);
+        SubscriptionResponse result = subscriptionService.getCurrentSubscription("u");
+
+        assertNotNull(result);
+        assertEquals("u", result.getUserId());
     }
 
     @Test
-    void getActiveSubscription_missing_throws() {
-        when(subscriptionRepository.findByUserIdAndActiveTrue("u")).thenReturn(Optional.empty());
-        assertThrows(RuntimeException.class, () -> subscriptionService.getActiveSubscription("u"));
+    void getCurrentSubscription_missing_throws() {
+        when(subscriptionRepository.findByUser_UserIdAndStatus("u", SubscriptionStatus.ACTIVE))
+                .thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class, () -> subscriptionService.getCurrentSubscription("u"));
     }
 
     @Test
-    void getTrial_mapsToDto() {
-        var trial = new Trial();
-        var dto = new TrialResponse();
+    void cancelSubscription_setsStatusCancelled() {
+        var user = new User();
+        user.setUserId("u");
 
-        when(trialRepository.findByUserId("u")).thenReturn(Optional.of(trial));
-        when(trialMapper.toDto(trial)).thenReturn(dto);
+        var sub = Subscription.builder()
+                .subscriptionId(1L)
+                .user(user)
+                .status(SubscriptionStatus.ACTIVE)
+                .totalPrice(BigDecimal.TEN)
+                .discountPercentage(BigDecimal.ZERO)
+                .startDate(LocalDate.now())
+                .endDate(LocalDate.now().plusMonths(1))
+                .autoRenew(true)
+                .plan("STANDARD")
+                .build();
 
-        assertSame(dto, subscriptionService.getTrial("u"));
+        when(subscriptionRepository.findByUser_UserIdAndStatus("u", SubscriptionStatus.ACTIVE))
+                .thenReturn(Optional.of(sub));
+        when(subscriptionRepository.save(sub)).thenReturn(sub);
+
+        subscriptionService.cancelSubscription("u");
+
+        assertEquals(SubscriptionStatus.CANCELLED, sub.getStatus());
+        assertFalse(sub.getAutoRenew());
+        verify(subscriptionRepository).save(sub);
+    }
+
+    @Test
+    void getSubscriptionHistory_returnsMappedList() {
+        var user = new User();
+        user.setUserId("u");
+
+        var sub = Subscription.builder()
+                .subscriptionId(1L)
+                .user(user)
+                .status(SubscriptionStatus.ACTIVE)
+                .totalPrice(BigDecimal.TEN)
+                .discountPercentage(BigDecimal.ZERO)
+                .startDate(LocalDate.now())
+                .endDate(LocalDate.now().plusMonths(1))
+                .autoRenew(true)
+                .plan("STANDARD")
+                .build();
+
+        when(subscriptionRepository.findByUser_UserId("u")).thenReturn(List.of(sub));
+
+        var result = subscriptionService.getSubscriptionHistory("u");
+
+        assertEquals(1, result.size());
+        verify(subscriptionRepository).findByUser_UserId("u");
     }
 }
-

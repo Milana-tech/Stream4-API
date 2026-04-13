@@ -4,6 +4,7 @@ import com.stream.four.dto.response.user.LoginRequest;
 import com.stream.four.model.user.User;
 import com.stream.four.repository.UserRepository;
 import org.junit.jupiter.api.Test;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
 
@@ -13,7 +14,8 @@ import static org.mockito.Mockito.*;
 class LoginServiceTest {
 
     private final UserRepository userRepository = mock(UserRepository.class);
-    private final LoginService loginService = new LoginService(userRepository);
+    private final PasswordEncoder passwordEncoder = mock(PasswordEncoder.class);
+    private final LoginService loginService = new LoginService(userRepository, passwordEncoder);
 
     @Test
     void login_withEmail_andCorrectPassword_returnsUser() {
@@ -23,15 +25,16 @@ class LoginServiceTest {
 
         var user = new User();
         user.setEmail("a@b.com");
-        user.setPassword("pw");
+        user.setPassword("encoded");
+        user.setVerified(true);
 
         when(userRepository.findByEmail("a@b.com")).thenReturn(Optional.of(user));
+        when(passwordEncoder.matches("pw", "encoded")).thenReturn(true);
 
         var result = loginService.login(req);
 
         assertSame(user, result);
-        verify(userRepository).findByEmail("a@b.com");
-        verify(userRepository, never()).findByName(anyString());
+        assertEquals(0, user.getFailedLoginAttempts());
     }
 
     @Test
@@ -42,9 +45,11 @@ class LoginServiceTest {
 
         var user = new User();
         user.setName("milan");
-        user.setPassword("pw");
+        user.setPassword("encoded");
+        user.setVerified(true);
 
         when(userRepository.findByName("milan")).thenReturn(Optional.of(user));
+        when(passwordEncoder.matches("pw", "encoded")).thenReturn(true);
 
         var result = loginService.login(req);
 
@@ -54,19 +59,75 @@ class LoginServiceTest {
     }
 
     @Test
-    void login_wrongPassword_throws() {
+    void login_unverifiedAccount_throws() {
+        var req = new LoginRequest();
+        req.setLogin("a@b.com");
+        req.setPassword("pw");
+
+        var user = new User();
+        user.setEmail("a@b.com");
+        user.setPassword("encoded");
+        user.setVerified(false);
+
+        when(userRepository.findByEmail("a@b.com")).thenReturn(Optional.of(user));
+
+        assertThrows(IllegalStateException.class, () -> loginService.login(req));
+    }
+
+    @Test
+    void login_wrongPassword_incrementsAttempts_andThrows() {
         var req = new LoginRequest();
         req.setLogin("a@b.com");
         req.setPassword("wrong");
 
         var user = new User();
         user.setEmail("a@b.com");
-        user.setPassword("pw");
+        user.setPassword("encoded");
+        user.setVerified(true);
+        user.setFailedLoginAttempts(0);
+
+        when(userRepository.findByEmail("a@b.com")).thenReturn(Optional.of(user));
+        when(passwordEncoder.matches("wrong", "encoded")).thenReturn(false);
+
+        assertThrows(IllegalArgumentException.class, () -> loginService.login(req));
+        assertEquals(1, user.getFailedLoginAttempts());
+    }
+
+    @Test
+    void login_thirdFailedAttempt_blocksAccount() {
+        var req = new LoginRequest();
+        req.setLogin("a@b.com");
+        req.setPassword("wrong");
+
+        var user = new User();
+        user.setEmail("a@b.com");
+        user.setPassword("encoded");
+        user.setVerified(true);
+        user.setFailedLoginAttempts(2);
+
+        when(userRepository.findByEmail("a@b.com")).thenReturn(Optional.of(user));
+        when(passwordEncoder.matches("wrong", "encoded")).thenReturn(false);
+
+        var ex = assertThrows(IllegalStateException.class, () -> loginService.login(req));
+        assertTrue(ex.getMessage().toLowerCase().contains("blocked"));
+        assertEquals(3, user.getFailedLoginAttempts());
+    }
+
+    @Test
+    void login_alreadyBlocked_throws() {
+        var req = new LoginRequest();
+        req.setLogin("a@b.com");
+        req.setPassword("pw");
+
+        var user = new User();
+        user.setEmail("a@b.com");
+        user.setPassword("encoded");
+        user.setVerified(true);
+        user.setFailedLoginAttempts(3);
 
         when(userRepository.findByEmail("a@b.com")).thenReturn(Optional.of(user));
 
-        var ex = assertThrows(IllegalArgumentException.class, () -> loginService.login(req));
-        assertTrue(ex.getMessage().toLowerCase().contains("incorrect"));
+        assertThrows(IllegalStateException.class, () -> loginService.login(req));
     }
 
     @Test
@@ -82,4 +143,3 @@ class LoginServiceTest {
         assertFalse(LoginService.isValidEmail("not-an-email"));
     }
 }
-

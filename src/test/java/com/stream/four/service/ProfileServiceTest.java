@@ -25,6 +25,7 @@ class ProfileServiceTest {
     void createProfile_setsUserId_savesAndReturnsDto() {
         var req = new CreateProfileRequest();
         req.setName("Kids");
+        req.setAge(8);
 
         var entity = new Profile();
         var dto = new ProfileResponse();

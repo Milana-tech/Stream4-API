@@ -4,6 +4,8 @@ import com.stream.four.dto.requests.CreateTitleRequest;
 import com.stream.four.dto.response.watch.TitleResponse;
 import com.stream.four.mapper.TitleMapper;
 import com.stream.four.model.watch.Title;
+import com.stream.four.repository.PreferencesRepository;
+import com.stream.four.repository.ProfileRepository;
 import com.stream.four.repository.TitleRepository;
 import org.junit.jupiter.api.Test;
 
@@ -17,8 +19,12 @@ class TitleServiceTest {
 
     private final TitleRepository titleRepository = mock(TitleRepository.class);
     private final TitleMapper titleMapper = mock(TitleMapper.class);
+    private final ProfileRepository profileRepository = mock(ProfileRepository.class);
+    private final PreferencesRepository preferencesRepository = mock(PreferencesRepository.class);
+    private final ContentService contentService = mock(ContentService.class);
 
-    private final TitleService titleService = new TitleService(titleRepository, titleMapper);
+    private final TitleService titleService = new TitleService(
+            titleRepository, titleMapper, profileRepository, preferencesRepository, contentService);
 
     @Test
     void createTitle_mapsSavesAndReturnsDto() {
@@ -56,4 +62,3 @@ class TitleServiceTest {
         assertThrows(RuntimeException.class, () -> titleService.getTitleById("id"));
     }
 }
-

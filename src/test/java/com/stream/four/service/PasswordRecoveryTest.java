@@ -5,7 +5,10 @@ import com.stream.four.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.transaction.annotation.Transactional;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -18,8 +21,11 @@ class PasswordRecoveryTest {
     @Autowired
     private UserRepository userRepository;
 
+    @MockBean
+    private JavaMailSender mailSender;
+
     @Test
-    void shouldGenerateTokenWhenRecoveryRequested() {
+    void shouldGenerateResetTokenWhenRecoveryRequested() {
         User user = new User();
         user.setName("TestUser");
         user.setEmail("test@example.com");
@@ -29,11 +35,28 @@ class PasswordRecoveryTest {
         recoveryService.initiateRecovery("test@example.com");
 
         User updatedUser = userRepository.findByEmail("test@example.com")
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow();
 
-        assertNotNull(updatedUser.getResetToken(), "The reset token should not be null");
-        assertFalse(updatedUser.getResetToken().isEmpty(), "The token should not be empty");
+        assertNotNull(updatedUser.getResetToken());
+        assertFalse(updatedUser.getResetToken().isEmpty());
+    }
 
-        System.out.println("Generated Token: " + updatedUser.getResetToken());
+    @Test
+    void shouldResetPasswordAndClearToken() {
+        User user = new User();
+        user.setName("TestUser2");
+        user.setEmail("test2@example.com");
+        user.setPassword("oldPassword");
+        user.setResetToken("valid-token");
+        user.setFailedLoginAttempts(3);
+        userRepository.save(user);
+
+        recoveryService.completePasswordReset("valid-token", "newPassword123");
+
+        User updatedUser = userRepository.findByEmail("test2@example.com")
+                .orElseThrow();
+
+        assertNull(updatedUser.getResetToken());
+        assertEquals(0, updatedUser.getFailedLoginAttempts());
     }
 }

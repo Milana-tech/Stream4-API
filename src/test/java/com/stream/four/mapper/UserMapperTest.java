@@ -7,7 +7,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class UserMapperTest {
 
-    // Uses MapStruct generated implementation via Mappers in the interface.
     private final UserMapper mapper = UserMapper.INSTANCE;
 
     @Test
@@ -20,7 +19,7 @@ class UserMapperTest {
         var entity = mapper.toEntity(req);
 
         assertNotNull(entity);
-        assertNull(entity.getId());
+        assertNull(entity.getUserId());
         assertEquals(0, entity.getFailedLoginAttempts());
         assertFalse(entity.isAccountLocked());
         assertEquals("n", entity.getName());
@@ -28,4 +27,3 @@ class UserMapperTest {
         assertEquals("pw", entity.getPassword());
     }
 }
-

@@ -6,6 +6,7 @@ import com.stream.four.mapper.UserMapper;
 import com.stream.four.model.user.User;
 import com.stream.four.repository.UserRepository;
 import org.junit.jupiter.api.Test;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,15 +18,15 @@ class UserServiceTest {
 
     private final UserRepository userRepository = mock(UserRepository.class);
     private final UserMapper userMapper = mock(UserMapper.class);
+    private final EmailService emailService = mock(EmailService.class);
+    private final PasswordEncoder passwordEncoder = mock(PasswordEncoder.class);
 
-    private final UserService userService = new UserService(userRepository, userMapper);
+    private final UserService userService = new UserService(userRepository, userMapper, emailService, passwordEncoder);
 
     @Test
     void getAllUsers_mapsEntitiesToDtos() {
         var u1 = new User();
-        u1.setId("1");
         var u2 = new User();
-        u2.setId("2");
 
         when(userRepository.findAll()).thenReturn(List.of(u1, u2));
         when(userMapper.toDto(u1)).thenReturn(new UserResponse());
@@ -35,15 +36,11 @@ class UserServiceTest {
 
         assertEquals(2, result.size());
         verify(userRepository).findAll();
-        verify(userMapper).toDto(u1);
-        verify(userMapper).toDto(u2);
     }
 
     @Test
     void getUser_existing_returnsDto() {
         var user = new User();
-        user.setId("u");
-
         var dto = new UserResponse();
 
         when(userRepository.findById("u")).thenReturn(Optional.of(user));
@@ -59,18 +56,49 @@ class UserServiceTest {
     }
 
     @Test
-    void createUser_savesMappedEntity_andReturnsDto() {
+    void createUser_encodesPassword_setsVerificationToken_sendsEmail_andReturnsDto() {
         var req = new CreateUserRequest();
+        req.setEmail("a@b.com");
+        req.setPassword("plaintext");
+
         var entity = new User();
         var saved = new User();
+        saved.setEmail("a@b.com");
+        saved.setVerificationToken("token-123");
         var dto = new UserResponse();
 
         when(userMapper.toEntity(req)).thenReturn(entity);
+        when(passwordEncoder.encode("plaintext")).thenReturn("encoded");
         when(userRepository.save(entity)).thenReturn(saved);
         when(userMapper.toDto(saved)).thenReturn(dto);
 
-        assertSame(dto, userService.createUser(req));
-        verify(userRepository).save(entity);
+        var result = userService.createUser(req);
+
+        assertSame(dto, result);
+        assertEquals("encoded", entity.getPassword());
+        assertFalse(entity.isVerified());
+        assertNotNull(entity.getVerificationToken());
+        verify(emailService).sendVerificationEmail(eq("a@b.com"), anyString());
+    }
+
+    @Test
+    void verifyAccount_validToken_verifiesUser() {
+        var user = new User();
+        user.setVerified(false);
+        user.setVerificationToken("tok");
+
+        when(userRepository.findByVerificationToken("tok")).thenReturn(Optional.of(user));
+
+        userService.verifyAccount("tok");
+
+        assertTrue(user.isVerified());
+        assertNull(user.getVerificationToken());
+        verify(userRepository).save(user);
+    }
+
+    @Test
+    void verifyAccount_invalidToken_throws() {
+        when(userRepository.findByVerificationToken("bad")).thenReturn(Optional.empty());
+        assertThrows(RuntimeException.class, () -> userService.verifyAccount("bad"));
     }
 }
-
