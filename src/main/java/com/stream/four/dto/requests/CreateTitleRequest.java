@@ -7,6 +7,7 @@ import com.stream.four.model.enums.TitleType;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.util.Set;
@@ -15,8 +16,10 @@ import java.util.Set;
 public class CreateTitleRequest {
 
     @NotBlank(message = "Name is required")
+    @Size(max = 200, message = "Name must be at most 200 characters")
     private String name;
 
+    @Size(max = 2000, message = "Description must be at most 2000 characters")
     private String description;
 
     @NotNull(message = "Release year is required")

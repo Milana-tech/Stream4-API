@@ -4,6 +4,7 @@ import com.stream.four.dto.response.user.UserResponse;
 import com.stream.four.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.http.MediaType;
@@ -23,21 +24,30 @@ public class UserController {
     private final UserService userService;
 
     @PreAuthorize("hasRole('ADMINISTRATOR')")
-    @GetMapping(value = "/api/users", produces = {
+    @GetMapping(value = "/users", produces = {
             MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE, "text/csv"
     })
     @Operation(summary = "Get all users", description = "Retrieve a list of all users. Supports JSON, XML, and CSV formats via Accept header.")
-    @ApiResponse(responseCode = "200", description = "Successfully retrieved list of users")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved list of users"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - JWT token missing or invalid"),
+            @ApiResponse(responseCode = "403", description = "Forbidden - insufficient role")
+    })
     public ResponseEntity<List<UserResponse>> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
     @PreAuthorize("hasRole('ADMINISTRATOR') or #userId == authentication.name")
-    @GetMapping(value = "/api/users/{userId}", produces = {
+    @GetMapping(value = "/users/{userId}", produces = {
             MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE, "text/csv"
     })
     @Operation(summary = "Get user by id", description = "Retrieve a user by id. Supports JSON, XML, and CSV formats via Accept header.")
-    @ApiResponse(responseCode = "200", description = "Successfully retrieved specific user")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved user"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - JWT token missing or invalid"),
+            @ApiResponse(responseCode = "403", description = "Forbidden - insufficient role"),
+            @ApiResponse(responseCode = "404", description = "User not found")
+    })
     public ResponseEntity<UserResponse> getUser(@PathVariable String userId) {
         return ResponseEntity.ok(userService.getUser(userId));
     }

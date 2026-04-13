@@ -1,6 +1,7 @@
 package com.stream.four.dto.update;
 
 import com.stream.four.model.enums.ContentWarning;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -21,6 +22,7 @@ public class UpdateProfileRequest {
 
     @NotNull(message = "Age is required")
     @Min(value = 0, message = "Age must be 0 or greater")
+    @Max(value = 120, message = "Age must be 120 or less")
     private Integer age;
 
     private List<ContentWarning> contentFilters;
