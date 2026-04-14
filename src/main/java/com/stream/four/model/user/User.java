@@ -6,6 +6,7 @@ import com.stream.four.model.subscription.Subscription;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -43,6 +44,8 @@ public class User extends Auditable
     private int failedLoginAttempts = 0;
 
     private String resetToken;
+
+    private LocalDateTime resetTokenExpiry;
 
     private String verificationToken;
 

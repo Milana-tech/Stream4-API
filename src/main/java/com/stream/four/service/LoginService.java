@@ -45,7 +45,7 @@ public class LoginService {
             if (user.getFailedLoginAttempts() >= 3) {
                 throw new IllegalStateException("Incorrect password. Account has been blocked.");
             }
-            throw new IllegalArgumentException("Incorrect credentials. Attempt " + user.getFailedLoginAttempts() + " of 3.");
+            throw new IllegalArgumentException("Invalid credentials.");
         }
     }
 
@@ -53,7 +53,7 @@ public class LoginService {
         if (email == null || email.isBlank()) {
             return false;
         }
-        String regex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
+        String regex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
         return email.matches(regex);
     }
 }

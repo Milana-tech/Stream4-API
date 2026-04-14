@@ -22,19 +22,16 @@ cd Stream4-API
 
 ### 2. Create the `.env` file
 
-Create a file named `.env` in the root of the project with the following content:
+Copy the provided template and fill in your values:
 
-```env
-MYSQL_DATABASE=stream4
-MYSQL_USER=admin
-MYSQL_PASSWORD=password
-MYSQL_ROOT_PASSWORD=rootpassword
-JWT_SECRET=your-secret-key-at-least-32-characters-long
-MAIL_USERNAME=your-gmail@gmail.com
-MAIL_PASSWORD=your-gmail-app-password
+```bash
+cp .env.example .env
 ```
 
-> **Note:** For Gmail, use an App Password, not your regular password.
+Then edit `.env` and replace every `change_me` placeholder with a real value.
+
+> **JWT_SECRET** — use any long random string (32+ characters).
+> **MAIL_PASSWORD** — use a Gmail App Password, not your regular password.
 > Generate one at: Google Account → Security → 2-Step Verification → App Passwords.
 
 ### 3. Start the containers
@@ -106,15 +103,15 @@ Each employee only sees the data their role permits.
 
 | Role | DB Username | DB Password | Access |
 |---|---|---|---|
-| Junior Employee | junior_employee | Junior@Stream4! | View users and profiles only |
-| Mid-level Employee | mid_employee | Mid@Stream4! | View all non-financial data, edit profiles, activate/deactivate accounts |
-| Senior Employee | senior_employee | Senior@Stream4! | Full access including subscriptions and viewing history |
+| Junior Employee | junior_employee | See `EMPLOYEE_JUNIOR_PASSWORD` in `.env` | View users and profiles only |
+| Mid-level Employee | mid_employee | See `EMPLOYEE_MID_PASSWORD` in `.env` | View all non-financial data, edit profiles, activate/deactivate accounts |
+| Senior Employee | senior_employee | See `EMPLOYEE_SENIOR_PASSWORD` in `.env` | Full access including subscriptions and viewing history |
 
 ### phpMyAdmin — API User Account
 
 | DB Username | DB Password | Access |
 |---|---|---|
-| API_user_account | Api@Stream4! | Views and stored procedures only — no direct table access |
+| API_user_account | See `API_USER_PASSWORD` in `.env` | Views and stored procedures only — no direct table access |
 
 ### DataGrip / DBeaver Connection
 
@@ -124,7 +121,7 @@ Each employee only sees the data their role permits.
 | Port | 3306 |
 | Database | stream4 |
 | User | admin (or any employee DB user) |
-| Password | password (or employee password) |
+| Password | See `MYSQL_PASSWORD` in `.env` (or the relevant employee password) |
 
 ---
 

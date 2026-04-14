@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -39,10 +40,24 @@ public class DbEmployeeAccessInitializer implements ApplicationRunner {
     @Value("${MYSQL_ROOT_PASSWORD}")
     private String rootPassword;
 
+    @Value("${EMPLOYEE_JUNIOR_PASSWORD:Junior@Stream4!}")
+    private String juniorPassword;
+
+    @Value("${EMPLOYEE_MID_PASSWORD:Mid@Stream4!}")
+    private String midPassword;
+
+    @Value("${EMPLOYEE_SENIOR_PASSWORD:Senior@Stream4!}")
+    private String seniorPassword;
+
+    @Value("${API_USER_PASSWORD:Api@Stream4!}")
+    private String apiUserPassword;
+
     @Override
     public void run(ApplicationArguments args) {
         String rootUrl = "jdbc:mysql://" + dbHost + ":" + dbPort +
                 "/?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true&allowMultiQueries=true";
+
+        validateIdentifier(database);
 
         try (Connection conn = DriverManager.getConnection(rootUrl, "root", rootPassword);
              Statement stmt = conn.createStatement()) {
@@ -63,14 +78,26 @@ public class DbEmployeeAccessInitializer implements ApplicationRunner {
         }
     }
 
+    // ── 0. VALIDATION ─────────────────────────────────────────────────────────
+
+    private void validateIdentifier(String value) {
+        if (!value.matches("[A-Za-z0-9_]+")) {
+            throw new IllegalArgumentException("Unsafe database identifier: " + value);
+        }
+    }
+
     // ── 1. CREATE USERS ───────────────────────────────────────────────────────
 
     private void applyUsers(Statement stmt) throws Exception {
         log.info("Creating internal DB users...");
-        stmt.execute("CREATE USER IF NOT EXISTS 'junior_employee'@'%' IDENTIFIED BY 'Junior@Stream4!'");
-        stmt.execute("CREATE USER IF NOT EXISTS 'mid_employee'@'%'    IDENTIFIED BY 'Mid@Stream4!'");
-        stmt.execute("CREATE USER IF NOT EXISTS 'senior_employee'@'%' IDENTIFIED BY 'Senior@Stream4!'");
-        stmt.execute("CREATE USER IF NOT EXISTS 'API_user_account'@'%' IDENTIFIED BY 'Api@Stream4!'");
+        stmt.execute("CREATE USER IF NOT EXISTS 'junior_employee'@'%' IDENTIFIED BY '" + juniorPassword.replace("'", "\\'") + "'");
+        stmt.execute("CREATE USER IF NOT EXISTS 'mid_employee'@'%'    IDENTIFIED BY '" + midPassword.replace("'", "\\'") + "'");
+        stmt.execute("CREATE USER IF NOT EXISTS 'senior_employee'@'%' IDENTIFIED BY '" + seniorPassword.replace("'", "\\'") + "'");
+        stmt.execute("CREATE USER IF NOT EXISTS 'API_user_account'@'%' IDENTIFIED BY '" + apiUserPassword.replace("'", "\\'") + "'");
+        stmt.execute("ALTER USER 'junior_employee'@'%' IDENTIFIED BY '" + juniorPassword.replace("'", "\\'") + "'");
+        stmt.execute("ALTER USER 'mid_employee'@'%'    IDENTIFIED BY '" + midPassword.replace("'", "\\'") + "'");
+        stmt.execute("ALTER USER 'senior_employee'@'%' IDENTIFIED BY '" + seniorPassword.replace("'", "\\'") + "'");
+        stmt.execute("ALTER USER 'API_user_account'@'%' IDENTIFIED BY '" + apiUserPassword.replace("'", "\\'") + "'");
     }
 
     // ── 2. EMPLOYEE GRANTS ────────────────────────────────────────────────────
@@ -216,16 +243,21 @@ public class DbEmployeeAccessInitializer implements ApplicationRunner {
     private void addFkIfMissing(Statement stmt, String db, String table, String constraintName,
                                  String column, String refTable, String refColumn,
                                  String onDelete) throws Exception {
-        String check = "SELECT COUNT(*) FROM information_schema.KEY_COLUMN_USAGE " +
-                "WHERE TABLE_SCHEMA = '" + db + "' AND TABLE_NAME = '" + table + "' " +
-                "AND CONSTRAINT_NAME = '" + constraintName + "'";
-        ResultSet rs = stmt.executeQuery(check);
-        rs.next();
-        if (rs.getInt(1) == 0) {
-            stmt.execute("ALTER TABLE `" + db + "`.`" + table + "` " +
-                    "ADD CONSTRAINT `" + constraintName + "` " +
-                    "FOREIGN KEY (`" + column + "`) REFERENCES `" + refTable + "`(`" + refColumn + "`) " +
-                    "ON DELETE " + onDelete);
+        String checkSql = "SELECT COUNT(*) FROM information_schema.KEY_COLUMN_USAGE " +
+                "WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ? AND CONSTRAINT_NAME = ?";
+        try (PreparedStatement ps = stmt.getConnection().prepareStatement(checkSql)) {
+            ps.setString(1, db);
+            ps.setString(2, table);
+            ps.setString(3, constraintName);
+            ResultSet rs = ps.executeQuery();
+            rs.next();
+            if (rs.getInt(1) == 0) {
+                // Identifiers cannot be parameterised; db is validated above, others are hardcoded
+                stmt.execute("ALTER TABLE `" + db + "`.`" + table + "` " +
+                        "ADD CONSTRAINT `" + constraintName + "` " +
+                        "FOREIGN KEY (`" + column + "`) REFERENCES `" + refTable + "`(`" + refColumn + "`) " +
+                        "ON DELETE " + onDelete);
+            }
         }
     }
 
