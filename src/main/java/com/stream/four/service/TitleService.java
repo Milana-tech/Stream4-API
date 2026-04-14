@@ -4,6 +4,7 @@ import com.stream.four.dto.requests.CreateTitleRequest;
 import com.stream.four.dto.response.watch.TitleResponse;
 import com.stream.four.exception.ResourceNotFoundException;
 import com.stream.four.exception.UnauthorizedException;
+import com.stream.four.model.enums.TitleType;
 import com.stream.four.mapper.TitleMapper;
 import com.stream.four.repository.PreferencesRepository;
 import com.stream.four.repository.ProfileRepository;
@@ -25,6 +26,10 @@ public class TitleService {
     private final ContentService contentService;
 
     public TitleResponse createTitle(CreateTitleRequest request) {
+        if (request.getType() == TitleType.MOVIE &&
+                (request.getDurationSeconds() == null || request.getDurationSeconds() < 1)) {
+            throw new IllegalArgumentException("Duration is required for movies");
+        }
         var title = titleMapper.toEntity(request);
         titleRepository.save(title);
         return titleMapper.toDto(title);

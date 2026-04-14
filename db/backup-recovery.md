@@ -82,6 +82,34 @@ docker exec stream4-db mysql -u root -p"$MYSQL_ROOT_PASSWORD" stream4 \
 
 ---
 
+## Preventing Database Downtime
+
+### Automatic container restart
+
+Both the `db` and `backend` containers are configured with `restart: unless-stopped` in `docker-compose.yml`. If the MySQL process crashes or the host machine reboots, Docker automatically restarts the container without manual intervention.
+
+### Health check and dependency ordering
+
+The `db` service has a health check that pings MySQL every 10 seconds. The `backend` and `phpmyadmin` containers declare `depends_on: condition: service_healthy`, so they only start once MySQL is accepting connections. This prevents "connection refused" errors during startup and after a DB restart.
+
+### Lock-free backups
+
+The backup command uses `--single-transaction`, which starts a consistent snapshot using InnoDB's MVCC without acquiring table locks. The database remains fully available for reads and writes while the dump runs. Without this flag, `mysqldump` would lock every table for the duration of the backup, causing downtime proportional to database size.
+
+### Connection pool resilience
+
+The Spring Boot backend uses HikariCP (the default connection pool). HikariCP detects broken connections and replaces them automatically. If the DB container restarts briefly (e.g. after a crash and auto-recovery), the backend reconnects within seconds without needing a restart itself.
+
+### Scheduled backups without stopping the service
+
+Never stop the backend or the database to take a backup. The `--single-transaction` flag makes that unnecessary. The recovery procedure does require stopping the backend (to prevent writes during restore), but the backup itself does not.
+
+### Production note
+
+For a production deployment, the above measures reduce but do not eliminate downtime risk. True high availability would require a MySQL replication setup (one primary, one or more read replicas) with automatic failover. In that model, the replica is promoted to primary if the primary becomes unavailable, keeping the database accessible. This is outside the scope of the current Docker-based setup but is the recommended next step before going to production.
+
+---
+
 ## Automated backup script
 
 Save as `db/backup.sh` and schedule it:
