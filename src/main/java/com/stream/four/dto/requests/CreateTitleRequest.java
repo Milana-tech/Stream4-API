@@ -4,6 +4,7 @@ import com.stream.four.model.enums.ContentWarning;
 import com.stream.four.model.enums.Genre;
 import com.stream.four.model.enums.MaturityRating;
 import com.stream.four.model.enums.TitleType;
+import com.stream.four.model.enums.VideoQuality;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -37,4 +38,6 @@ public class CreateTitleRequest {
     private MaturityRating maturityRating;
 
     private Set<ContentWarning> contentWarnings;
+
+    private Set<VideoQuality> supportedQualities;
 }

@@ -6,6 +6,7 @@ import com.stream.four.model.enums.ContentWarning;
 import com.stream.four.model.enums.Genre;
 import com.stream.four.model.enums.MaturityRating;
 import com.stream.four.model.enums.TitleType;
+import com.stream.four.model.enums.VideoQuality;
 import lombok.Data;
 
 import java.util.Set;
@@ -40,4 +41,7 @@ public class TitleResponse {
 
     @JacksonXmlProperty(localName = "contentWarnings")
     private Set<ContentWarning> contentWarnings;
+
+    @JacksonXmlProperty(localName = "supportedQualities")
+    private Set<VideoQuality> supportedQualities;
 }
