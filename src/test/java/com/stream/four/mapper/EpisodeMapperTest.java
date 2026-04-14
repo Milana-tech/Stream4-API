@@ -21,5 +21,16 @@ class EpisodeMapperTest {
         assertNotNull(entity);
         assertEquals("E1", entity.getName());
     }
+
+    @Test
+    void toEntity_mapsDuration() {
+        var req = new CreateEpisodeRequest();
+        req.setTitle("E1");
+        req.setDurationSeconds(2700);
+
+        var entity = mapper.toEntity(req);
+
+        assertEquals(2700, entity.getDurationSeconds());
+    }
 }
 

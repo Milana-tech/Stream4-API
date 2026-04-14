@@ -20,5 +20,19 @@ class TitleMapperTest {
         assertNotNull(entity);
         assertEquals("Title", entity.getName());
     }
+
+    @Test
+    void toEntity_mapsSupportedQualitiesAndDuration() {
+        var req = new CreateTitleRequest();
+        req.setName("Movie");
+        req.setDurationSeconds(5400);
+        req.setSupportedQualities(Set.of(VideoQuality.HD, VideoQuality.UHD));
+
+        var entity = mapper.toEntity(req);
+
+        assertEquals(5400, entity.getDurationSeconds());
+        assertTrue(entity.getSupportedQualities().contains(VideoQuality.HD));
+        assertTrue(entity.getSupportedQualities().contains(VideoQuality.UHD));
+    }
 }
 
