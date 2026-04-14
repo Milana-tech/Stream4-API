@@ -4,6 +4,7 @@ import com.stream.four.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
@@ -19,6 +20,7 @@ public class PasswordRecoveryService {
 
         String token = UUID.randomUUID().toString();
         user.setResetToken(token);
+        user.setResetTokenExpiry(LocalDateTime.now().plusHours(1));
         userRepository.save(user);
 
         emailService.sendPasswordResetEmail(user.getEmail(), token);
@@ -28,8 +30,16 @@ public class PasswordRecoveryService {
         var user = userRepository.findByResetToken(token)
                 .orElseThrow(() -> new ResourceNotFoundException("Invalid or expired token"));
 
+        if (user.getResetTokenExpiry() == null || user.getResetTokenExpiry().isBefore(LocalDateTime.now())) {
+            user.setResetToken(null);
+            user.setResetTokenExpiry(null);
+            userRepository.save(user);
+            throw new ResourceNotFoundException("Invalid or expired token");
+        }
+
         user.setPassword(passwordEncoder.encode(newPassword));
         user.setResetToken(null);
+        user.setResetTokenExpiry(null);
         user.setFailedLoginAttempts(0);
 
         userRepository.save(user);
