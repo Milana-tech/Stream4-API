@@ -150,6 +150,7 @@ public class SubscriptionService {
         return SubscriptionResponse.builder()
                 .subscriptionId(subscription.getSubscriptionId())
                 .userId(subscription.getUser().getUserId())
+                .plan(subscription.getPlan().name())
                 .totalPrice(subscription.getTotalPrice())
                 .discountPercentage(subscription.getDiscountPercentage())
                 .discountedPrice(discountedPrice)
