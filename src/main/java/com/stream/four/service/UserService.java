@@ -4,6 +4,7 @@ import com.stream.four.dto.requests.CreateUserRequest;
 import com.stream.four.dto.response.user.UserResponse;
 import com.stream.four.exception.ResourceNotFoundException;
 import com.stream.four.mapper.UserMapper;
+import com.stream.four.repository.InvitationRepository;
 import com.stream.four.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,6 +22,7 @@ public class UserService
     private final EmailService emailService;
     private final PasswordEncoder passwordEncoder;
     private final TrialService trialService;
+    private final InvitationRepository invitationRepository;
 
     public List<UserResponse> getAllUsers()
     {
@@ -46,6 +48,17 @@ public class UserService
         var saved = userRepository.save(user);
         emailService.sendVerificationEmail(saved.getEmail(), saved.getVerificationToken());
         trialService.createTrial(saved.getUserId());
+
+        if (createUserRequest.getInvitationToken() != null) {
+            invitationRepository.findByToken(createUserRequest.getInvitationToken())
+                    .ifPresent(invitation -> {
+                        invitation.setInviteeUserId(saved.getUserId());
+                        invitationRepository.save(invitation);
+                        saved.setInvitedBy(invitation.getInviterUserId());
+                        userRepository.save(saved);
+                    });
+        }
+
         return userMapper.toDto(saved);
     }
 

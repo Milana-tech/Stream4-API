@@ -8,6 +8,8 @@ import com.stream.four.model.Invitation;
 
 public interface InvitationRepository extends JpaRepository<Invitation, String> {
 
-    public Optional<Invitation> findByToken(String token);
+    Optional<Invitation> findByToken(String token);
+
+    Optional<Invitation> findByInviteeUserId(String inviteeUserId);
 
 }
