@@ -30,6 +30,10 @@ spring:
           timeout: 5000
           writetimeout: 5000
 
+springdoc:
+  api-docs:
+    version: openapi_3_1
+
 server:
   port: 8080
 

@@ -2,7 +2,9 @@ package com.stream.four.controller.watch;
 
 import com.stream.four.dto.requests.CreateTitleRequest;
 import com.stream.four.dto.response.watch.TitleResponse;
+import com.stream.four.dto.response.watch.TvMazeShowResponse;
 import com.stream.four.service.TitleService;
+import com.stream.four.service.TvMazeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -23,6 +25,7 @@ import java.util.List;
 public class TitleController {
 
     private final TitleService titleService;
+    private final TvMazeService tvMazeService;
 
     @PostMapping(produces = {
             MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE, "text/csv"
@@ -73,5 +76,33 @@ public class TitleController {
     })
     public ResponseEntity<List<TitleResponse>> getForProfile(@PathVariable String profileId) {
         return ResponseEntity.ok(titleService.getTitlesForProfile(profileId));
+    }
+
+    @GetMapping("/tvmaze/search")
+    @Operation(
+            summary = "Search shows via TVmaze",
+            description = "Search for TV shows using the external TVmaze public API (https://api.tvmaze.com). " +
+                    "Returns show details such as name, status, rating, and premiere date."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Search results returned (may be empty if no match)"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - JWT token missing or invalid")
+    })
+    public ResponseEntity<List<TvMazeShowResponse>> searchTvMaze(@RequestParam String query) {
+        return ResponseEntity.ok(tvMazeService.searchShows(query));
+    }
+
+    @GetMapping("/tvmaze/lookup")
+    @Operation(
+            summary = "Look up a single show via TVmaze",
+            description = "Fetch detailed information for a single show by name from the external TVmaze public API."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Show details returned"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - JWT token missing or invalid"),
+            @ApiResponse(responseCode = "404", description = "No show found on TVmaze for the given query")
+    })
+    public ResponseEntity<TvMazeShowResponse> lookupTvMaze(@RequestParam String query) {
+        return ResponseEntity.ok(tvMazeService.getShow(query));
     }
 }
