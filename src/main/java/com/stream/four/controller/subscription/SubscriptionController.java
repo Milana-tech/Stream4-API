@@ -4,6 +4,8 @@ import com.stream.four.dto.requests.CreateSubscriptionRequest;
 import com.stream.four.dto.response.subscription.SubscriptionResponse;
 import com.stream.four.service.SubscriptionService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -31,6 +33,12 @@ public class SubscriptionController
     })
     @Operation (summary = "Create subscription", description = "Create a paid subscription (converts trial if active)" +
             ". Supports JSON, XML, CSV.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Subscription created successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid input - validation failed"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - JWT token missing or invalid"),
+            @ApiResponse(responseCode = "409", description = "User already has an active subscription")
+    })
     public ResponseEntity<SubscriptionResponse> createSubscription(@Valid @RequestBody CreateSubscriptionRequest request, Authentication authentication)
     {
         String userId = authentication.getName();
@@ -43,6 +51,11 @@ public class SubscriptionController
     })
     @Operation (summary = "Get current subscription", description = "Get active subscription for current user. " +
             "Supports JSON, XML, CSV.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Active subscription retrieved successfully"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - JWT token missing or invalid"),
+            @ApiResponse(responseCode = "404", description = "No active subscription found")
+    })
     public ResponseEntity<SubscriptionResponse> getCurrentSubscription(Authentication authentication)
     {
         String userId = authentication.getName();
@@ -55,6 +68,10 @@ public class SubscriptionController
     })
     @Operation (summary = "Get subscription history", description = "Get all subscriptions for current user. Supports" +
             " JSON, XML, CSV.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Subscription history retrieved successfully"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - JWT token missing or invalid")
+    })
     public ResponseEntity<List<SubscriptionResponse>> getHistory(Authentication authentication)
     {
         String userId = authentication.getName();
@@ -66,6 +83,11 @@ public class SubscriptionController
             MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE, "text/csv"
     })
     @Operation (summary = "Cancel subscription", description = "Cancel current subscription. Supports JSON, XML, CSV.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Subscription cancelled successfully"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - JWT token missing or invalid"),
+            @ApiResponse(responseCode = "404", description = "No active subscription found")
+    })
     public ResponseEntity<SubscriptionResponse> cancelSubscription(Authentication authentication)
     {
         String userId = authentication.getName();
