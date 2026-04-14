@@ -11,6 +11,15 @@ public class WatchEventResponse
     @JacksonXmlProperty (localName = "titleId")
     private String titleId;
 
+    @JacksonXmlProperty(localName = "episodeId")
+    private String episodeId;
+
+    @JacksonXmlProperty(localName = "autoContinued")
+    private boolean autoContinued;
+
+    @JacksonXmlProperty(localName = "startedAt")
+    private long startedAt;
+
     @JacksonXmlProperty (localName = "progressSeconds")
     private int progressSeconds;
 

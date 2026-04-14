@@ -13,6 +13,11 @@ public class CreateWatchEventRequest {
     @Size(max = 64)
     private String titleId;
 
+    @Size(max = 64)
+    private String episodeId; // optional, only for series
+
+    private boolean autoContinued = false;
+
     @NotBlank(message = "ProfileId is required")
     private String profileId;
 
