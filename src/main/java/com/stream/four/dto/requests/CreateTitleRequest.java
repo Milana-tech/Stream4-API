@@ -4,6 +4,7 @@ import com.stream.four.model.enums.ContentWarning;
 import com.stream.four.model.enums.Genre;
 import com.stream.four.model.enums.MaturityRating;
 import com.stream.four.model.enums.TitleType;
+import com.stream.four.model.enums.VideoQuality;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -26,6 +27,9 @@ public class CreateTitleRequest {
     @Min(value = 1888, message = "Release year must be 1888 or later")
     private Integer releaseYear;
 
+    @Min(1)
+    private Integer durationSeconds; // required for MOVIE, optional for SERIES
+
     @NotNull(message = "Type is required")
     private TitleType type;
 
@@ -34,4 +38,6 @@ public class CreateTitleRequest {
     private MaturityRating maturityRating;
 
     private Set<ContentWarning> contentWarnings;
+
+    private Set<VideoQuality> supportedQualities;
 }

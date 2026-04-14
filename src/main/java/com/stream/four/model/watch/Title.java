@@ -30,6 +30,8 @@ public class Title {
 
     private int releaseYear;
 
+    private int durationSeconds; // only for MOVIE type, leave 0 for SERIES
+
     @Enumerated(EnumType.STRING)
     private TitleType type; // MOVIE or SERIES
     
