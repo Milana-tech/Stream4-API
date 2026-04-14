@@ -1,6 +1,7 @@
 package com.stream.four.service;
 
 import com.stream.four.dto.requests.CreateSubscriptionRequest;
+import com.stream.four.dto.response.referral.ReferralDiscountResponse;
 import com.stream.four.dto.response.subscription.SubscriptionResponse;
 import com.stream.four.exception.DuplicateResourceException;
 import com.stream.four.exception.ResourceNotFoundException;
@@ -99,15 +100,42 @@ public class SubscriptionService {
         return toSubscriptionResponse(subscriptionRepository.save(subscription));
     }
 
+    // ========== REFERRAL ==========
+
+    public ReferralDiscountResponse applyReferralDiscount(String inviteeId) {
+        var invitee = userRepository.findById(inviteeId)
+                .orElseThrow(() -> new ResourceNotFoundException("Invitee not found"));
+
+        if (invitee.getInvitedBy() == null) {
+            return new ReferralDiscountResponse(null, invitee.getUserId(), false, false,
+                    "Invitee was not invited by anyone.");
+        }
+
+        var inviter = userRepository.findById(invitee.getInvitedBy())
+                .orElseThrow(() -> new ResourceNotFoundException("Inviter not found"));
+
+        if (invitee.isReferralDiscountUsed() || inviter.isReferralDiscountUsed()) {
+            return new ReferralDiscountResponse(inviter.getUserId(), invitee.getUserId(), false, false,
+                    "Discount already used by one of the accounts.");
+        }
+
+        var inviteeSub = subscriptionRepository.findByUser_UserIdAndStatus(inviteeId, SubscriptionStatus.ACTIVE)
+                .orElseThrow(() -> new ResourceNotFoundException("Invitee has no active subscription"));
+
+        applyReferralDiscount(inviteeSub, invitee, inviter);
+
+        return new ReferralDiscountResponse(inviter.getUserId(), invitee.getUserId(), true, true,
+                "Referral discount applied to both users.");
+    }
+
     // ========== PRIVATE HELPERS ==========
 
-    private void applyReferralDiscount(Subscription newSubscription, User invitee, User inviter) {
-        // Apply discount to the new subscription
-        newSubscription.setReferralDiscountApplied(true);
-        newSubscription.setDiscountPercentage(REFERRAL_DISCOUNT_PERCENTAGE);
-        newSubscription.setDiscountEndDate(LocalDate.now().plusMonths(1));
+    private void applyReferralDiscount(Subscription inviteeSub, User invitee, User inviter) {
+        inviteeSub.setReferralDiscountApplied(true);
+        inviteeSub.setDiscountPercentage(REFERRAL_DISCOUNT_PERCENTAGE);
+        inviteeSub.setDiscountEndDate(LocalDate.now().plusMonths(1));
+        inviteeSub.setReferralDiscountUsed(true);
 
-        // Apply discount to inviter's active subscription if they have one
         subscriptionRepository.findByUser_UserIdAndStatus(inviter.getUserId(), SubscriptionStatus.ACTIVE)
                 .ifPresent(inviterSub -> {
                     inviterSub.setReferralDiscountApplied(true);
@@ -117,12 +145,11 @@ public class SubscriptionService {
                     subscriptionRepository.save(inviterSub);
                 });
 
-        // Mark both accounts as having used the discount
         invitee.setReferralDiscountUsed(true);
         inviter.setReferralDiscountUsed(true);
+        userRepository.save(invitee);
         userRepository.save(inviter);
 
-        // Record discount status centrally on the invitation
         invitationRepository.findByInviteeUserId(invitee.getUserId())
                 .ifPresent(invitation -> {
                     invitation.setDiscountApplied(true);

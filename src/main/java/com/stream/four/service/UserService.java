@@ -35,7 +35,7 @@ public class UserService
     public UserResponse getUser(String userId)
     {
         var user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User with id" + userId + " wasn't found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         return userMapper.toDto(user);
     }
 

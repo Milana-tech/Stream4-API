@@ -33,9 +33,6 @@ public class AuthController {
     @ApiResponse(responseCode = "200", description = "Successfully logged in")
     public ResponseEntity<UserLoginResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
         var user = loginService.login(loginRequest);
-        if (user.getFailedLoginAttempts() >= 3) {
-            throw new RuntimeException("Account is locked due to too many failed login attempts.");
-        }
         var token = jwtService.generateToken(user.getUserId(), user.getRole().name());
         return ResponseEntity.ok(new UserLoginResponse(user.getUserId(), user.getName(), user.getEmail(), user.getRole(), token));
     }

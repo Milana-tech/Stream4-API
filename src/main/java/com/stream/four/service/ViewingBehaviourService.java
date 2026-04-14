@@ -2,6 +2,7 @@ package com.stream.four.service;
 
 import com.stream.four.dto.requests.CreateWatchEventRequest;
 import com.stream.four.dto.response.watch.WatchEventResponse;
+import com.stream.four.exception.ResourceNotFoundException;
 import com.stream.four.mapper.WatchEventMapper;
 import com.stream.four.model.watch.WatchEvent;
 import com.stream.four.repository.WatchEventRepository;
@@ -60,7 +61,7 @@ public class ViewingBehaviourService {
 
     public WatchEventResponse progress(String userId, String titleId) {
         var event = watchEventRepository.findByUserIdAndTitleId(userId, titleId)
-                .orElseThrow(() -> new RuntimeException("No progress found"));
+                .orElseThrow(() -> new ResourceNotFoundException("No progress found for this title"));
         return watchEventMapper.toDto(event);
     }
 }

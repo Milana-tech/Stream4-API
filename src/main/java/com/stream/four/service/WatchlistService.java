@@ -2,6 +2,9 @@ package com.stream.four.service;
 
 import com.stream.four.dto.requests.CreateWatchlistItemRequest;
 import com.stream.four.dto.response.watch.WatchlistItemResponse;
+import com.stream.four.exception.DuplicateResourceException;
+import com.stream.four.exception.ResourceNotFoundException;
+import com.stream.four.exception.UnauthorizedException;
 import com.stream.four.mapper.WatchlistMapper;
 import com.stream.four.repository.WatchlistRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +21,7 @@ public class WatchlistService {
 
     public WatchlistItemResponse add(String userId, CreateWatchlistItemRequest request) {
         if (watchlistRepository.existsByUserIdAndTitleId(userId, request.getTitleId())) {
-            throw new RuntimeException("Title already in watchlist");
+            throw new DuplicateResourceException("Title already in watchlist");
         }
 
         var item = watchlistMapper.toEntity(request);
@@ -38,10 +41,10 @@ public class WatchlistService {
 
     public void remove(String userId, String id) {
         var item = watchlistRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Watchlist item not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Watchlist item not found"));
 
         if (!item.getUserId().equals(userId)) {
-            throw new RuntimeException("Not allowed");
+            throw new UnauthorizedException("Access denied: item does not belong to the current user");
         }
 
         watchlistRepository.delete(item);

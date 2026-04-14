@@ -39,7 +39,7 @@ public class TitleService {
 
     public TitleResponse getTitleById(String id) {
         var title = titleRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Title not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Title not found"));
         return titleMapper.toDto(title);
     }
 

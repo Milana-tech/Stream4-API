@@ -3,9 +3,15 @@ info:
   title: StreamFlix Public API
   version: 1.0.0
   description: >
+    NOTE: This file is the original design-phase specification written before
+    implementation. It documents the intended API contract and architecture decisions.
+    The live, auto-generated Swagger documentation that reflects the actual
+    implementation is available at http://localhost:8080/swagger-ui.html when
+    the application is running.
+
     StreamFlix REST API for account management, profiles, content browsing,
-    subscription handling, invitations and viewing progress.  
-    All database access is performed through predefined views and stored 
+    subscription handling, invitations and viewing progress.
+    All database access is performed through predefined views and stored
     procedures using the technical API_user_account.
 
 servers:

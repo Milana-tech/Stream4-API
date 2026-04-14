@@ -20,10 +20,10 @@ public class LoginService {
 
         if (isValidEmail(identifier)) {
             user = userRepository.findByEmail(identifier)
-                    .orElseThrow(() -> new IllegalArgumentException("User with email " + identifier + " not found"));
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid credentials."));
         } else {
             user = userRepository.findByName(identifier)
-                    .orElseThrow(() -> new IllegalArgumentException("User with username " + identifier + " not found"));
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid credentials."));
         }
 
         if (!user.isVerified()) {
