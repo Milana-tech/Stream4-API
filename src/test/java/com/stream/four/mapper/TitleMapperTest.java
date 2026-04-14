@@ -1,8 +1,11 @@
 package com.stream.four.mapper;
 
 import com.stream.four.dto.requests.CreateTitleRequest;
+import com.stream.four.model.enums.VideoQuality;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
+
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 

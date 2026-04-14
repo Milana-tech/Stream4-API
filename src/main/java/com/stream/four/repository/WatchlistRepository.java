@@ -10,4 +10,6 @@ public interface WatchlistRepository extends JpaRepository<WatchlistItem, String
     List<WatchlistItem> findByUserIdOrderByAddedAtDesc(String userId);
 
     boolean existsByUserIdAndTitleId(String userId, String titleId);
+
+    void deleteByUserIdAndTitleId(String userId, String titleId);
 }
