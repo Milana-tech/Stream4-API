@@ -1,29 +1,36 @@
 package com.stream.four.security;
 
 import com.stream.four.model.enums.Role;
-import com.stream.four.model.user.User;
+import com.stream.four.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component("employeeSecurity")
+@RequiredArgsConstructor
 public class EmployeeSecurity
 {
-    public boolean canViewBasicInfo(User user)
+    private final UserRepository userRepository;
+
+    public boolean canViewBasicInfo(String userId)
     {
-      return user != null && (
-              user.getRole() == Role.JUNIOR_EMPLOYEE || user.getRole() == Role.MID_EMPLOYEE ||
-                      user.getRole() == Role.SENIOR_EMPLOYEE
-              );
+        return userRepository.findById(userId)
+                .map(u -> u.getRole() == Role.JUNIOR_EMPLOYEE
+                        || u.getRole() == Role.MID_EMPLOYEE
+                        || u.getRole() == Role.SENIOR_EMPLOYEE)
+                .orElse(false);
     }
 
-    public boolean canModifyProfiles(User user)
+    public boolean canModifyProfiles(String userId)
     {
-        return user != null && (
-                user.getRole() == Role.MID_EMPLOYEE || user.getRole() == Role.SENIOR_EMPLOYEE
-                );
+        return userRepository.findById(userId)
+                .map(u -> u.getRole() == Role.MID_EMPLOYEE || u.getRole() == Role.SENIOR_EMPLOYEE)
+                .orElse(false);
     }
 
-    public boolean canViewFinancialData(User user)
+    public boolean canViewFinancialData(String userId)
     {
-        return user != null &&  user.getRole() == Role.SENIOR_EMPLOYEE;
+        return userRepository.findById(userId)
+                .map(u -> u.getRole() == Role.SENIOR_EMPLOYEE)
+                .orElse(false);
     }
 }
