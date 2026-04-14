@@ -11,5 +11,8 @@ public interface WatchEventRepository extends JpaRepository<WatchEvent, String> 
 
     Optional<WatchEvent> findByUserIdAndTitleId(String userId, String titleId);
 
+    // Record for multiple episodes
+    Optional<WatchEvent> findByUserIdAndTitleIdAndEpisodeId(String userId, String titleId, String episodeId);
+
     List<WatchEvent> findByUserIdOrderByLastUpdatedDesc(String userId);
 }

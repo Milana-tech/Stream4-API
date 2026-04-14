@@ -47,7 +47,7 @@ public class SubscriptionService {
         Subscription subscription = Subscription.builder()
                 .user(user)
                 .status(SubscriptionStatus.ACTIVE)
-                .plan(plan.name())
+                .plan(plan)
                 .totalPrice(plan.getMonthlyPrice())
                 .startDate(LocalDate.now())
                 .endDate(LocalDate.now().plusMonths(1))

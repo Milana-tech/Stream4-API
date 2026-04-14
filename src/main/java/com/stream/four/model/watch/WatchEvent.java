@@ -18,6 +18,12 @@ public class WatchEvent {
     private String userId;
 
     private String titleId;
+    
+    private String episodeId; // null for movies
+
+    private boolean autoContinued = false;
+
+    private long startedAt; // timestamp when first started watching
 
     private int progressSeconds; // how far the user watched
 

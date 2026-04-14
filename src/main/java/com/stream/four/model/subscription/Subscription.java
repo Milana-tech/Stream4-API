@@ -2,6 +2,7 @@ package com.stream.four.model.subscription;
 
 import com.stream.four.model.user.User;
 import com.stream.four.model.enums.SubscriptionStatus;
+import com.stream.four.model.enums.SubscriptionPlan;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -65,8 +66,9 @@ public class Subscription {
     @Column(name = "InviteDiscountUsed")
     private boolean referralDiscountUsed = false;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "Plan", nullable = false)
-    private String plan;
+    private SubscriptionPlan plan;
 
 
     @PrePersist
