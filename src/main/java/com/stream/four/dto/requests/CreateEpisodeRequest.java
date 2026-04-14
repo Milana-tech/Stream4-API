@@ -13,6 +13,9 @@ public class CreateEpisodeRequest {
     @Max(10_000)
     private int episodeNumber;
 
+    @Min(1)
+    private int durationSeconds;
+
     @NotBlank
     @Size(max = 200)
     private String title;

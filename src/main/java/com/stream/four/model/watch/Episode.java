@@ -19,6 +19,8 @@ public class Episode {
 
     private int episodeNumber;
 
+    private int durationSeconds;
+
     private String name;
 
     @Column(length = 2000)

@@ -26,6 +26,9 @@ public class TitleResponse {
     @JacksonXmlProperty(localName = "releaseYear")
     private int releaseYear;
 
+    @JacksonXmlProperty(localName = "durationSeconds")
+    private int durationSeconds;
+
     @JacksonXmlProperty(localName = "type")
     private TitleType type;
 

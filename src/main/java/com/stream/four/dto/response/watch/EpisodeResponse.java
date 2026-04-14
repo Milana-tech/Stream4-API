@@ -14,6 +14,9 @@ public class EpisodeResponse
     @JacksonXmlProperty (localName = "episodeNumber")
     private int episodeNumber;
 
+    @JacksonXmlProperty(localName = "durationSeconds")
+    private int durationSeconds;
+
     @JacksonXmlProperty (localName = "name")
     private String name;
 

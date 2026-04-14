@@ -26,6 +26,9 @@ public class CreateTitleRequest {
     @Min(value = 1888, message = "Release year must be 1888 or later")
     private Integer releaseYear;
 
+    @Min(1)
+    private Integer durationSeconds; // required for MOVIE, optional for SERIES
+
     @NotNull(message = "Type is required")
     private TitleType type;
 
