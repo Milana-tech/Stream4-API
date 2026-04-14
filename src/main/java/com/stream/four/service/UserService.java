@@ -20,6 +20,7 @@ public class UserService
     private final UserMapper userMapper;
     private final EmailService emailService;
     private final PasswordEncoder passwordEncoder;
+    private final TrialService trialService;
 
     public List<UserResponse> getAllUsers()
     {
@@ -44,6 +45,7 @@ public class UserService
         user.setVerified(false);
         var saved = userRepository.save(user);
         emailService.sendVerificationEmail(saved.getEmail(), saved.getVerificationToken());
+        trialService.createTrial(saved.getUserId());
         return userMapper.toDto(saved);
     }
 

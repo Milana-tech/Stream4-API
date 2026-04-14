@@ -1,6 +1,7 @@
 package com.stream.four.mapper;
 
 import com.stream.four.dto.requests.CreateSubscriptionRequest;
+import com.stream.four.model.enums.SubscriptionPlan;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 
@@ -13,12 +14,11 @@ class SubscriptionMapperTest {
     @Test
     void toEntity_mapsBasicFields() {
         var req = new CreateSubscriptionRequest();
-        req.setPlan("BASIC");
+        req.setPlan(SubscriptionPlan.HD);
 
         var entity = mapper.toEntity(req);
 
         assertNotNull(entity);
-        assertEquals("BASIC", entity.getPlan());
+        assertEquals("HD", entity.getPlan());
     }
 }
-

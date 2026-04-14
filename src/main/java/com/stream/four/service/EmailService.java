@@ -30,6 +30,17 @@ public class EmailService {
         mailSender.send(message);
     }
 
+    public void sendInvitationEmail(String to, String invitationLink) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom(from);
+        message.setTo(to);
+        message.setSubject("StreamFlix – You've been invited!");
+        message.setText("You've been invited to join StreamFlix!\n\nClick the link below to register:\n\n"
+                + invitationLink + "\n\nEnjoy your first month with a discount when you subscribe.");
+
+        mailSender.send(message);
+    }
+
     public void sendPasswordResetEmail(String to, String token) {
         String link = baseUrl + "/auth/reset-password?token=" + token;
 

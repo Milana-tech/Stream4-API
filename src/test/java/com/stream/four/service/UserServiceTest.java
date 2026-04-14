@@ -20,8 +20,9 @@ class UserServiceTest {
     private final UserMapper userMapper = mock(UserMapper.class);
     private final EmailService emailService = mock(EmailService.class);
     private final PasswordEncoder passwordEncoder = mock(PasswordEncoder.class);
+    private final TrialService trialService = mock(TrialService.class);
 
-    private final UserService userService = new UserService(userRepository, userMapper, emailService, passwordEncoder);
+    private final UserService userService = new UserService(userRepository, userMapper, emailService, passwordEncoder, trialService);
 
     @Test
     void getAllUsers_mapsEntitiesToDtos() {
