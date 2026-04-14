@@ -1,5 +1,6 @@
 package com.stream.four.service;
 
+import com.stream.four.dto.requests.CreateSubscriptionRequest;
 import com.stream.four.dto.response.subscription.SubscriptionResponse;
 import com.stream.four.exception.ResourceNotFoundException;
 import com.stream.four.model.enums.SubscriptionStatus;
@@ -114,5 +115,63 @@ class SubscriptionServiceTest {
 
         assertEquals(1, result.size());
         verify(subscriptionRepository).findByUser_UserId("u");
+    }
+
+    @Test
+    void createSubscription_withReferral_appliesDiscountToBothParties() {
+        // Arrange
+        var inviter = new User();
+        inviter.setUserId("inviter1");
+        inviter.setReferralDiscountUsed(false);
+
+        var invitee = new User();
+        invitee.setUserId("invitee1");
+        invitee.setInvitedBy("inviter1");
+        invitee.setReferralDiscountUsed(false);
+
+        var inviterSub = new Subscription();
+        inviterSub.setStatus(SubscriptionStatus.ACTIVE);
+        inviterSub.setTotalPrice(new BigDecimal("12.99"));
+        inviterSub.setUser(inviter);
+
+        var request = new CreateSubscriptionRequest();
+        request.setPlan(SubscriptionPlan.HD);
+
+        when(userRepository.findById("invitee1")).thenReturn(Optional.of(invitee));
+        when(userRepository.findById("inviter1")).thenReturn(Optional.of(inviter));
+        when(subscriptionRepository.existsByUser_UserIdAndStatus("invitee1", SubscriptionStatus.ACTIVE)).thenReturn(false);
+        when(subscriptionRepository.findByUser_UserIdAndStatus("inviter1", SubscriptionStatus.ACTIVE)).thenReturn(Optional.of(inviterSub));
+        when(subscriptionRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+        when(invitationRepository.findByInviteeUserId("invitee1")).thenReturn(Optional.empty());
+
+        // Act
+        var result = subscriptionService.createSubscription("invitee1", request);
+
+        // Assert
+        assertEquals(new BigDecimal("10.00"), result.getDiscountPercentage());
+        assertTrue(invitee.isReferralDiscountUsed());
+        assertTrue(inviter.isReferralDiscountUsed());
+    }
+
+    @Test
+    void createSubscription_discountAlreadyUsed_doesNotApplyDiscount() {
+        // Arrange
+        var invitee = new User();
+        invitee.setUserId("invitee1");
+        invitee.setInvitedBy("inviter1");
+        invitee.setReferralDiscountUsed(true); // already used
+
+        var request = new CreateSubscriptionRequest();
+        request.setPlan(SubscriptionPlan.HD);
+
+        when(userRepository.findById("invitee1")).thenReturn(Optional.of(invitee));
+        when(subscriptionRepository.existsByUser_UserIdAndStatus("invitee1", SubscriptionStatus.ACTIVE)).thenReturn(false);
+        when(subscriptionRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        // Act
+        var result = subscriptionService.createSubscription("invitee1", request);
+
+        // Assert
+        assertNull(result.getDiscountPercentage());
     }
 }

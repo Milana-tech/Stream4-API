@@ -41,6 +41,54 @@ class ProfileServiceTest {
     }
 
     @Test
+    void createProfile_age8_setsKidsMaturityLevel() {
+        // Arrange
+        var req = new CreateProfileRequest();
+        req.setAge(8);
+        var entity = new Profile();
+        when(profileMapper.toEntity(req)).thenReturn(entity);
+        when(profileMapper.toDto(entity)).thenReturn(new ProfileResponse());
+
+        // Act
+        profileService.createProfile("u1", req);
+
+        // Assert
+        assertEquals("KIDS", entity.getMaturityLevel());
+    }
+
+    @Test
+    void createProfile_age14_setsTeensMaturityLevel() {
+        // Arrange
+        var req = new CreateProfileRequest();
+        req.setAge(14);
+        var entity = new Profile();
+        when(profileMapper.toEntity(req)).thenReturn(entity);
+        when(profileMapper.toDto(entity)).thenReturn(new ProfileResponse());
+
+        // Act
+        profileService.createProfile("u1", req);
+
+        // Assert
+        assertEquals("TEENS", entity.getMaturityLevel());
+    }
+
+    @Test
+    void createProfile_age25_setsAdultMaturityLevel() {
+        // Arrange
+        var req = new CreateProfileRequest();
+        req.setAge(25);
+        var entity = new Profile();
+        when(profileMapper.toEntity(req)).thenReturn(entity);
+        when(profileMapper.toDto(entity)).thenReturn(new ProfileResponse());
+
+        // Act
+        profileService.createProfile("u1", req);
+
+        // Assert
+        assertEquals("ADULT", entity.getMaturityLevel());
+    }
+
+    @Test
     void getProfiles_mapsToDtos() {
         var p1 = new Profile();
         var p2 = new Profile();
