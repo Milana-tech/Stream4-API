@@ -2,6 +2,8 @@ package com.stream.four.mapper;
 
 import org.springframework.stereotype.Component;
 
+import com.stream.four.exception.DuplicateResourceException;
+import com.stream.four.exception.ResourceNotFoundException;
 import com.stream.four.repository.InvitationRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -15,17 +17,17 @@ public class InvitationHelper {
     public void validatedToken(String token)
     {
         var invitation = invitationRepository.findByToken(token)
-                .orElseThrow(() -> new RuntimeException("Invalid invitation token"));
+                .orElseThrow(() -> new ResourceNotFoundException("Invalid invitation token"));
 
         if (invitation.isUsed()) {
-            throw new RuntimeException("Invitation already used");
+            throw new DuplicateResourceException("Invitation already used");
         }
     }
-    
+
     public void linkAccounts(String token, String email)
     {
         var invitation = invitationRepository.findByToken(token)
-                .orElseThrow(() -> new RuntimeException("Invalid invitation token"));
+                .orElseThrow(() -> new ResourceNotFoundException("Invalid invitation token"));
         
         invitation.setInviteeEmail(email);
         invitation.setUsed(true); 

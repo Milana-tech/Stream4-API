@@ -66,7 +66,7 @@ You should see: `Database initialisation complete.`
 
 | Service | URL |
 |---|---|
-| API (Swagger UI) | http://localhost:8080/swagger-ui.html |
+| API (Swagger UI) | http://localhost:8080/swagger-ui.html — live, auto-generated, authoritative |
 | API Docs (OpenAPI 3.1) | http://localhost:8080/v3/api-docs |
 | phpMyAdmin (DBMS) | http://localhost:8081 |
 | MySQL (DataGrip / DBeaver) | localhost:3306 |
