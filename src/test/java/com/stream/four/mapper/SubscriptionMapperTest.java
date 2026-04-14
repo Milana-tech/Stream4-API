@@ -19,6 +19,6 @@ class SubscriptionMapperTest {
         var entity = mapper.toEntity(req);
 
         assertNotNull(entity);
-        assertEquals("HD", entity.getPlan());
+        assertEquals(SubscriptionPlan.HD, entity.getPlan());
     }
 }

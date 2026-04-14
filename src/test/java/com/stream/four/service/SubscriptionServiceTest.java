@@ -3,6 +3,7 @@ package com.stream.four.service;
 import com.stream.four.dto.response.subscription.SubscriptionResponse;
 import com.stream.four.exception.ResourceNotFoundException;
 import com.stream.four.model.enums.SubscriptionStatus;
+import com.stream.four.model.enums.SubscriptionPlan;
 import com.stream.four.model.subscription.Subscription;
 import com.stream.four.model.user.User;
 import com.stream.four.repository.InvitationRepository;
@@ -42,7 +43,7 @@ class SubscriptionServiceTest {
                 .startDate(LocalDate.now())
                 .endDate(LocalDate.now().plusMonths(1))
                 .autoRenew(true)
-                .plan("STANDARD")
+                .plan(SubscriptionPlan.SD)
                 .build();
 
         when(subscriptionRepository.findByUser_UserIdAndStatus("u", SubscriptionStatus.ACTIVE))
@@ -76,7 +77,7 @@ class SubscriptionServiceTest {
                 .startDate(LocalDate.now())
                 .endDate(LocalDate.now().plusMonths(1))
                 .autoRenew(true)
-                .plan("STANDARD")
+                .plan(SubscriptionPlan.SD)
                 .build();
 
         when(subscriptionRepository.findByUser_UserIdAndStatus("u", SubscriptionStatus.ACTIVE))
@@ -104,7 +105,7 @@ class SubscriptionServiceTest {
                 .startDate(LocalDate.now())
                 .endDate(LocalDate.now().plusMonths(1))
                 .autoRenew(true)
-                .plan("STANDARD")
+                .plan(SubscriptionPlan.SD)
                 .build();
 
         when(subscriptionRepository.findByUser_UserId("u")).thenReturn(List.of(sub));

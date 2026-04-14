@@ -1,5 +1,6 @@
 package com.stream.four.service;
 
+import com.stream.four.model.enums.SubscriptionPlan;
 import com.stream.four.model.enums.SubscriptionStatus;
 import com.stream.four.model.enums.VideoQuality;
 import com.stream.four.model.subscription.Subscription;
@@ -24,7 +25,7 @@ class PlaybackServiceTest {
             mock(ContentService.class)
     );
 
-    private User userWithPlan(String plan) {
+    private User userWithPlan(SubscriptionPlan plan) {
         var sub = new Subscription();
         sub.setPlan(plan);
         sub.setStatus(SubscriptionStatus.ACTIVE);
@@ -42,7 +43,7 @@ class PlaybackServiceTest {
     @Test
     void uhdPlan_titleSupportsUhd_returnsUhd() {
         // Arrange
-        User user = userWithPlan("UHD");
+        User user = userWithPlan(SubscriptionPlan.UHD);
         Title title = titleWithQualities(VideoQuality.SD, VideoQuality.HD, VideoQuality.UHD);
 
         // Act
@@ -55,7 +56,7 @@ class PlaybackServiceTest {
     @Test
     void uhdPlan_titleOnlySupportsHd_returnsHd() {
         // Arrange
-        User user = userWithPlan("UHD");
+        User user = userWithPlan(SubscriptionPlan.UHD);
         Title title = titleWithQualities(VideoQuality.SD, VideoQuality.HD);
 
         // Act
@@ -68,7 +69,7 @@ class PlaybackServiceTest {
     @Test
     void hdPlan_titleSupportsUhd_returnsHd() {
         // Arrange
-        User user = userWithPlan("HD");
+        User user = userWithPlan(SubscriptionPlan.HD);
         Title title = titleWithQualities(VideoQuality.SD, VideoQuality.HD, VideoQuality.UHD);
 
         // Act
@@ -81,7 +82,7 @@ class PlaybackServiceTest {
     @Test
     void sdPlan_titleSupportsAllQualities_returnsSd() {
         // Arrange
-        User user = userWithPlan("SD");
+        User user = userWithPlan(SubscriptionPlan.SD);
         Title title = titleWithQualities(VideoQuality.SD, VideoQuality.HD, VideoQuality.UHD);
 
         // Act
@@ -94,7 +95,7 @@ class PlaybackServiceTest {
     @Test
     void uhdPlan_titleOnlySupportsSd_returnsSd() {
         // Arrange
-        User user = userWithPlan("UHD");
+        User user = userWithPlan(SubscriptionPlan.UHD);
         Title title = titleWithQualities(VideoQuality.SD);
 
         // Act
