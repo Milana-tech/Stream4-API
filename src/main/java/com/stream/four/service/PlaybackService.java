@@ -4,6 +4,7 @@ import com.stream.four.exception.ResourceNotFoundException;
 import com.stream.four.exception.UnauthorizedException;
 import com.stream.four.model.enums.MaturityRating;
 import com.stream.four.model.enums.VideoQuality;
+import com.stream.four.model.enums.SubscriptionPlan;
 import com.stream.four.model.user.Profile;
 import com.stream.four.model.user.User;
 import com.stream.four.model.watch.Title;
@@ -36,13 +37,13 @@ public class PlaybackService {
         }
 
         Set<VideoQuality> supported = title.getSupportedQualities();
-        String plan = user.getSubscription().getPlan().toUpperCase();
+        SubscriptionPlan plan = user.getSubscription().getPlan();
 
-        if (plan.equals("PREMIUM") && supported.contains(VideoQuality.UHD)) {
+        if (plan == SubscriptionPlan.UHD && supported.contains(VideoQuality.UHD)) {
             return VideoQuality.UHD;
         }
 
-        if ((plan.equals("PREMIUM") || plan.equals("STANDARD")) && supported.contains(VideoQuality.HD)) {
+        if ((plan == SubscriptionPlan.UHD || plan == SubscriptionPlan.HD) && supported.contains(VideoQuality.HD)) {
             return VideoQuality.HD;
         }
 
@@ -68,12 +69,7 @@ public class PlaybackService {
                     ". Content warnings: " + title.getContentWarnings().stream().map(Enum::name).collect(java.util.stream.Collectors.joining(", "));
         }
 
-        String plan = user.getSubscription().getPlan().toUpperCase();
-
-        if (plan.equals("PREMIUM") && title.getSupportedQualities().contains(VideoQuality.UHD)) {
-            return "User " + email + " is watching " + titleName + " in UHD";
-        }
-
-        return "User " + email + " is watching " + titleName + " in SD";
+        VideoQuality quality = getAvailableQuality(user, title);
+        return "User " + email + " is watching " + titleName + " in " + quality.name();
     }
 }
