@@ -64,12 +64,12 @@ You should see: `Database initialisation complete.`
 
 ## Access Points
 
-| Service | URL |
-|---|---|
-| API (Swagger UI) | http://localhost:8080/swagger-ui.html — live, auto-generated, authoritative |
-| API Docs (OpenAPI 3.1) | http://localhost:8080/v3/api-docs |
-| phpMyAdmin (DBMS) | http://localhost:8081 |
-| MySQL (DataGrip / DBeaver) | localhost:3306 |
+| Service | URL                                    |
+|---|----------------------------------------|
+| API (Swagger UI) | http://localhost:8080/swagger-ui/index.html# — live, auto-generated, authoritative |
+| API Docs (OpenAPI 3.1) | http://localhost:8080/v3/api-docs      |
+| phpMyAdmin (DBMS) | http://localhost:8081                  |
+| MySQL (DataGrip / DBeaver) | localhost:3306                         |
 
 ---
 

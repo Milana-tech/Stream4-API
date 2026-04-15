@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @Service
 @AllArgsConstructor
 public class LoginService {
@@ -30,12 +32,19 @@ public class LoginService {
             throw new IllegalStateException("Account is not verified. Please check your email for the activation link.");
         }
 
-        if (user.getFailedLoginAttempts() >= 3) {
-            throw new IllegalStateException("Account is temporarily blocked due to 3 failed attempts.");
+        if (user.isAccountLocked()) {
+            throw new IllegalStateException("Account is temporarily blocked. Try again after " + user.getLockedUntil() + ".");
+        }
+
+        // Lock expired — reset the counter
+        if (user.getLockedUntil() != null && LocalDateTime.now().isAfter(user.getLockedUntil())) {
+            user.setFailedLoginAttempts(0);
+            user.setLockedUntil(null);
         }
 
         if (passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
             user.setFailedLoginAttempts(0);
+            user.setLockedUntil(null);
             userRepository.save(user);
             return user;
         } else {
@@ -43,7 +52,9 @@ public class LoginService {
             userRepository.save(user);
 
             if (user.getFailedLoginAttempts() >= 3) {
-                throw new IllegalStateException("Incorrect password. Account has been blocked.");
+                user.setLockedUntil(LocalDateTime.now().plusMinutes(15));
+                userRepository.save(user);
+                throw new IllegalStateException("Incorrect password. Account has been blocked for 15 minutes.");
             }
             throw new IllegalArgumentException("Invalid credentials.");
         }

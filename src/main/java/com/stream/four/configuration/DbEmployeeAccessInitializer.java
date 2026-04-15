@@ -344,12 +344,12 @@ public class DbEmployeeAccessInitializer implements ApplicationRunner {
 
         // Role rights & Employees
         // Table names match @Table(name = "RoleRight") and @Table(name = "Employee") exactly
-        exec(stmt, "INSERT IGNORE INTO RoleRight (RoleID,RoleName,Description,Permissions) VALUES " +
+        exec(stmt, "INSERT IGNORE INTO role_right (roleid,role_name,description,permissions) VALUES " +
             "(1,'JUNIOR_EMPLOYEE','Read-only access to basic user and profile data','READ_USERS,READ_PROFILES')," +
             "(2,'MID_EMPLOYEE','Read access plus limited write on profiles and accounts','READ_USERS,READ_PROFILES,UPDATE_PROFILES,DEACTIVATE_ACCOUNTS')," +
             "(3,'SENIOR_EMPLOYEE','Full access including financial and viewing history','ALL')");
 
-        exec(stmt, "INSERT IGNORE INTO Employee (EmployeeID,Name,Email,Password,RoleID,IsActive) VALUES " +
+        exec(stmt, "INSERT IGNORE INTO employee (employeeid,name,email,password,roleid,is_active) VALUES " +
             "(1,'Junior Jan','junior@stream4.com','" + pw + "',1,1)," +
             "(2,'Mid Marie','mid@stream4.com','" + pw + "',2,1)," +
             "(3,'Senior Steve','senior@stream4.com','" + pw + "',3,1)");
