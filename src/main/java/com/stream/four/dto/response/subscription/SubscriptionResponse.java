@@ -23,11 +23,8 @@ public class SubscriptionResponse
     @JacksonXmlProperty(localName = "userId")
     private String userId;
 
-    @JacksonXmlProperty(localName = "packageName")
-    private String packageName;
-
-    @JacksonXmlProperty(localName = "quality")
-    private String quality;
+   @JacksonXmlProperty(localName = "plan")
+    private String plan;
 
     @JacksonXmlProperty(localName = "status")
     private String status;
