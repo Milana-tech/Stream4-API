@@ -343,15 +343,22 @@ public class DbEmployeeAccessInitializer implements ApplicationRunner {
             "('inv-001','user-001','newuser@example.com','invite-token-abc123',0,0)");
 
         // Role rights & Employees
-        exec(stmt, "INSERT IGNORE INTO role_right (roleid,role_name,description,permissions) VALUES " +
+        // Table names match @Table(name = "RoleRight") and @Table(name = "Employee") exactly
+        exec(stmt, "INSERT IGNORE INTO RoleRight (RoleID,RoleName,Description,Permissions) VALUES " +
             "(1,'JUNIOR_EMPLOYEE','Read-only access to basic user and profile data','READ_USERS,READ_PROFILES')," +
             "(2,'MID_EMPLOYEE','Read access plus limited write on profiles and accounts','READ_USERS,READ_PROFILES,UPDATE_PROFILES,DEACTIVATE_ACCOUNTS')," +
             "(3,'SENIOR_EMPLOYEE','Full access including financial and viewing history','ALL')");
 
-        exec(stmt, "INSERT IGNORE INTO employee (employeeid,name,email,password,roleid,is_active) VALUES " +
+        exec(stmt, "INSERT IGNORE INTO Employee (EmployeeID,Name,Email,Password,RoleID,IsActive) VALUES " +
             "(1,'Junior Jan','junior@stream4.com','" + pw + "',1,1)," +
             "(2,'Mid Marie','mid@stream4.com','" + pw + "',2,1)," +
             "(3,'Senior Steve','senior@stream4.com','" + pw + "',3,1)");
+
+        // Employees must also exist in `users` so they can log in via JWT and pass EmployeeSecurity checks
+        exec(stmt, "INSERT IGNORE INTO users (userid,name,email,password,age,role,verified,deleted,failed_login_attempts,referral_discount_used,created_date) VALUES " +
+            "('emp-001','Junior Jan','junior@stream4.com','" + pw + "',25,'JUNIOR_EMPLOYEE',1,0,0,0,NOW())," +
+            "('emp-002','Mid Marie','mid@stream4.com','"   + pw + "',30,'MID_EMPLOYEE',1,0,0,0,NOW())," +
+            "('emp-003','Senior Steve','senior@stream4.com','" + pw + "',35,'SENIOR_EMPLOYEE',1,0,0,0,NOW())");
 
         log.info("Test data seeded successfully. All passwords: Test1234!");
     }

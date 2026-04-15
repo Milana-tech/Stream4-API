@@ -96,10 +96,21 @@ All test account passwords are: `Test1234!`
 | Bob Smith | bob@stream4.com | Test1234! | 7-day trial |
 | Carol Williams | carol@stream4.com | Test1234! | 7-day trial |
 
-### phpMyAdmin — Internal Employees
+### API — Employee Accounts (login via `POST /auth/login`)
+
+Employees log in with email + password and receive a JWT token, the same as regular users.
+Use the token in Swagger UI to access the `/employees/**` endpoints.
+
+| Name | Email | Password | Role | API Access |
+|---|---|---|---|---|
+| Junior Jan | junior@stream4.com | Test1234! | JUNIOR_EMPLOYEE | `GET /employees/basic-info` |
+| Mid Marie | mid@stream4.com | Test1234! | MID_EMPLOYEE | Basic info + activate/deactivate profiles |
+| Senior Steve | senior@stream4.com | Test1234! | SENIOR_EMPLOYEE | All of the above + subscription overview |
+
+### phpMyAdmin — Internal Employees (direct DB access)
 
 Log in at `http://localhost:8081` using the DB credentials below.
-Each employee only sees the data their role permits.
+Each employee only sees the data their role permits at the database level.
 
 | Role | DB Username | DB Password | Access |
 |---|---|---|---|
@@ -198,6 +209,14 @@ The API integrates with the free [TVmaze public API](https://api.tvmaze.com) to 
 
 ### Trigger
 - `trg_convert_trial_on_subscribe` — automatically marks a trial as CONVERTED when a paid subscription is created
+
+---
+
+## Database Design Decisions
+
+See [`docs/database-design.md`](docs/database-design.md) for the full justification of:
+- Why each view, stored procedure, and trigger was created
+- Which transaction isolation level is used and why
 
 ---
 

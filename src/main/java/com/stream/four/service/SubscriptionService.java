@@ -14,6 +14,7 @@ import com.stream.four.repository.SubscriptionRepository;
 import com.stream.four.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
@@ -35,6 +36,24 @@ public class SubscriptionService {
     private final TrialService trialService;
     private final InvitationRepository invitationRepository;
 
+    /**
+     * Creates a new subscription for the given user.
+     *
+     * Isolation level: REPEATABLE_READ
+     *
+     * This method performs several reads before writing:
+     *   1. Checks whether the user already has an active subscription.
+     *   2. Reads the inviter's subscription and referral-discount status.
+     *   3. Checks whether an active trial exists before marking it as converted.
+     *
+     * With READ_COMMITTED, a concurrent transaction could create a second active
+     * subscription between our existence check (step 1) and our insert, bypassing
+     * the duplicate guard. REPEATABLE_READ ensures that any row read once in this
+     * transaction returns the same data if read again, so the check and the insert
+     * see a consistent snapshot. SERIALIZABLE would add unnecessary range-lock
+     * overhead that this operation does not require.
+     */
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public SubscriptionResponse createSubscription(String userId, CreateSubscriptionRequest request) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
@@ -177,6 +196,7 @@ public class SubscriptionService {
         return SubscriptionResponse.builder()
                 .subscriptionId(subscription.getSubscriptionId())
                 .userId(subscription.getUser().getUserId())
+                .status(subscription.getStatus() != null ? subscription.getStatus().name() : null)
                 .plan(subscription.getPlan().name())
                 .totalPrice(subscription.getTotalPrice())
                 .discountPercentage(subscription.getDiscountPercentage())
