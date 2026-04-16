@@ -25,7 +25,7 @@ public class User extends Auditable
     @Column(name = "UserID")
     private String userId;
 
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     private String name;
 
     @Column(unique = true, nullable = false)
@@ -43,6 +43,8 @@ public class User extends Auditable
 
     private int failedLoginAttempts = 0;
 
+    private LocalDateTime lockedUntil;
+
     private String resetToken;
 
     private LocalDateTime resetTokenExpiry;
@@ -52,7 +54,7 @@ public class User extends Auditable
     private boolean verified = false;
 
     public boolean isAccountLocked() {
-        return this.failedLoginAttempts >= 3;
+        return lockedUntil != null && LocalDateTime.now().isBefore(lockedUntil);
     }
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)

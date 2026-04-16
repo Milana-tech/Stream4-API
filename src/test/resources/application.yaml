@@ -34,6 +34,9 @@ app:
     link-expiry-hours: 24
     base-url: http://localhost:8080
 
+cors:
+  allowed-origins: http://localhost:3000
+
 management:
   health:
     mail:

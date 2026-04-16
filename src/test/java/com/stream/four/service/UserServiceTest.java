@@ -55,7 +55,7 @@ class UserServiceTest {
     @Test
     void getUser_missing_throws() {
         when(userRepository.findById("missing")).thenReturn(Optional.empty());
-        assertThrows(IllegalArgumentException.class, () -> userService.getUser("missing"));
+        assertThrows(com.stream.four.exception.ResourceNotFoundException.class, () -> userService.getUser("missing"));
     }
 
     @Test
