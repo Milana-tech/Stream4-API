@@ -1,44 +1,56 @@
+const API_BASE_URL = "http://localhost:8080";
+
 const continueRow = document.getElementById("continueRow");
 const recommendedRow = document.getElementById("recommendedRow");
 const popularRow = document.getElementById("popularRow");
 const activeProfileText = document.getElementById("activeProfile");
 const logoutBtn = document.getElementById("logoutBtn");
 
-const activeProfile = localStorage.getItem("activeProfile") || "Guest";
+// 1. Get Auth Data - Using "activeProfileName" to match main's logic
+const activeProfile = localStorage.getItem("activeProfileName") || "Guest";
 const token = localStorage.getItem("token"); 
+
 activeProfileText.textContent = `Profile: ${activeProfile}`;
 
-// Main function to load real data from your API
-async function loadHomeData() {
+// 2. Main function to load real data from your API
+async function loadTitles() {
+    // AUTH GUARD: Redirect to login if no token found
     if (!token) {
-        window.location.href = "index.html"; // Redirect if not logged in
+        window.location.href = "index.html"; 
         return;
     }
 
-    // Example calls to your actual API endpoints
-    fetchRowData("/api/titles/continue", continueRow);
-    fetchRowData("/api/titles/recommended", recommendedRow);
-    fetchRowData("/api/titles/popular", popularRow);
-}
-
-async function fetchRowData(endpoint, rowElement) {
     try {
-        const response = await fetch(`http://localhost:8080${endpoint}`, {
+        const res = await fetch(`${API_BASE_URL}/api/titles`, {
             headers: {
                 "Authorization": `Bearer ${token}`,
                 "Accept": "application/json"
             }
         });
 
-        if (response.ok) {
-            const titles = await response.json();
-            // Clear the "loading" or old content
-            rowElement.innerHTML = "";
-            // titles is likely a list of objects, so we pass the whole object
-            createCards(rowElement, titles);
+        if (!res.ok) {
+            console.error("Failed to load titles");
+            return;
         }
+
+        const titles = await res.json();
+
+        // Split titles into 3 sections (Logic from main)
+        const continueWatching = titles.slice(0, 8);
+        const recommended = titles.slice(8, 16);
+        const popular = titles.slice(16, 24);
+
+        // Clear rows and create cards
+        continueRow.innerHTML = "";
+        recommendedRow.innerHTML = "";
+        popularRow.innerHTML = "";
+
+        createCards(continueRow, continueWatching);
+        createCards(recommendedRow, recommended);
+        createCards(popularRow, popular);
+
     } catch (err) {
-        console.error("Failed to fetch row data:", err);
+        console.error("API Error:", err);
     }
 }
 
@@ -60,47 +72,34 @@ function createCards(row, items) {
     });
 }
 
-function scrollRow(rowId, direction) 
-{
+function scrollRow(rowId, direction) {
     const row = document.getElementById(rowId);
     const scrollAmount = 300;
-    row.scrollBy(
-    {
+    row.scrollBy({
         left: scrollAmount * direction,
         behavior: "smooth"
     });
-
     setTimeout(() => updateArrows(rowId), 100);
 }
 
-logoutBtn.addEventListener("click", () => {
-    localStorage.removeItem("activeProfile");
-    window.location.href = "index.html";
-});
-
-function updateArrows(rowId) 
-{
+function updateArrows(rowId) {
     const row = document.getElementById(rowId);
     const wrapper = row.parentElement;
     const leftArrow = wrapper.querySelector(".arrow.left");
 
-    if (row.scrollLeft === 0)
-    {
-        leftArrow.style.display = "none";
-    } 
-    else    
-    {
-        leftArrow.style.display = "flex";
+    if (leftArrow) {
+        leftArrow.style.display = row.scrollLeft === 0 ? "none" : "flex";
     }
 }
 
+// 3. Cleanup Logout logic
 logoutBtn.addEventListener("click", () => {
     localStorage.clear(); 
     window.location.href = "index.html";
 });
 
-// INITIALIZE
-loadHomeData();
+// 4. INITIALIZE
+loadTitles();
 
 [continueRow, recommendedRow, popularRow].forEach(row => {
     row.addEventListener("scroll", () => updateArrows(row.id));
