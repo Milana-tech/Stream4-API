@@ -1,5 +1,6 @@
 package com.stream.four.controller.watch;
 
+import com.stream.four.dto.response.MessageResponse;
 import com.stream.four.service.PlaybackService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -7,6 +8,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,14 +25,14 @@ public class PlaybackController {
 
     private final PlaybackService playbackService;
 
-    @GetMapping("/test-playback")
+    @GetMapping(value = "/test-playback", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     @Operation(summary = "Resolve playback quality", description = "Returns the allowed playback quality for a given user and profile based on their active subscription")
     @ApiResponse(responseCode = "200", description = "Playback quality resolved successfully")
-    public ResponseEntity<String> testPlayback(
+    public ResponseEntity<MessageResponse> testPlayback(
             @RequestParam @Email(message = "Must be a valid email address") @NotBlank(message = "Email is required") String email,
             @RequestParam @NotBlank(message = "Title name is required") String titleName,
             @RequestParam @NotBlank(message = "Profile ID is required") String profileId) {
 
-        return ResponseEntity.ok(playbackService.getPlaybackQuality(email, titleName, profileId));
+        return ResponseEntity.ok(new MessageResponse(playbackService.getPlaybackQuality(email, titleName, profileId)));
     }
 }

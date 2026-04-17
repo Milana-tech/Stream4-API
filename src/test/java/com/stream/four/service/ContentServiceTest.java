@@ -4,6 +4,7 @@ import com.stream.four.model.enums.ContentWarning;
 import com.stream.four.model.enums.Genre;
 import com.stream.four.model.enums.MaturityRating;
 import com.stream.four.model.enums.TitleType;
+import com.stream.four.model.enums.VideoQuality;
 import com.stream.four.model.user.Profile;
 import com.stream.four.model.watch.Preferences;
 import com.stream.four.model.watch.Title;
@@ -195,5 +196,33 @@ class ContentServiceTest {
         // Assert
         assertEquals(1, result.size());
         assertEquals(MaturityRating.MATURE, result.get(0).getMaturityRating());
+    }
+
+    @Test
+    void getAvailableQuality_supportedQuality_returnsIt() {
+        var title = new Title();
+        title.setSupportedQualities(Set.of(VideoQuality.HD, VideoQuality.UHD));
+        assertEquals("HD", contentService.getAvailableQuality(title, "HD"));
+    }
+
+    @Test
+    void getAvailableQuality_notSupported_returnsSd() {
+        var title = new Title();
+        title.setSupportedQualities(Set.of(VideoQuality.SD));
+        assertEquals("SD", contentService.getAvailableQuality(title, "HD"));
+    }
+
+    @Test
+    void getAvailableQuality_invalidQuality_returnsSd() {
+        var title = new Title();
+        title.setSupportedQualities(Set.of(VideoQuality.HD));
+        assertEquals("SD", contentService.getAvailableQuality(title, "INVALID_QUALITY"));
+    }
+
+    @Test
+    void getAvailableQuality_nullQualities_returnsSd() {
+        var title = new Title();
+        title.setSupportedQualities(null);
+        assertEquals("SD", contentService.getAvailableQuality(title, "HD"));
     }
 }

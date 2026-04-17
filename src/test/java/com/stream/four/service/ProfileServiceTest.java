@@ -110,6 +110,44 @@ class ProfileServiceTest {
     }
 
     @Test
+    void getProfile_found_returnsDto() {
+        var profile = new Profile();
+        var dto = new ProfileResponse();
+        when(profileRepository.findById("id")).thenReturn(Optional.of(profile));
+        when(profileMapper.toDto(profile)).thenReturn(dto);
+        assertSame(dto, profileService.getProfile("id"));
+    }
+
+    @Test
+    void getProfile_notFound_throws() {
+        when(profileRepository.findById("missing")).thenReturn(Optional.empty());
+        assertThrows(RuntimeException.class, () -> profileService.getProfile("missing"));
+    }
+
+    @Test
+    void updateProfile_found_updatesAndReturns() {
+        var profile = new Profile();
+        var req = new UpdateProfileRequest();
+        req.setAge(20);
+        var dto = new ProfileResponse();
+
+        when(profileRepository.findById("id")).thenReturn(Optional.of(profile));
+        when(profileMapper.toDto(profile)).thenReturn(dto);
+
+        var result = profileService.updateProfile("id", req);
+
+        assertSame(dto, result);
+        assertEquals("ADULT", profile.getMaturityLevel());
+        verify(profileRepository).save(profile);
+    }
+
+    @Test
+    void deleteProfile_notFound_throws() {
+        when(profileRepository.findById("missing")).thenReturn(Optional.empty());
+        assertThrows(RuntimeException.class, () -> profileService.deleteProfile("missing"));
+    }
+
+    @Test
     void deleteProfile_marksDeletedAndSaves() {
         var profile = new Profile();
         profile.setDeleted(false);

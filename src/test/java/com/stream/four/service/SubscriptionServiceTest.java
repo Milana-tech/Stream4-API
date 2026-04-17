@@ -174,4 +174,34 @@ class SubscriptionServiceTest {
         // Assert
         assertNull(result.getDiscountPercentage());
     }
+
+    @Test
+    void createSubscription_noReferral_createsBasicSubscription() {
+        var user = new User();
+        user.setUserId("u1");
+
+        var request = new CreateSubscriptionRequest();
+        request.setPlan(SubscriptionPlan.HD);
+
+        when(userRepository.findById("u1")).thenReturn(Optional.of(user));
+        when(subscriptionRepository.existsByUser_UserIdAndStatus("u1", SubscriptionStatus.ACTIVE)).thenReturn(false);
+        when(subscriptionRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
+
+        var result = subscriptionService.createSubscription("u1", request);
+
+        assertNotNull(result);
+        verify(subscriptionRepository).save(any());
+    }
+
+    @Test
+    void createSubscription_alreadyActive_throws() {
+        when(userRepository.findById("u1")).thenReturn(Optional.of(new User()));
+        when(subscriptionRepository.existsByUser_UserIdAndStatus("u1", SubscriptionStatus.ACTIVE)).thenReturn(true);
+
+        var request = new CreateSubscriptionRequest();
+        request.setPlan(SubscriptionPlan.HD);
+
+        assertThrows(com.stream.four.exception.DuplicateResourceException.class,
+                () -> subscriptionService.createSubscription("u1", request));
+    }
 }

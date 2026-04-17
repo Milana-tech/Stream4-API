@@ -57,8 +57,33 @@ class TitleServiceTest {
     }
 
     @Test
+    void getTitleById_found_returnsDto() {
+        var entity = new Title();
+        var dto = new TitleResponse();
+        when(titleRepository.findById("id")).thenReturn(Optional.of(entity));
+        when(titleMapper.toDto(entity)).thenReturn(dto);
+        assertSame(dto, titleService.getTitleById("id"));
+    }
+
+    @Test
     void getTitleById_missing_throws() {
         when(titleRepository.findById("id")).thenReturn(Optional.empty());
         assertThrows(RuntimeException.class, () -> titleService.getTitleById("id"));
+    }
+
+    @Test
+    void createTitle_movieWithoutDuration_throws() {
+        var req = new CreateTitleRequest();
+        req.setType(com.stream.four.model.enums.TitleType.MOVIE);
+        req.setDurationSeconds(null);
+        assertThrows(IllegalArgumentException.class, () -> titleService.createTitle(req));
+    }
+
+    @Test
+    void createTitle_movieWithZeroDuration_throws() {
+        var req = new CreateTitleRequest();
+        req.setType(com.stream.four.model.enums.TitleType.MOVIE);
+        req.setDurationSeconds(0);
+        assertThrows(IllegalArgumentException.class, () -> titleService.createTitle(req));
     }
 }

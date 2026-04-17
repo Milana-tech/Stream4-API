@@ -7,6 +7,7 @@ import com.stream.four.model.watch.WatchlistItem;
 import com.stream.four.repository.WatchlistRepository;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -61,5 +62,37 @@ class WatchlistServiceTest {
         assertEquals("u", entity.getUserId());
         assertTrue(entity.getAddedAt() > 0);
         verify(watchlistRepository).save(entity);
+    }
+
+    @Test
+    void getAll_returnsMappedList() {
+        var item = new WatchlistItem();
+        var dto = new WatchlistItemResponse();
+        when(watchlistRepository.findByUserIdOrderByAddedAtDesc("u")).thenReturn(List.of(item));
+        when(watchlistMapper.toDto(item)).thenReturn(dto);
+
+        var result = watchlistService.getAll("u");
+
+        assertEquals(1, result.size());
+        assertSame(dto, result.get(0));
+    }
+
+    @Test
+    void remove_ownerCanDelete() {
+        var item = new WatchlistItem();
+        item.setId("id");
+        item.setUserId("u");
+
+        when(watchlistRepository.findById("id")).thenReturn(Optional.of(item));
+
+        watchlistService.remove("u", "id");
+
+        verify(watchlistRepository).delete(item);
+    }
+
+    @Test
+    void remove_notFound_throws() {
+        when(watchlistRepository.findById("missing")).thenReturn(Optional.empty());
+        assertThrows(RuntimeException.class, () -> watchlistService.remove("u", "missing"));
     }
 }
