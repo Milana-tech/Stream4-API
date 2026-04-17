@@ -1,6 +1,6 @@
 # StreamFlix API
 
-A REST API for a streaming platform built with Spring Boot, MySQL and Docker.
+A REST API and web frontend for a streaming platform built with Spring Boot, MySQL, and Docker.
 
 ---
 
@@ -43,7 +43,8 @@ docker compose up -d
 This will automatically:
 - Start the MySQL database
 - Start the Spring Boot backend on port `8080`
-- Start phpMyAdmin on port `8081`
+- Start the frontend on port `3001`
+- Start phpMyAdmin on port `8083`
 - Create all database tables via Hibernate
 - Create internal DB users with role-based access
 - Seed test data
@@ -52,7 +53,17 @@ This will automatically:
 
 Wait about 15–20 seconds for everything to be ready.
 
-### 4. Verify it is running
+### 4. Open the frontend
+
+Once the containers are running, open your browser and go to:
+
+```
+http://localhost:3001
+```
+
+This is the StreamFlix web app where you can register, log in, and manage profiles.
+
+### 5. Verify it is running
 
 ```bash
 docker logs stream4-backend | grep "Database initialisation complete"
@@ -64,12 +75,13 @@ You should see: `Database initialisation complete.`
 
 ## Access Points
 
-| Service | URL                                    |
-|---|----------------------------------------|
-| API (Swagger UI) | http://localhost:8080/swagger-ui/index.html# — live, auto-generated, authoritative |
-| API Docs (OpenAPI 3.1) | http://localhost:8080/v3/api-docs      |
-| phpMyAdmin (DBMS) | http://localhost:8081                  |
-| MySQL (DataGrip / DBeaver) | localhost:3306                         |
+| Service | URL |
+|---|---|
+| Frontend | http://localhost:3001 |
+| API (Swagger UI) | http://localhost:8080/swagger-ui/index.html |
+| API Docs (OpenAPI 3.1) | http://localhost:8080/v3/api-docs |
+| phpMyAdmin (DBMS) | http://localhost:8083 |
+| MySQL (DataGrip / DBeaver) | localhost:3306 |
 
 ---
 
@@ -109,7 +121,7 @@ Use the token in Swagger UI to access the `/employees/**` endpoints.
 
 ### phpMyAdmin — Internal Employees (direct DB access)
 
-Log in at `http://localhost:8081` using the DB credentials below.
+Log in at `http://localhost:8083` using the DB credentials below.
 Each employee only sees the data their role permits at the database level.
 
 | Role | DB Username | DB Password | Access |
