@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://localhost:8080/api";
+const API_BASE_URL = "http://localhost:8080";
 
 const profilesGrid = document.getElementById("profilesGrid");
 const addProfileBtn = document.getElementById("addProfileBtn");
@@ -37,7 +37,8 @@ function renderProfiles(profiles) {
 
         // Select profile
         card.addEventListener("click", () => {
-            localStorage.setItem("activeProfile", profile.name);
+            localStorage.setItem("activeProfileId", profile.id);
+            localStorage.setItem("activeProfileName", profile.name);
             window.location.href = "home.html";
         });
 
@@ -48,7 +49,8 @@ function renderProfiles(profiles) {
 // Create a new profile
 addProfileBtn.addEventListener("click", async () => {
     const name = prompt("Enter profile name:");
-    if (!name) return;
+    const age = parseInt(prompt("Enter age:"));
+    if (!name || !age) return;
 
     const token = localStorage.getItem("token");
 
@@ -58,7 +60,7 @@ addProfileBtn.addEventListener("click", async () => {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${token}`
         },
-        body: JSON.stringify({ name })
+        body: JSON.stringify({ name, age })
     });
 
     if (!res.ok) {

@@ -1,11 +1,11 @@
-const API_BASE_URL = "http://localhost:8080/api";
+const API_BASE_URL = "http://localhost:8080";
 
 const continueRow = document.getElementById("continueRow");
 const recommendedRow = document.getElementById("recommendedRow");
 const popularRow = document.getElementById("popularRow");
 const activeProfileText = document.getElementById("activeProfile");
 
-const activeProfile = localStorage.getItem("activeProfile") || "Guest";
+const activeProfile = localStorage.getItem("activeProfileName") || "Guest";
 activeProfileText.textContent = `Profile: ${activeProfile}`;
 
 async function loadTitles() {
@@ -63,6 +63,9 @@ function scrollRow(rowId, direction) {
 
 logoutBtn.addEventListener("click", () => {
     localStorage.removeItem("activeProfile");
+    localStorage.removeItem("activeProfileId");
+    localStorage.removeItem("activeProfileName");
+    localStorage.removeItem("token");
     window.location.href = "index.html";
 });
 
