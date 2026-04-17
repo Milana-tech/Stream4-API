@@ -20,6 +20,14 @@ async function loadTitles() {
         return;
     }
 
+<<<<<<< HEAD
+=======
+    // Example calls to your actual API endpoints
+    fetchRowData("/api/titles", continueRow, recommendedRow, popularRow);
+}
+
+async function fetchRowData(endpoint, rowElement) {
+>>>>>>> b7f94d3a2351817f00081ebc505de29b3fbec616
     try {
         const res = await fetch(`${API_BASE_URL}/api/titles`, {
             headers: {
@@ -82,7 +90,12 @@ function scrollRow(rowId, direction) {
     setTimeout(() => updateArrows(rowId), 100);
 }
 
+<<<<<<< HEAD
 function updateArrows(rowId) {
+=======
+function updateArrows(rowId) 
+{
+>>>>>>> b7f94d3a2351817f00081ebc505de29b3fbec616
     const row = document.getElementById(rowId);
     const wrapper = row.parentElement;
     const leftArrow = wrapper.querySelector(".arrow.left");
