@@ -2,25 +2,58 @@ const continueRow = document.getElementById("continueRow");
 const recommendedRow = document.getElementById("recommendedRow");
 const popularRow = document.getElementById("popularRow");
 const activeProfileText = document.getElementById("activeProfile");
-
-const activeProfile = localStorage.getItem("activeProfile") || "Guest";
-activeProfileText.textContent = `Profile: ${activeProfile}`;
-
-const continueWatching = ["Film 1", "Film 2", "Film 3","Film 4","Film 5","Film 6","Film 7","Film 8"];
-const recommended = ["Film 1","Film 2","Film 3","Film 4", "Film 5", "Film 6","Film 7","Film 8"];
-const popular = ["Film 1","Film 2","Film 3","Film 4", "Film 5", "Film 6","Film 7","Film 8"];
-
 const logoutBtn = document.getElementById("logoutBtn");
 
-function createCards(row, titles) 
-{
-    titles.forEach(title => {
+const activeProfile = localStorage.getItem("activeProfile") || "Guest";
+const token = localStorage.getItem("token"); 
+activeProfileText.textContent = `Profile: ${activeProfile}`;
+
+// Main function to load real data from your API
+async function loadHomeData() {
+    if (!token) {
+        window.location.href = "index.html"; // Redirect if not logged in
+        return;
+    }
+
+    // Example calls to your actual API endpoints
+    fetchRowData("/api/titles/continue", continueRow);
+    fetchRowData("/api/titles/recommended", recommendedRow);
+    fetchRowData("/api/titles/popular", popularRow);
+}
+
+async function fetchRowData(endpoint, rowElement) {
+    try {
+        const response = await fetch(`http://localhost:8080${endpoint}`, {
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Accept": "application/json"
+            }
+        });
+
+        if (response.ok) {
+            const titles = await response.json();
+            // Clear the "loading" or old content
+            rowElement.innerHTML = "";
+            // titles is likely a list of objects, so we pass the whole object
+            createCards(rowElement, titles);
+        }
+    } catch (err) {
+        console.error("Failed to fetch row data:", err);
+    }
+}
+
+function createCards(row, items) {
+    items.forEach(item => {
         const card = document.createElement("div");
         card.classList.add("card");
-        card.innerHTML = `<p class="card-title">${title}</p>`;
+        
+        card.innerHTML = `
+            <img src="${item.imageUrl || 'assets/placeholder.jpg'}" alt="${item.name}">
+            <p class="card-title">${item.name}</p>
+        `;
 
         card.addEventListener("click", () => {
-        alert(`Clicked: ${title}`);
+            alert(`Now streaming: ${item.name}`);
         });
 
         row.appendChild(card);
@@ -61,14 +94,15 @@ function updateArrows(rowId)
     }
 }
 
-[continueRow, recommendedRow, popularRow].forEach(row => {
-    row.addEventListener("scroll", () => {
-        updateArrows(row.id);
-    });
-
-    updateArrows(row.id);
+logoutBtn.addEventListener("click", () => {
+    localStorage.clear(); 
+    window.location.href = "index.html";
 });
 
-createCards(continueRow, continueWatching);
-createCards(recommendedRow, recommended);
-createCards(popularRow, popular);
+// INITIALIZE
+loadHomeData();
+
+[continueRow, recommendedRow, popularRow].forEach(row => {
+    row.addEventListener("scroll", () => updateArrows(row.id));
+    updateArrows(row.id);
+});
