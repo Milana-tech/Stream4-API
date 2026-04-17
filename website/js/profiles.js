@@ -25,13 +25,40 @@ async function renderProfiles() {
             card.innerHTML = `
                 <div class="avatar">${profile.name.charAt(0)}</div>
                 <p class="profile-name">${profile.name}</p>
+                <button class="edit-btn">Edit</button>
+                <button class="delete-btn">Delete</button>
             `;
 
+            // Select profile
             card.addEventListener("click", () => {
                 // Store the ID (for API calls) and Name (for the UI)
                 localStorage.setItem("activeProfileId", profile.id);
                 localStorage.setItem("activeProfile", profile.name);
                 window.location.href = "home.html";
+            });
+
+            // Edit
+            card.querySelector(".edit-btn").addEventListener("click", async (e) => {
+                e.stopPropagation(); // prevent card click
+                const newName = prompt("New profile name:", profile.name);
+                if (!newName) return;
+                await fetch(`http://localhost:8080/api/profiles/${profile.id}`, {
+                    method: "PUT",
+                    headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
+                    body: JSON.stringify({ name: newName })
+                });
+                renderProfiles();
+            });
+
+            // Delete
+            card.querySelector(".delete-btn").addEventListener("click", async (e) => {
+                e.stopPropagation(); // prevent card click
+                if (!confirm(`Delete "${profile.name}"?`)) return;
+                await fetch(`http://localhost:8080/api/profiles/${profile.id}`, {
+                    method: "DELETE",
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+                renderProfiles();
             });
 
             profilesGrid.appendChild(card);

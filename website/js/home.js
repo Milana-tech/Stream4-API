@@ -16,9 +16,7 @@ async function loadHomeData() {
     }
 
     // Example calls to your actual API endpoints
-    fetchRowData("/api/titles/continue", continueRow);
-    fetchRowData("/api/titles/recommended", recommendedRow);
-    fetchRowData("/api/titles/popular", popularRow);
+    fetchRowData("/api/titles", continueRow, recommendedRow, popularRow);
 }
 
 async function fetchRowData(endpoint, rowElement) {
@@ -72,11 +70,6 @@ function scrollRow(rowId, direction)
 
     setTimeout(() => updateArrows(rowId), 100);
 }
-
-logoutBtn.addEventListener("click", () => {
-    localStorage.removeItem("activeProfile");
-    window.location.href = "index.html";
-});
 
 function updateArrows(rowId) 
 {
