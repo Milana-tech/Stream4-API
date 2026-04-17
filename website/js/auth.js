@@ -1,33 +1,57 @@
-const loginForm = document.getElementById("loginForm");
-const registerBtn = document.getElementById("registerBtn");
+const loginSection = document.getElementById("loginSection");
+const registerSection = document.getElementById("registerSection");
 
-loginForm.addEventListener("submit", async function(e) {
-  e.preventDefault();
-  
-  const email = e.target.querySelector('input[type="email"]').value;
-  const password = e.target.querySelector('input[type="password"]').value;
+// Toggle to register
+document.getElementById("registerBtn").addEventListener("click", () => {
+    loginSection.style.display = "none";
+    registerSection.style.display = "block";
+});
 
-  try {
-    const response = await fetch('http://localhost:8080/api/auth/login', {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ login: email, password: password })
+// Toggle back to login
+document.getElementById("backToLoginBtn").addEventListener("click", () => {
+    registerSection.style.display = "none";
+    loginSection.style.display = "block";
+});
+
+// LOGIN
+document.getElementById("loginForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const login = document.getElementById("loginEmail").value;
+    const password = document.getElementById("loginPassword").value;
+
+    const response = await fetch("http://localhost:8080/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ login, password })
     });
 
     if (response.ok) {
-      const data = await response.json();
-      // data.token comes from your UserLoginResponse
-      localStorage.setItem("token", data.token); 
-      window.location.href = "profiles.html";
+        const data = await response.json();
+        localStorage.setItem("token", data.token);
+        window.location.href = "profiles.html";
     } else {
-      alert("Invalid credentials!");
+        alert("Invalid credentials!");
     }
-  } catch (err) {
-    console.error("Connection failed", err);
-  }
 });
 
-registerBtn.addEventListener("click", function() 
-{
-  alert("Register flow later");
+// REGISTER
+document.getElementById("registerForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const name = document.getElementById("regName").value;
+    const email = document.getElementById("regEmail").value;
+    const password = document.getElementById("regPassword").value;
+
+    const response = await fetch("http://localhost:8080/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password, role: "USER" })
+    });
+
+    if (response.ok) {
+        alert("Account created! Please check your email to verify your account, then log in.");
+        registerSection.style.display = "none";
+        loginSection.style.display = "block";
+    } else {
+        alert("Registration failed. Email may already be in use.");
+    }
 });
