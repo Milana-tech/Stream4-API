@@ -6,6 +6,7 @@ import com.stream.four.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -128,6 +129,39 @@ class LoginServiceTest {
         when(userRepository.findByEmail("a@b.com")).thenReturn(Optional.of(user));
 
         assertThrows(IllegalStateException.class, () -> loginService.login(req));
+    }
+
+    @Test
+    void login_expiredLock_resetsCounterAndSucceeds() {
+        var req = new LoginRequest();
+        req.setLogin("a@b.com");
+        req.setPassword("pw");
+
+        var user = new User();
+        user.setEmail("a@b.com");
+        user.setPassword("encoded");
+        user.setVerified(true);
+        user.setFailedLoginAttempts(3);
+        user.setLockedUntil(LocalDateTime.now().minusMinutes(1)); // lock expired
+
+        when(userRepository.findByEmail("a@b.com")).thenReturn(Optional.of(user));
+        when(passwordEncoder.matches("pw", "encoded")).thenReturn(true);
+
+        var result = loginService.login(req);
+
+        assertSame(user, result);
+        assertEquals(0, user.getFailedLoginAttempts());
+    }
+
+    @Test
+    void login_userNotFound_throws() {
+        var req = new LoginRequest();
+        req.setLogin("missing@b.com");
+        req.setPassword("pw");
+
+        when(userRepository.findByEmail("missing@b.com")).thenReturn(Optional.empty());
+
+        assertThrows(IllegalArgumentException.class, () -> loginService.login(req));
     }
 
     @Test
