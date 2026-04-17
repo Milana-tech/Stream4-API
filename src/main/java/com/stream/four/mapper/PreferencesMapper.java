@@ -4,9 +4,9 @@ import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.ReportingPolicy;
 
-import com.stream.four.dto.PreferencesResponse;
-import com.stream.four.dto.UpdatePreferencesRequest;
-import com.stream.four.model.Preferences;
+import com.stream.four.dto.response.watch.PreferencesResponse;
+import com.stream.four.dto.update.UpdatePreferencesRequest;
+import com.stream.four.model.watch.Preferences;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface PreferencesMapper {

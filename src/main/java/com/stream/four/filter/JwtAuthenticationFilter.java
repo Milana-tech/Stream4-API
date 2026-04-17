@@ -11,7 +11,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import java.io.IOException;
 import java.util.List;
 
-public class JwtAuthenticationFilter extends GenericFilter {
+public class JwtAuthenticationFilter extends GenericFilter
+{
 
     private final JwtService jwtService;
     private final UserDetailsServiceImpl userDetailsService;

@@ -6,11 +6,12 @@ import org.springframework.stereotype.Component;
 
 @Component("profileSecurity")
 @RequiredArgsConstructor
-public class ProfileSecurity {
-
+public class ProfileSecurity
+{
     private final ProfileRepository profileRepository;
 
-    public boolean canAccessProfile(String profileId, String userId) {
+    public boolean canAccessProfile(String profileId, String userId)
+    {
         return profileRepository.existsByIdAndUserId(profileId, userId);
     }
 }

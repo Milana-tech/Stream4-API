@@ -3,9 +3,9 @@ package com.stream.four.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 
-import com.stream.four.dto.CreateSeasonRequest;
-import com.stream.four.dto.SeasonResponse;
-import com.stream.four.model.Season;
+import com.stream.four.dto.requests.CreateSeasonRequest;
+import com.stream.four.dto.response.watch.SeasonResponse;
+import com.stream.four.model.watch.Season;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface SeasonMapper {
