@@ -1,38 +1,73 @@
+const API_BASE_URL = "http://localhost:8080/api";
+
 const profilesGrid = document.getElementById("profilesGrid");
 const addProfileBtn = document.getElementById("addProfileBtn");
 
-let profiles = [
-  { name: "A" }
-];
+// Load profiles from API
+async function loadProfiles() {
+    const token = localStorage.getItem("token");
 
-function renderProfiles() 
-{
-  profilesGrid.innerHTML = "";
-
-  profiles.forEach((profile, index) => {
-    const card = document.createElement("div");
-    card.classList.add("profile-card");
-
-    card.innerHTML = `
-      <div class="avatar">${profile.name.charAt(0)}</div>
-      <p class="profile-name">${profile.name}</p>
-    `;
-
-    card.addEventListener("click", () => {
-      localStorage.setItem("activeProfile", profile.name);
-      window.location.href = "home.html";
+    const res = await fetch(`${API_BASE_URL}/profiles`, {
+        headers: {
+            "Authorization": `Bearer ${token}`
+        }
     });
 
-    profilesGrid.appendChild(card);
-  });
+    if (!res.ok) {
+        console.error("Failed to load profiles");
+        return;
+    }
+
+    const profiles = await res.json();
+    renderProfiles(profiles);
 }
 
-addProfileBtn.addEventListener("click", () => {
-  const name = prompt("Enter profile name:");
-  if (!name) return;
+// Render profiles to the page
+function renderProfiles(profiles) {
+    profilesGrid.innerHTML = "";
 
-  profiles.push({ name });
-  renderProfiles();
+    profiles.forEach(profile => {
+        const card = document.createElement("div");
+        card.classList.add("profile-card");
+
+        card.innerHTML = `
+            <div class="avatar">${profile.name.charAt(0)}</div>
+            <p class="profile-name">${profile.name}</p>
+        `;
+
+        // Select profile
+        card.addEventListener("click", () => {
+            localStorage.setItem("activeProfile", profile.name);
+            window.location.href = "home.html";
+        });
+
+        profilesGrid.appendChild(card);
+    });
+}
+
+// Create a new profile
+addProfileBtn.addEventListener("click", async () => {
+    const name = prompt("Enter profile name:");
+    if (!name) return;
+
+    const token = localStorage.getItem("token");
+
+    const res = await fetch(`${API_BASE_URL}/profiles`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({ name })
+    });
+
+    if (!res.ok) {
+        alert("Failed to create profile");
+        return;
+    }
+
+    void loadProfiles();
 });
 
-renderProfiles();
+// Load profiles on page start
+void loadProfiles();
