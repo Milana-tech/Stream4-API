@@ -7,17 +7,17 @@ loginForm.addEventListener("submit", async function(e)
 {
   e.preventDefault();
 
-  const email = document.getElementById("email".value);
+  const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
 
   try {
-      const red = await fetch('${API_BASE_URL}/auth/login', {
+      const red = await fetch(`${API_BASE_URL}/auth/login`, {
           method: "POST",
-          headers: {"Content-Type": "application.json"},
+          headers: {"Content-Type": "application/json"},
           body: JSON.stringify({email, password})
       });
 
-      if(red.ok)
+      if(!red.ok)
       {
           alert("Invalid login");
           return;
@@ -29,7 +29,7 @@ loginForm.addEventListener("submit", async function(e)
       localStorage.setItem("token", data.token);
 
       //Redirect to profiles page
-      window.location.href = "../profiles.html";
+      window.location.href = "profiles.html";
   } catch (err) {
       console.error(err);
       alert("Server error");
