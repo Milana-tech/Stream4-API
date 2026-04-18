@@ -1,154 +1,109 @@
 {
   "info": {
     "_postman_id": "b5a7b2e1-05b7-4b7b-8d05-14e45741a3d6",
-    "name": "Stream4-API (grouped by controller)",
+    "name": "Stream4-API",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "description": "Auto-generated from Spring controllers under src/main/java/com/stream/four/controller. Uses {{baseUrl}} and {{jwt}} variables."
+    "description": "Complete StreamFlix API collection. Set {{baseUrl}} to http://localhost:8080 and {{jwt}} to the token returned by POST /auth/login."
   },
   "variable": [
     { "key": "baseUrl", "value": "http://localhost:8080" },
-    { "key": "jwt", "value": "" }
+    { "key": "jwt",     "value": "" }
   ],
   "item": [
     {
-      "name": "AuthController",
+      "name": "Auth",
       "item": [
-        {
-          "name": "POST /auth/login",
-          "request": {
-            "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"password\"\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/auth/login",
-              "host": ["{{baseUrl}}"],
-              "path": ["auth", "login"]
-            }
-          }
-        },
         {
           "name": "POST /auth/register",
           "request": {
             "method": "POST",
-            "header": [
-              { "key": "Content-Type", "value": "application/json" }
-            ],
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"New User\",\n  \"email\": \"new.user@example.com\",\n  \"password\": \"password\",\n  \"invitationToken\": null\n}"
+              "raw": "{\n  \"name\": \"New User\",\n  \"email\": \"new.user@example.com\",\n  \"password\": \"Test1234!\",\n  \"age\": 25,\n  \"invitationToken\": null\n}"
             },
-            "url": {
-              "raw": "{{baseUrl}}/auth/register",
-              "host": ["{{baseUrl}}"],
-              "path": ["auth", "register"]
-            }
+            "url": { "raw": "{{baseUrl}}/auth/register", "host": ["{{baseUrl}}"], "path": ["auth", "register"] }
           }
-        }
-      ]
-    },
-    {
-      "name": "EpisodeController",
-      "item": [
+        },
         {
-          "name": "POST /seasons/:seasonId/episodes",
+          "name": "POST /auth/login",
           "request": {
             "method": "POST",
-            "header": [
-              { "key": "Authorization", "value": "Bearer {{jwt}}" },
-              { "key": "Content-Type", "value": "application/json" }
-            ],
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"Episode 1\",\n  \"description\": \"Description\",\n  \"durationMinutes\": 45,\n  \"episodeNumber\": 1\n}"
+              "raw": "{\n  \"email\": \"alice@stream4.com\",\n  \"password\": \"Test1234!\"\n}"
             },
+            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"] }
+          }
+        },
+        {
+          "name": "GET /auth/verify?token=",
+          "request": {
+            "method": "GET",
+            "header": [],
             "url": {
-              "raw": "{{baseUrl}}/seasons/:seasonId/episodes",
+              "raw": "{{baseUrl}}/auth/verify?token=YOUR_VERIFICATION_TOKEN",
               "host": ["{{baseUrl}}"],
-              "path": ["seasons", ":seasonId", "episodes"],
-              "variable": [
-                { "key": "seasonId", "value": "" }
-              ]
+              "path": ["auth", "verify"],
+              "query": [{ "key": "token", "value": "YOUR_VERIFICATION_TOKEN" }]
             }
           }
         },
         {
-          "name": "GET /seasons/:seasonId/episodes",
+          "name": "POST /auth/forgot-password",
           "request": {
-            "method": "GET",
-            "header": [
-              { "key": "Authorization", "value": "Bearer {{jwt}}" }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/seasons/:seasonId/episodes",
-              "host": ["{{baseUrl}}"],
-              "path": ["seasons", ":seasonId", "episodes"],
-              "variable": [
-                { "key": "seasonId", "value": "" }
-              ]
-            }
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"alice@stream4.com\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/auth/forgot-password", "host": ["{{baseUrl}}"], "path": ["auth", "forgot-password"] }
+          }
+        },
+        {
+          "name": "POST /auth/reset-password",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"token\": \"YOUR_RESET_TOKEN\",\n  \"newPassword\": \"NewPassword1!\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/auth/reset-password", "host": ["{{baseUrl}}"], "path": ["auth", "reset-password"] }
           }
         }
       ]
     },
     {
-      "name": "PreferencesController",
+      "name": "Users",
       "item": [
         {
-          "name": "GET /preferences",
+          "name": "GET /users",
           "request": {
             "method": "GET",
-            "header": [
-              { "key": "Authorization", "value": "Bearer {{jwt}}" }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/preferences",
-              "host": ["{{baseUrl}}"],
-              "path": ["preferences"]
-            }
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt}}" }],
+            "url": { "raw": "{{baseUrl}}/users", "host": ["{{baseUrl}}"], "path": ["users"] }
           }
         },
         {
-          "name": "PUT /preferences",
-          "request": {
-            "method": "PUT",
-            "header": [
-              { "key": "Authorization", "value": "Bearer {{jwt}}" },
-              { "key": "Content-Type", "value": "application/json" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"filters\": []\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/preferences",
-              "host": ["{{baseUrl}}"],
-              "path": ["preferences"]
-            }
-          }
-        },
-        {
-          "name": "GET /preferences/filterFilters",
+          "name": "GET /users/:userId",
           "request": {
             "method": "GET",
-            "header": [
-              { "key": "Authorization", "value": "Bearer {{jwt}}" }
-            ],
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt}}" }],
             "url": {
-              "raw": "{{baseUrl}}/preferences/filterFilters",
+              "raw": "{{baseUrl}}/users/:userId",
               "host": ["{{baseUrl}}"],
-              "path": ["preferences", "filterFilters"]
+              "path": ["users", ":userId"],
+              "variable": [{ "key": "userId", "value": "user-001" }]
             }
           }
         }
       ]
     },
     {
-      "name": "ProfileController",
+      "name": "Profiles",
       "item": [
         {
           "name": "POST /profiles",
@@ -160,43 +115,29 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Profile 1\"\n}"
+              "raw": "{\n  \"name\": \"My Profile\",\n  \"avatar\": \"avatar1.png\",\n  \"age\": 25,\n  \"maturityLevel\": \"ADULT\"\n}"
             },
-            "url": {
-              "raw": "{{baseUrl}}/profiles",
-              "host": ["{{baseUrl}}"],
-              "path": ["profiles"]
-            }
+            "url": { "raw": "{{baseUrl}}/profiles", "host": ["{{baseUrl}}"], "path": ["profiles"] }
           }
         },
         {
           "name": "GET /profiles",
           "request": {
             "method": "GET",
-            "header": [
-              { "key": "Authorization", "value": "Bearer {{jwt}}" }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/profiles",
-              "host": ["{{baseUrl}}"],
-              "path": ["profiles"]
-            }
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt}}" }],
+            "url": { "raw": "{{baseUrl}}/profiles", "host": ["{{baseUrl}}"], "path": ["profiles"] }
           }
         },
         {
           "name": "GET /profiles/:id",
           "request": {
             "method": "GET",
-            "header": [
-              { "key": "Authorization", "value": "Bearer {{jwt}}" }
-            ],
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt}}" }],
             "url": {
               "raw": "{{baseUrl}}/profiles/:id",
               "host": ["{{baseUrl}}"],
               "path": ["profiles", ":id"],
-              "variable": [
-                { "key": "id", "value": "" }
-              ]
+              "variable": [{ "key": "id", "value": "prof-001" }]
             }
           }
         },
@@ -210,15 +151,13 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Updated Profile\"\n}"
+              "raw": "{\n  \"name\": \"Updated Name\",\n  \"avatar\": \"avatar2.png\",\n  \"maturityLevel\": \"ADULT\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/profiles/:id",
               "host": ["{{baseUrl}}"],
               "path": ["profiles", ":id"],
-              "variable": [
-                { "key": "id", "value": "" }
-              ]
+              "variable": [{ "key": "id", "value": "prof-001" }]
             }
           }
         },
@@ -226,23 +165,137 @@
           "name": "DELETE /profiles/:id",
           "request": {
             "method": "DELETE",
-            "header": [
-              { "key": "Authorization", "value": "Bearer {{jwt}}" }
-            ],
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt}}" }],
             "url": {
               "raw": "{{baseUrl}}/profiles/:id",
               "host": ["{{baseUrl}}"],
               "path": ["profiles", ":id"],
-              "variable": [
-                { "key": "id", "value": "" }
-              ]
+              "variable": [{ "key": "id", "value": "prof-001" }]
             }
           }
         }
       ]
     },
     {
-      "name": "SeasonController",
+      "name": "Preferences",
+      "item": [
+        {
+          "name": "GET /profiles/:profileId/preferences",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/profiles/:profileId/preferences",
+              "host": ["{{baseUrl}}"],
+              "path": ["profiles", ":profileId", "preferences"],
+              "variable": [{ "key": "profileId", "value": "prof-001" }]
+            }
+          }
+        },
+        {
+          "name": "PUT /profiles/:profileId/preferences",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"preferredType\": \"SERIES\",\n  \"preferredGenres\": [\"DRAMA\"],\n  \"minimumMaturityRating\": \"PG\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/profiles/:profileId/preferences",
+              "host": ["{{baseUrl}}"],
+              "path": ["profiles", ":profileId", "preferences"],
+              "variable": [{ "key": "profileId", "value": "prof-001" }]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Titles",
+      "item": [
+        {
+          "name": "POST /titles",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Example Movie\",\n  \"description\": \"A great film.\",\n  \"releaseYear\": 2024,\n  \"type\": \"MOVIE\",\n  \"genre\": \"ACTION\",\n  \"maturityRating\": \"TEEN\",\n  \"supportedQualities\": [\"HD\", \"UHD\"]\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/titles", "host": ["{{baseUrl}}"], "path": ["titles"] }
+          }
+        },
+        {
+          "name": "GET /titles",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt}}" }],
+            "url": { "raw": "{{baseUrl}}/titles", "host": ["{{baseUrl}}"], "path": ["titles"] }
+          }
+        },
+        {
+          "name": "GET /titles/:id",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/titles/:id",
+              "host": ["{{baseUrl}}"],
+              "path": ["titles", ":id"],
+              "variable": [{ "key": "id", "value": "title-001" }]
+            }
+          }
+        },
+        {
+          "name": "GET /titles/for-profile/:profileId",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/titles/for-profile/:profileId",
+              "host": ["{{baseUrl}}"],
+              "path": ["titles", "for-profile", ":profileId"],
+              "variable": [{ "key": "profileId", "value": "prof-001" }]
+            }
+          }
+        },
+        {
+          "name": "GET /titles/tvmaze/search?query=",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/titles/tvmaze/search?query=breaking bad",
+              "host": ["{{baseUrl}}"],
+              "path": ["titles", "tvmaze", "search"],
+              "query": [{ "key": "query", "value": "breaking bad" }]
+            }
+          }
+        },
+        {
+          "name": "GET /titles/tvmaze/lookup?query=",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/titles/tvmaze/lookup?query=breaking bad",
+              "host": ["{{baseUrl}}"],
+              "path": ["titles", "tvmaze", "lookup"],
+              "query": [{ "key": "query", "value": "breaking bad" }]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Seasons",
       "item": [
         {
           "name": "POST /titles/:titleId/seasons",
@@ -260,9 +313,7 @@
               "raw": "{{baseUrl}}/titles/:titleId/seasons",
               "host": ["{{baseUrl}}"],
               "path": ["titles", ":titleId", "seasons"],
-              "variable": [
-                { "key": "titleId", "value": "" }
-              ]
+              "variable": [{ "key": "titleId", "value": "title-001" }]
             }
           }
         },
@@ -270,23 +321,57 @@
           "name": "GET /titles/:titleId/seasons",
           "request": {
             "method": "GET",
-            "header": [
-              { "key": "Authorization", "value": "Bearer {{jwt}}" }
-            ],
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt}}" }],
             "url": {
               "raw": "{{baseUrl}}/titles/:titleId/seasons",
               "host": ["{{baseUrl}}"],
               "path": ["titles", ":titleId", "seasons"],
-              "variable": [
-                { "key": "titleId", "value": "" }
-              ]
+              "variable": [{ "key": "titleId", "value": "title-001" }]
             }
           }
         }
       ]
     },
     {
-      "name": "SubscriptionController",
+      "name": "Episodes",
+      "item": [
+        {
+          "name": "POST /seasons/:seasonId/episodes",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Pilot\",\n  \"description\": \"The first episode.\",\n  \"episodeNumber\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/seasons/:seasonId/episodes",
+              "host": ["{{baseUrl}}"],
+              "path": ["seasons", ":seasonId", "episodes"],
+              "variable": [{ "key": "seasonId", "value": "season-001" }]
+            }
+          }
+        },
+        {
+          "name": "GET /seasons/:seasonId/episodes",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/seasons/:seasonId/episodes",
+              "host": ["{{baseUrl}}"],
+              "path": ["seasons", ":seasonId", "episodes"],
+              "variable": [{ "key": "seasonId", "value": "season-001" }]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Subscriptions",
       "item": [
         {
           "name": "POST /subscriptions",
@@ -298,50 +383,63 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"plan\": \"BASIC\"\n}"
+              "raw": "{\n  \"plan\": \"HD\"\n}"
             },
-            "url": {
-              "raw": "{{baseUrl}}/subscriptions",
-              "host": ["{{baseUrl}}"],
-              "path": ["subscriptions"]
-            }
+            "url": { "raw": "{{baseUrl}}/subscriptions", "host": ["{{baseUrl}}"], "path": ["subscriptions"] }
           }
         },
         {
-          "name": "GET /subscriptions",
+          "name": "GET /subscriptions/current",
           "request": {
             "method": "GET",
-            "header": [
-              { "key": "Authorization", "value": "Bearer {{jwt}}" }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/subscriptions",
-              "host": ["{{baseUrl}}"],
-              "path": ["subscriptions"]
-            }
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt}}" }],
+            "url": { "raw": "{{baseUrl}}/subscriptions/current", "host": ["{{baseUrl}}"], "path": ["subscriptions", "current"] }
           }
         },
+        {
+          "name": "GET /subscriptions/history",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt}}" }],
+            "url": { "raw": "{{baseUrl}}/subscriptions/history", "host": ["{{baseUrl}}"], "path": ["subscriptions", "history"] }
+          }
+        },
+        {
+          "name": "DELETE /subscriptions/cancel",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt}}" }],
+            "url": { "raw": "{{baseUrl}}/subscriptions/cancel", "host": ["{{baseUrl}}"], "path": ["subscriptions", "cancel"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Trials",
+      "item": [
         {
           "name": "GET /trials",
           "request": {
             "method": "GET",
-            "header": [
-              { "key": "Authorization", "value": "Bearer {{jwt}}" }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/trials",
-              "host": ["{{baseUrl}}"],
-              "path": ["trials"]
-            }
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt}}" }],
+            "url": { "raw": "{{baseUrl}}/trials", "host": ["{{baseUrl}}"], "path": ["trials"] }
+          }
+        },
+        {
+          "name": "GET /trials/active",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt}}" }],
+            "url": { "raw": "{{baseUrl}}/trials/active", "host": ["{{baseUrl}}"], "path": ["trials", "active"] }
           }
         }
       ]
     },
     {
-      "name": "TitleController",
+      "name": "Watchlist",
       "item": [
         {
-          "name": "POST /titles",
+          "name": "POST /watchlists",
           "request": {
             "method": "POST",
             "header": [
@@ -350,194 +448,199 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Example Title\",\n  \"type\": \"MOVIE\"\n}"
+              "raw": "{\n  \"titleId\": \"title-001\",\n  \"profileId\": \"prof-001\"\n}"
             },
+            "url": { "raw": "{{baseUrl}}/watchlists", "host": ["{{baseUrl}}"], "path": ["watchlists"] }
+          }
+        },
+        {
+          "name": "GET /watchlists?profileId=",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt}}" }],
             "url": {
-              "raw": "{{baseUrl}}/titles",
+              "raw": "{{baseUrl}}/watchlists?profileId=prof-001",
               "host": ["{{baseUrl}}"],
-              "path": ["titles"]
+              "path": ["watchlists"],
+              "query": [{ "key": "profileId", "value": "prof-001" }]
             }
           }
         },
         {
-          "name": "GET /titles",
-          "request": {
-            "method": "GET",
-            "header": [
-              { "key": "Authorization", "value": "Bearer {{jwt}}" }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/titles",
-              "host": ["{{baseUrl}}"],
-              "path": ["titles"]
-            }
-          }
-        },
-        {
-          "name": "GET /titles/:id",
-          "request": {
-            "method": "GET",
-            "header": [
-              { "key": "Authorization", "value": "Bearer {{jwt}}" }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/titles/:id",
-              "host": ["{{baseUrl}}"],
-              "path": ["titles", ":id"],
-              "variable": [
-                { "key": "id", "value": "" }
-              ]
-            }
-          }
-        }
-      ]
-    },
-    {
-      "name": "UserController",
-      "item": [
-        {
-          "name": "GET /api/users",
-          "request": {
-            "method": "GET",
-            "header": [
-              { "key": "Authorization", "value": "Bearer {{jwt}}" }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/api/users",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "users"]
-            }
-          }
-        },
-        {
-          "name": "GET /api/users/:userId",
-          "request": {
-            "method": "GET",
-            "header": [
-              { "key": "Authorization", "value": "Bearer {{jwt}}" }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/api/users/:userId",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "users", ":userId"],
-              "variable": [
-                { "key": "userId", "value": "" }
-              ]
-            }
-          }
-        }
-      ]
-    },
-    {
-      "name": "ViewingBehaviourController",
-      "item": [
-        {
-          "name": "POST /watch",
-          "request": {
-            "method": "POST",
-            "header": [
-              { "key": "Authorization", "value": "Bearer {{jwt}}" },
-              { "key": "Content-Type", "value": "application/json" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"titleId\": \"\",\n  \"episodeId\": null,\n  \"progressSeconds\": 120\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/watch",
-              "host": ["{{baseUrl}}"],
-              "path": ["watch"]
-            }
-          }
-        },
-        {
-          "name": "GET /history",
-          "request": {
-            "method": "GET",
-            "header": [
-              { "key": "Authorization", "value": "Bearer {{jwt}}" }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/history",
-              "host": ["{{baseUrl}}"],
-              "path": ["history"]
-            }
-          }
-        },
-        {
-          "name": "GET /progress/:titleId",
-          "request": {
-            "method": "GET",
-            "header": [
-              { "key": "Authorization", "value": "Bearer {{jwt}}" }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/progress/:titleId",
-              "host": ["{{baseUrl}}"],
-              "path": ["progress", ":titleId"],
-              "variable": [
-                { "key": "titleId", "value": "" }
-              ]
-            }
-          }
-        }
-      ]
-    },
-    {
-      "name": "WatchlistController",
-      "item": [
-        {
-          "name": "POST /watchlist",
-          "request": {
-            "method": "POST",
-            "header": [
-              { "key": "Authorization", "value": "Bearer {{jwt}}" },
-              { "key": "Content-Type", "value": "application/json" }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"titleId\": \"\"\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/watchlist",
-              "host": ["{{baseUrl}}"],
-              "path": ["watchlist"]
-            }
-          }
-        },
-        {
-          "name": "GET /watchlist",
-          "request": {
-            "method": "GET",
-            "header": [
-              { "key": "Authorization", "value": "Bearer {{jwt}}" }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/watchlist",
-              "host": ["{{baseUrl}}"],
-              "path": ["watchlist"]
-            }
-          }
-        },
-        {
-          "name": "DELETE /watchlist/:id",
+          "name": "DELETE /watchlists/:id",
           "request": {
             "method": "DELETE",
-            "header": [
-              { "key": "Authorization", "value": "Bearer {{jwt}}" }
-            ],
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt}}" }],
             "url": {
-              "raw": "{{baseUrl}}/watchlist/:id",
+              "raw": "{{baseUrl}}/watchlists/:id",
               "host": ["{{baseUrl}}"],
-              "path": ["watchlist", ":id"],
-              "variable": [
-                { "key": "id", "value": "" }
+              "path": ["watchlists", ":id"],
+              "variable": [{ "key": "id", "value": "wl-001" }]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Viewing Behaviour",
+      "item": [
+        {
+          "name": "POST /viewing-behaviour/watch",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"titleId\": \"title-001\",\n  \"profileId\": \"prof-001\",\n  \"episodeId\": null,\n  \"progressSeconds\": 120,\n  \"finished\": false,\n  \"autoContinued\": false\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/viewing-behaviour/watch", "host": ["{{baseUrl}}"], "path": ["viewing-behaviour", "watch"] }
+          }
+        },
+        {
+          "name": "GET /viewing-behaviour/history?profileId=",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/viewing-behaviour/history?profileId=prof-001",
+              "host": ["{{baseUrl}}"],
+              "path": ["viewing-behaviour", "history"],
+              "query": [{ "key": "profileId", "value": "prof-001" }]
+            }
+          }
+        },
+        {
+          "name": "GET /viewing-behaviour/progress/:titleId",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/viewing-behaviour/progress/:titleId",
+              "host": ["{{baseUrl}}"],
+              "path": ["viewing-behaviour", "progress", ":titleId"],
+              "variable": [{ "key": "titleId", "value": "title-001" }]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Playback",
+      "item": [
+        {
+          "name": "GET /playback/test-playback",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/playback/test-playback?email=alice@stream4.com&titleName=Breaking Bad&profileId=prof-001",
+              "host": ["{{baseUrl}}"],
+              "path": ["playback", "test-playback"],
+              "query": [
+                { "key": "email",     "value": "alice@stream4.com" },
+                { "key": "titleName", "value": "Breaking Bad" },
+                { "key": "profileId", "value": "prof-001" }
               ]
             }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Invitations",
+      "item": [
+        {
+          "name": "POST /invitations",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"inviteeEmail\": \"friend@example.com\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/invitations", "host": ["{{baseUrl}}"], "path": ["invitations"] }
+          }
+        },
+        {
+          "name": "GET /invitations",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt}}" }],
+            "url": { "raw": "{{baseUrl}}/invitations", "host": ["{{baseUrl}}"], "path": ["invitations"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Referrals",
+      "item": [
+        {
+          "name": "POST /referrals/apply-discount/:inviteeId",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/referrals/apply-discount/:inviteeId",
+              "host": ["{{baseUrl}}"],
+              "path": ["referrals", "apply-discount", ":inviteeId"],
+              "variable": [{ "key": "inviteeId", "value": "user-002" }]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Employees",
+      "item": [
+        {
+          "name": "GET /employees/basic-info",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt}}" }],
+            "url": { "raw": "{{baseUrl}}/employees/basic-info", "host": ["{{baseUrl}}"], "path": ["employees", "basic-info"] }
+          }
+        },
+        {
+          "name": "PUT /employees/profile/:id/activate",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/employees/profile/:id/activate",
+              "host": ["{{baseUrl}}"],
+              "path": ["employees", "profile", ":id", "activate"],
+              "variable": [{ "key": "id", "value": "prof-001" }]
+            }
+          }
+        },
+        {
+          "name": "PUT /employees/profile/:id/deactivate",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/employees/profile/:id/deactivate",
+              "host": ["{{baseUrl}}"],
+              "path": ["employees", "profile", ":id", "deactivate"],
+              "variable": [{ "key": "id", "value": "prof-001" }]
+            }
+          }
+        },
+        {
+          "name": "GET /employees/subscriptions",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt}}" }],
+            "url": { "raw": "{{baseUrl}}/employees/subscriptions", "host": ["{{baseUrl}}"], "path": ["employees", "subscriptions"] }
           }
         }
       ]
     }
   ]
 }
-
