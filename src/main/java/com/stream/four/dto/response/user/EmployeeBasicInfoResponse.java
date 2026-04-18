@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@XmlRootElement(name = "EmployeeBasicInfo")
+@XmlRootElement(name = "EmployeeBasicInfoResponse")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

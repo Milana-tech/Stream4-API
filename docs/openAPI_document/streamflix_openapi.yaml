@@ -54,7 +54,7 @@ paths:
             type: string
       responses:
         '200':
-          description: OK
+          description: Preferences retrieved successfully
           content:
             application/json:
               schema:
@@ -65,6 +65,33 @@ paths:
             text/csv:
               schema:
                 $ref: '#/components/schemas/PreferencesResponse'
+        '401':
+          description: Unauthorized - JWT token missing or invalid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden - profile belongs to another user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Profile not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
     put:
       tags:
         - preferences
@@ -85,7 +112,7 @@ paths:
         required: true
       responses:
         '200':
-          description: OK
+          description: Preferences updated successfully
           content:
             application/json:
               schema:
@@ -96,6 +123,42 @@ paths:
             text/csv:
               schema:
                 $ref: '#/components/schemas/PreferencesResponse'
+        '400':
+          description: Invalid input - validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized - JWT token missing or invalid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden - profile belongs to another user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Profile not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /profiles/{id}:
     get:
       tags:
@@ -127,37 +190,28 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ProfileResponse'
+                $ref: '#/components/schemas/ErrorResponse'
             application/xml:
               schema:
-                $ref: '#/components/schemas/ProfileResponse'
-            text/csv:
-              schema:
-                $ref: '#/components/schemas/ProfileResponse'
+                $ref: '#/components/schemas/ErrorResponse'
         '403':
           description: Forbidden - profile belongs to another user
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ProfileResponse'
+                $ref: '#/components/schemas/ErrorResponse'
             application/xml:
               schema:
-                $ref: '#/components/schemas/ProfileResponse'
-            text/csv:
-              schema:
-                $ref: '#/components/schemas/ProfileResponse'
+                $ref: '#/components/schemas/ErrorResponse'
         '404':
           description: Profile not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ProfileResponse'
+                $ref: '#/components/schemas/ErrorResponse'
             application/xml:
               schema:
-                $ref: '#/components/schemas/ProfileResponse'
-            text/csv:
-              schema:
-                $ref: '#/components/schemas/ProfileResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     put:
       tags:
         - profiles
@@ -194,49 +248,37 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ProfileResponse'
+                $ref: '#/components/schemas/ErrorResponse'
             application/xml:
               schema:
-                $ref: '#/components/schemas/ProfileResponse'
-            text/csv:
-              schema:
-                $ref: '#/components/schemas/ProfileResponse'
+                $ref: '#/components/schemas/ErrorResponse'
         '401':
           description: Unauthorized - JWT token missing or invalid
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ProfileResponse'
+                $ref: '#/components/schemas/ErrorResponse'
             application/xml:
               schema:
-                $ref: '#/components/schemas/ProfileResponse'
-            text/csv:
-              schema:
-                $ref: '#/components/schemas/ProfileResponse'
+                $ref: '#/components/schemas/ErrorResponse'
         '403':
           description: Forbidden - profile belongs to another user
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ProfileResponse'
+                $ref: '#/components/schemas/ErrorResponse'
             application/xml:
               schema:
-                $ref: '#/components/schemas/ProfileResponse'
-            text/csv:
-              schema:
-                $ref: '#/components/schemas/ProfileResponse'
+                $ref: '#/components/schemas/ErrorResponse'
         '404':
           description: Profile not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ProfileResponse'
+                $ref: '#/components/schemas/ErrorResponse'
             application/xml:
               schema:
-                $ref: '#/components/schemas/ProfileResponse'
-            text/csv:
-              schema:
-                $ref: '#/components/schemas/ProfileResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     delete:
       tags:
         - profiles
@@ -273,7 +315,7 @@ paths:
             type: string
       responses:
         '200':
-          description: OK
+          description: Profile deactivated successfully
           content:
             application/json:
               schema:
@@ -284,6 +326,33 @@ paths:
             text/csv:
               schema:
                 $ref: '#/components/schemas/ProfileStatusResponse'
+        '401':
+          description: Unauthorized - JWT token missing or invalid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden - insufficient role
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Profile not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /employees/profile/{id}/activate:
     put:
       tags:
@@ -299,7 +368,7 @@ paths:
             type: string
       responses:
         '200':
-          description: OK
+          description: Profile activated successfully
           content:
             application/json:
               schema:
@@ -310,13 +379,40 @@ paths:
             text/csv:
               schema:
                 $ref: '#/components/schemas/ProfileStatusResponse'
+        '401':
+          description: Unauthorized - JWT token missing or invalid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden - insufficient role
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Profile not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /watchlists:
     get:
       tags:
         - watchlists
       summary: Get watchlist
       description: Get profile's watchlist. Supports JSON, XML, CSV.
-      operationId: getAll
+      operationId: getWatchlist
       parameters:
         - name: profileId
           in: query
@@ -325,7 +421,7 @@ paths:
             type: string
       responses:
         '200':
-          description: OK
+          description: Watchlist retrieved successfully
           content:
             application/json:
               schema:
@@ -342,12 +438,21 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/WatchlistItemResponse'
+        '401':
+          description: Unauthorized - JWT token missing or invalid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
     post:
       tags:
         - watchlists
       summary: Add to watchlist
       description: Add a title to user's watchlist. Supports JSON, XML, CSV.
-      operationId: add
+      operationId: addToWatchlist
       requestBody:
         content:
           application/json:
@@ -355,8 +460,8 @@ paths:
               $ref: '#/components/schemas/CreateWatchlistItemRequest'
         required: true
       responses:
-        '200':
-          description: OK
+        '201':
+          description: Title added to watchlist successfully
           content:
             application/json:
               schema:
@@ -367,6 +472,24 @@ paths:
             text/csv:
               schema:
                 $ref: '#/components/schemas/WatchlistItemResponse'
+        '400':
+          description: Invalid input - validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized - JWT token missing or invalid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /viewing-behaviour/watch:
     post:
       tags:
@@ -381,8 +504,8 @@ paths:
               $ref: '#/components/schemas/CreateWatchEventRequest'
         required: true
       responses:
-        '200':
-          description: OK
+        '201':
+          description: Watch event recorded successfully
           content:
             application/json:
               schema:
@@ -393,13 +516,31 @@ paths:
             text/csv:
               schema:
                 $ref: '#/components/schemas/WatchEventResponse'
+        '400':
+          description: Invalid input - validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized - JWT token missing or invalid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /titles:
     get:
       tags:
         - titles
       summary: Get all titles
       description: Get all movies and series. Supports JSON, XML, CSV.
-      operationId: getAll_1
+      operationId: getTitles
       responses:
         '200':
           description: Titles retrieved successfully
@@ -424,25 +565,16 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/TitleResponse'
+                $ref: '#/components/schemas/ErrorResponse'
             application/xml:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/TitleResponse'
-            text/csv:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/TitleResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     post:
       tags:
         - titles
       summary: Create title
       description: Create a new movie or series
-      operationId: create
+      operationId: createTitle
       requestBody:
         content:
           application/json:
@@ -467,32 +599,26 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TitleResponse'
+                $ref: '#/components/schemas/ErrorResponse'
             application/xml:
               schema:
-                $ref: '#/components/schemas/TitleResponse'
-            text/csv:
-              schema:
-                $ref: '#/components/schemas/TitleResponse'
+                $ref: '#/components/schemas/ErrorResponse'
         '401':
           description: Unauthorized - JWT token missing or invalid
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TitleResponse'
+                $ref: '#/components/schemas/ErrorResponse'
             application/xml:
               schema:
-                $ref: '#/components/schemas/TitleResponse'
-            text/csv:
-              schema:
-                $ref: '#/components/schemas/TitleResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /titles/{titleId}/seasons:
     get:
       tags:
         - seasons
       summary: Get seasons
       description: Get all seasons for a series. Supports JSON, XML, CSV.
-      operationId: getAll_2
+      operationId: getSeasons
       parameters:
         - name: titleId
           in: path
@@ -501,7 +627,7 @@ paths:
             type: string
       responses:
         '200':
-          description: OK
+          description: Seasons retrieved successfully
           content:
             application/json:
               schema:
@@ -518,12 +644,30 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/SeasonResponse'
+        '401':
+          description: Unauthorized - JWT token missing or invalid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Title not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
     post:
       tags:
         - seasons
       summary: Create season
       description: Create a new season for a series. Supports JSON, XML, CSV.
-      operationId: create_1
+      operationId: createSeason
       parameters:
         - name: titleId
           in: path
@@ -537,8 +681,8 @@ paths:
               $ref: '#/components/schemas/CreateSeasonRequest'
         required: true
       responses:
-        '200':
-          description: OK
+        '201':
+          description: Season created successfully
           content:
             application/json:
               schema:
@@ -549,6 +693,33 @@ paths:
             text/csv:
               schema:
                 $ref: '#/components/schemas/SeasonResponse'
+        '400':
+          description: Invalid input - validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized - JWT token missing or invalid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Title not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /subscriptions:
     post:
       tags:
@@ -580,37 +751,28 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SubscriptionResponse'
+                $ref: '#/components/schemas/ErrorResponse'
             application/xml:
               schema:
-                $ref: '#/components/schemas/SubscriptionResponse'
-            text/csv:
-              schema:
-                $ref: '#/components/schemas/SubscriptionResponse'
+                $ref: '#/components/schemas/ErrorResponse'
         '401':
           description: Unauthorized - JWT token missing or invalid
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SubscriptionResponse'
+                $ref: '#/components/schemas/ErrorResponse'
             application/xml:
               schema:
-                $ref: '#/components/schemas/SubscriptionResponse'
-            text/csv:
-              schema:
-                $ref: '#/components/schemas/SubscriptionResponse'
+                $ref: '#/components/schemas/ErrorResponse'
         '409':
           description: User already has an active subscription
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SubscriptionResponse'
+                $ref: '#/components/schemas/ErrorResponse'
             application/xml:
               schema:
-                $ref: '#/components/schemas/SubscriptionResponse'
-            text/csv:
-              schema:
-                $ref: '#/components/schemas/SubscriptionResponse'
+                $ref: '#/components/schemas/ErrorResponse'
       security:
         - bearerAuth: []
   /seasons/{seasonId}/episodes:
@@ -619,7 +781,7 @@ paths:
         - episodes
       summary: Get episodes
       description: Get all episodes for a season. Supports JSON, XML, CSV.
-      operationId: getAll_3
+      operationId: getEpisodes
       parameters:
         - name: seasonId
           in: path
@@ -628,7 +790,7 @@ paths:
             type: string
       responses:
         '200':
-          description: OK
+          description: Episodes retrieved successfully
           content:
             application/json:
               schema:
@@ -645,12 +807,30 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/EpisodeResponse'
+        '401':
+          description: Unauthorized - JWT token missing or invalid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Season not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
     post:
       tags:
         - episodes
       summary: Create episode
       description: Create a new episode for a season. Supports JSON, XML, CSV.
-      operationId: create_2
+      operationId: createEpisode
       parameters:
         - name: seasonId
           in: path
@@ -664,8 +844,8 @@ paths:
               $ref: '#/components/schemas/CreateEpisodeRequest'
         required: true
       responses:
-        '200':
-          description: OK
+        '201':
+          description: Episode created successfully
           content:
             application/json:
               schema:
@@ -676,6 +856,33 @@ paths:
             text/csv:
               schema:
                 $ref: '#/components/schemas/EpisodeResponse'
+        '400':
+          description: Invalid input - validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized - JWT token missing or invalid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Season not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /referrals/apply-discount/{inviteeId}:
     post:
       tags:
@@ -691,7 +898,7 @@ paths:
             type: string
       responses:
         '200':
-          description: OK
+          description: Referral discount applied successfully
           content:
             application/json:
               schema:
@@ -702,6 +909,24 @@ paths:
             text/csv:
               schema:
                 $ref: '#/components/schemas/ReferralDiscountResponse'
+        '401':
+          description: Unauthorized - JWT token missing or invalid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Invitee not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
         - bearerAuth: []
   /profiles:
@@ -735,19 +960,10 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ProfileResponse'
+                $ref: '#/components/schemas/ErrorResponse'
             application/xml:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ProfileResponse'
-            text/csv:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ProfileResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     post:
       tags:
         - profiles
@@ -778,35 +994,29 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ProfileResponse'
+                $ref: '#/components/schemas/ErrorResponse'
             application/xml:
               schema:
-                $ref: '#/components/schemas/ProfileResponse'
-            text/csv:
-              schema:
-                $ref: '#/components/schemas/ProfileResponse'
+                $ref: '#/components/schemas/ErrorResponse'
         '401':
           description: Unauthorized - JWT token missing or invalid
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ProfileResponse'
+                $ref: '#/components/schemas/ErrorResponse'
             application/xml:
               schema:
-                $ref: '#/components/schemas/ProfileResponse'
-            text/csv:
-              schema:
-                $ref: '#/components/schemas/ProfileResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /invitations:
     get:
       tags:
         - invitations
       summary: Get sent invitations
       description: Get all invitations sent by the current user, including discount status and validity period
-      operationId: getSent
+      operationId: getSentInvitations
       responses:
         '200':
-          description: OK
+          description: Invitations retrieved successfully
           content:
             application/json:
               schema:
@@ -823,6 +1033,15 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/InvitationResponse'
+        '401':
+          description: Unauthorized - JWT token missing or invalid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
     post:
       tags:
         - invitations
@@ -837,7 +1056,7 @@ paths:
         required: true
       responses:
         '200':
-          description: OK
+          description: Invitation sent successfully
           content:
             application/json:
               schema:
@@ -848,10 +1067,30 @@ paths:
             text/csv:
               schema:
                 $ref: '#/components/schemas/InvitationResponse'
+        '400':
+          description: Invalid input - validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized - JWT token missing or invalid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /auth/reset-password:
     post:
       tags:
         - auth
+      summary: Reset password
+      description: Reset password using the token received by email
       operationId: resetPassword
       requestBody:
         content:
@@ -861,7 +1100,7 @@ paths:
         required: true
       responses:
         '200':
-          description: OK
+          description: Password reset successfully
           content:
             application/json:
               schema:
@@ -869,6 +1108,15 @@ paths:
             application/xml:
               schema:
                 $ref: '#/components/schemas/MessageResponse'
+        '400':
+          description: Invalid or expired token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /auth/register:
     post:
       tags:
@@ -892,6 +1140,24 @@ paths:
             application/xml:
               schema:
                 $ref: '#/components/schemas/UserLoginResponse'
+        '400':
+          description: Invalid input - validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Email already in use
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /auth/login:
     post:
       tags:
@@ -915,10 +1181,21 @@ paths:
             application/xml:
               schema:
                 $ref: '#/components/schemas/UserLoginResponse'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /auth/forgot-password:
     post:
       tags:
         - auth
+      summary: Forgot password
+      description: Send a password reset link to the provided email address
       operationId: forgotPassword
       requestBody:
         content:
@@ -928,7 +1205,7 @@ paths:
         required: true
       responses:
         '200':
-          description: OK
+          description: Password reset email sent
           content:
             application/json:
               schema:
@@ -936,13 +1213,22 @@ paths:
             application/xml:
               schema:
                 $ref: '#/components/schemas/MessageResponse'
+        '404':
+          description: Email not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /viewing-behaviour/progress/{titleId}:
     get:
       tags:
         - viewing-behaviour
       summary: Get viewing progress
       description: Get viewing progress for a specific title. Supports JSON, XML, CSV.
-      operationId: progress
+      operationId: getViewingProgress
       parameters:
         - name: titleId
           in: path
@@ -951,7 +1237,7 @@ paths:
             type: string
       responses:
         '200':
-          description: OK
+          description: Viewing progress retrieved successfully
           content:
             application/json:
               schema:
@@ -962,13 +1248,31 @@ paths:
             text/csv:
               schema:
                 $ref: '#/components/schemas/WatchEventResponse'
+        '401':
+          description: Unauthorized - JWT token missing or invalid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: No viewing progress found for this title
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /viewing-behaviour/history:
     get:
       tags:
         - viewing-behaviour
       summary: Get watch history
       description: Get profile's viewing history. Supports JSON, XML, CSV.
-      operationId: history
+      operationId: getWatchHistory
       parameters:
         - name: profileId
           in: query
@@ -977,7 +1281,7 @@ paths:
             type: string
       responses:
         '200':
-          description: OK
+          description: Watch history retrieved successfully
           content:
             application/json:
               schema:
@@ -994,6 +1298,15 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/WatchEventResponse'
+        '401':
+          description: Unauthorized - JWT token missing or invalid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /users:
     get:
       tags:
@@ -1025,37 +1338,19 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UserResponse'
+                $ref: '#/components/schemas/ErrorResponse'
             application/xml:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UserResponse'
-            text/csv:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UserResponse'
+                $ref: '#/components/schemas/ErrorResponse'
         '403':
           description: Forbidden - insufficient role
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UserResponse'
+                $ref: '#/components/schemas/ErrorResponse'
             application/xml:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UserResponse'
-            text/csv:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UserResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /users/{userId}:
     get:
       tags:
@@ -1087,37 +1382,28 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserResponse'
+                $ref: '#/components/schemas/ErrorResponse'
             application/xml:
               schema:
-                $ref: '#/components/schemas/UserResponse'
-            text/csv:
-              schema:
-                $ref: '#/components/schemas/UserResponse'
+                $ref: '#/components/schemas/ErrorResponse'
         '403':
           description: Forbidden - insufficient role
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserResponse'
+                $ref: '#/components/schemas/ErrorResponse'
             application/xml:
               schema:
-                $ref: '#/components/schemas/UserResponse'
-            text/csv:
-              schema:
-                $ref: '#/components/schemas/UserResponse'
+                $ref: '#/components/schemas/ErrorResponse'
         '404':
           description: User not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserResponse'
+                $ref: '#/components/schemas/ErrorResponse'
             application/xml:
               schema:
-                $ref: '#/components/schemas/UserResponse'
-            text/csv:
-              schema:
-                $ref: '#/components/schemas/UserResponse'
+                $ref: '#/components/schemas/ErrorResponse'
     put:
       tags:
         - users
@@ -1151,14 +1437,49 @@ paths:
                 $ref: '#/components/schemas/UserResponse'
         '400':
           description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '401':
           description: Unauthorized - JWT token missing or invalid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '403':
           description: Forbidden - insufficient role
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '404':
           description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '409':
           description: Email already in use
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /trials:
     get:
       tags:
@@ -1168,7 +1489,7 @@ paths:
       operationId: getTrial
       responses:
         '200':
-          description: OK
+          description: Trial information retrieved successfully
           content:
             application/json:
               schema:
@@ -1179,6 +1500,24 @@ paths:
             text/csv:
               schema:
                 $ref: '#/components/schemas/TrialResponse'
+        '401':
+          description: Unauthorized - JWT token missing or invalid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: No trial found for current user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
         - bearerAuth: []
   /trials/active:
@@ -1190,7 +1529,7 @@ paths:
       operationId: hasActiveTrial
       responses:
         '200':
-          description: OK
+          description: Trial status returned
           content:
             application/json:
               schema:
@@ -1201,6 +1540,15 @@ paths:
             text/csv:
               schema:
                 type: boolean
+        '401':
+          description: Unauthorized - JWT token missing or invalid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       security:
         - bearerAuth: []
   /titles/{id}:
@@ -1209,7 +1557,7 @@ paths:
         - titles
       summary: Get title by ID
       description: Get specific movie or series. Supports JSON, XML, CSV.
-      operationId: getById
+      operationId: getTitleById
       parameters:
         - name: id
           in: path
@@ -1234,25 +1582,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TitleResponse'
+                $ref: '#/components/schemas/ErrorResponse'
             application/xml:
               schema:
-                $ref: '#/components/schemas/TitleResponse'
-            text/csv:
-              schema:
-                $ref: '#/components/schemas/TitleResponse'
+                $ref: '#/components/schemas/ErrorResponse'
         '404':
           description: Title not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TitleResponse'
+                $ref: '#/components/schemas/ErrorResponse'
             application/xml:
               schema:
-                $ref: '#/components/schemas/TitleResponse'
-            text/csv:
-              schema:
-                $ref: '#/components/schemas/TitleResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /titles/tvmaze/search:
     get:
       tags:
@@ -1272,7 +1614,12 @@ paths:
         '200':
           description: Search results returned (may be empty if no match)
           content:
-            '*/*':
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TvMazeShowResponse'
+            application/xml:
               schema:
                 type: array
                 items:
@@ -1280,11 +1627,12 @@ paths:
         '401':
           description: Unauthorized - JWT token missing or invalid
           content:
-            '*/*':
+            application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/TvMazeShowResponse'
+                $ref: '#/components/schemas/ErrorResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /titles/tvmaze/lookup:
     get:
       tags:
@@ -1302,28 +1650,37 @@ paths:
         '200':
           description: Show details returned
           content:
-            '*/*':
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TvMazeShowResponse'
+            application/xml:
               schema:
                 $ref: '#/components/schemas/TvMazeShowResponse'
         '401':
           description: Unauthorized - JWT token missing or invalid
           content:
-            '*/*':
+            application/json:
               schema:
-                $ref: '#/components/schemas/TvMazeShowResponse'
+                $ref: '#/components/schemas/ErrorResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '404':
           description: No show found on TVmaze for the given query
           content:
-            '*/*':
+            application/json:
               schema:
-                $ref: '#/components/schemas/TvMazeShowResponse'
+                $ref: '#/components/schemas/ErrorResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /titles/for-profile/{profileId}:
     get:
       tags:
         - titles
       summary: Get titles for profile
       description: Get titles filtered by profile age restrictions and viewing preferences.
-      operationId: getForProfile
+      operationId: getTitlesForProfile
       parameters:
         - name: profileId
           in: path
@@ -1354,44 +1711,26 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/TitleResponse'
+                $ref: '#/components/schemas/ErrorResponse'
             application/xml:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/TitleResponse'
-            text/csv:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/TitleResponse'
+                $ref: '#/components/schemas/ErrorResponse'
         '404':
           description: Profile not found
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/TitleResponse'
+                $ref: '#/components/schemas/ErrorResponse'
             application/xml:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/TitleResponse'
-            text/csv:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/TitleResponse'
+                $ref: '#/components/schemas/ErrorResponse'
   /subscriptions/history:
     get:
       tags:
         - subscription-management
       summary: Get subscription history
       description: Get all subscriptions for current user. Supports JSON, XML, CSV.
-      operationId: getHistory
+      operationId: getSubscriptionHistory
       responses:
         '200':
           description: Subscription history retrieved successfully
@@ -1416,19 +1755,10 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/SubscriptionResponse'
+                $ref: '#/components/schemas/ErrorResponse'
             application/xml:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/SubscriptionResponse'
-            text/csv:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/SubscriptionResponse'
+                $ref: '#/components/schemas/ErrorResponse'
       security:
         - bearerAuth: []
   /subscriptions/current:
@@ -1456,25 +1786,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SubscriptionResponse'
+                $ref: '#/components/schemas/ErrorResponse'
             application/xml:
               schema:
-                $ref: '#/components/schemas/SubscriptionResponse'
-            text/csv:
-              schema:
-                $ref: '#/components/schemas/SubscriptionResponse'
+                $ref: '#/components/schemas/ErrorResponse'
         '404':
           description: No active subscription found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SubscriptionResponse'
+                $ref: '#/components/schemas/ErrorResponse'
             application/xml:
               schema:
-                $ref: '#/components/schemas/SubscriptionResponse'
-            text/csv:
-              schema:
-                $ref: '#/components/schemas/SubscriptionResponse'
+                $ref: '#/components/schemas/ErrorResponse'
       security:
         - bearerAuth: []
   /playback/test-playback:
@@ -1510,6 +1834,24 @@ paths:
             application/xml:
               schema:
                 $ref: '#/components/schemas/MessageResponse'
+        '401':
+          description: Unauthorized - JWT token missing or invalid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: User, profile, or title not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /employees/subscriptions:
     get:
       tags:
@@ -1519,7 +1861,7 @@ paths:
       operationId: getSubscriptionOverview
       responses:
         '200':
-          description: OK
+          description: Subscription overview retrieved successfully
           content:
             application/json:
               schema:
@@ -1530,6 +1872,24 @@ paths:
             text/csv:
               schema:
                 $ref: '#/components/schemas/SubscriptionOverviewResponse'
+        '401':
+          description: Unauthorized - JWT token missing or invalid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden - insufficient role
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /employees/basic-info:
     get:
       tags:
@@ -1539,7 +1899,7 @@ paths:
       operationId: getBasicInfo
       responses:
         '200':
-          description: OK
+          description: Employee info retrieved successfully
           content:
             application/json:
               schema:
@@ -1550,6 +1910,24 @@ paths:
             text/csv:
               schema:
                 $ref: '#/components/schemas/EmployeeBasicInfoResponse'
+        '401':
+          description: Unauthorized - JWT token missing or invalid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden - insufficient role
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /auth/verify:
     get:
       tags:
@@ -1573,13 +1951,22 @@ paths:
             application/xml:
               schema:
                 $ref: '#/components/schemas/MessageResponse'
+        '400':
+          description: Invalid or expired verification token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /watchlists/{id}:
     delete:
       tags:
         - watchlists
       summary: Remove from watchlist
       description: Remove a title from user's watchlist
-      operationId: remove
+      operationId: removeFromWatchlist
       parameters:
         - name: id
           in: path
@@ -1587,8 +1974,12 @@ paths:
           schema:
             type: string
       responses:
-        '200':
-          description: OK
+        '204':
+          description: Title removed from watchlist successfully
+        '401':
+          description: Unauthorized - JWT token missing or invalid
+        '404':
+          description: Watchlist item not found
   /subscriptions/cancel:
     delete:
       tags:
@@ -1614,29 +2005,31 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SubscriptionResponse'
+                $ref: '#/components/schemas/ErrorResponse'
             application/xml:
               schema:
-                $ref: '#/components/schemas/SubscriptionResponse'
-            text/csv:
-              schema:
-                $ref: '#/components/schemas/SubscriptionResponse'
+                $ref: '#/components/schemas/ErrorResponse'
         '404':
           description: No active subscription found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SubscriptionResponse'
+                $ref: '#/components/schemas/ErrorResponse'
             application/xml:
               schema:
-                $ref: '#/components/schemas/SubscriptionResponse'
-            text/csv:
-              schema:
-                $ref: '#/components/schemas/SubscriptionResponse'
+                $ref: '#/components/schemas/ErrorResponse'
       security:
         - bearerAuth: []
 components:
   schemas:
+    ErrorResponse:
+      properties:
+        message:
+          type: string
+        errors:
+          type: object
+          additionalProperties:
+            type: string
     UpdateUserRequest:
       properties:
         name:
@@ -1644,6 +2037,24 @@ components:
           type: string
         email:
           type: string
+    UserResponse:
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+        role:
+          type: string
+          enum:
+            - JUNIOR_EMPLOYEE
+            - MID_EMPLOYEE
+            - SENIOR_EMPLOYEE
+            - USER
+            - ADMINISTRATOR
+        deleted:
+          type: boolean
     UpdatePreferencesRequest:
       properties:
         preferredGenres:
@@ -2202,24 +2613,6 @@ components:
           type: string
       required:
         - email
-    UserResponse:
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        email:
-          type: string
-        role:
-          type: string
-          enum:
-            - JUNIOR_EMPLOYEE
-            - MID_EMPLOYEE
-            - SENIOR_EMPLOYEE
-            - USER
-            - ADMINISTRATOR
-        deleted:
-          type: boolean
     TrialResponse:
       properties:
         trialId:
@@ -2302,7 +2695,7 @@ components:
         role:
           type: string
       xml:
-        name: EmployeeBasicInfo
+        name: EmployeeBasicInfoResponse
   securitySchemes:
     bearerAuth:
       type: http

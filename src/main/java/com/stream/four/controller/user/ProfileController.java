@@ -3,8 +3,11 @@ package com.stream.four.controller.user;
 import com.stream.four.dto.requests.CreateProfileRequest;
 import com.stream.four.dto.response.user.ProfileResponse;
 import com.stream.four.dto.update.UpdateProfileRequest;
+import com.stream.four.exception.ErrorResponse;
 import com.stream.four.service.ProfileService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -33,8 +36,10 @@ public class ProfileController {
     @Operation(summary = "Create profile", description = "Create a new profile for the authenticated user")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Profile created successfully"),
-            @ApiResponse(responseCode = "400", description = "Invalid input - validation failed"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized - JWT token missing or invalid")
+            @ApiResponse(responseCode = "400", description = "Invalid input - validation failed",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - JWT token missing or invalid",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     public ResponseEntity<ProfileResponse> createProfile(@Valid @RequestBody CreateProfileRequest request, Principal principal) {
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -47,7 +52,8 @@ public class ProfileController {
     @Operation(summary = "Get profiles", description = "Get all profiles for the authenticated user. Supports JSON, XML, CSV.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Profiles retrieved successfully"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized - JWT token missing or invalid")
+            @ApiResponse(responseCode = "401", description = "Unauthorized - JWT token missing or invalid",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     public ResponseEntity<List<ProfileResponse>> getProfiles(Principal principal) {
         return ResponseEntity.ok(profileService.getProfiles(principal.getName()));
@@ -60,9 +66,12 @@ public class ProfileController {
     @Operation(summary = "Get profile by ID", description = "Get specific profile. Supports JSON, XML, CSV.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Profile retrieved successfully"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized - JWT token missing or invalid"),
-            @ApiResponse(responseCode = "403", description = "Forbidden - profile belongs to another user"),
-            @ApiResponse(responseCode = "404", description = "Profile not found")
+            @ApiResponse(responseCode = "401", description = "Unauthorized - JWT token missing or invalid",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "403", description = "Forbidden - profile belongs to another user",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "404", description = "Profile not found",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     public ResponseEntity<ProfileResponse> getProfile(@PathVariable String id) {
         return ResponseEntity.ok(profileService.getProfile(id));
@@ -75,10 +84,14 @@ public class ProfileController {
     @Operation(summary = "Update profile", description = "Update a profile")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Profile updated successfully"),
-            @ApiResponse(responseCode = "400", description = "Invalid input - validation failed"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized - JWT token missing or invalid"),
-            @ApiResponse(responseCode = "403", description = "Forbidden - profile belongs to another user"),
-            @ApiResponse(responseCode = "404", description = "Profile not found")
+            @ApiResponse(responseCode = "400", description = "Invalid input - validation failed",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - JWT token missing or invalid",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "403", description = "Forbidden - profile belongs to another user",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "404", description = "Profile not found",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     public ResponseEntity<ProfileResponse> updateProfile(@PathVariable String id, @Valid @RequestBody UpdateProfileRequest request) {
         return ResponseEntity.ok(profileService.updateProfile(id, request));

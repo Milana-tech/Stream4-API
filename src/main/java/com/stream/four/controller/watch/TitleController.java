@@ -3,9 +3,12 @@ package com.stream.four.controller.watch;
 import com.stream.four.dto.requests.CreateTitleRequest;
 import com.stream.four.dto.response.watch.TitleResponse;
 import com.stream.four.dto.response.watch.TvMazeShowResponse;
+import com.stream.four.exception.ErrorResponse;
 import com.stream.four.service.TitleService;
 import com.stream.four.service.TvMazeService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -30,11 +33,13 @@ public class TitleController {
     @PostMapping(produces = {
             MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE, "text/csv"
     })
-    @Operation(summary = "Create title", description = "Create a new movie or series")
+    @Operation(operationId = "createTitle", summary = "Create title", description = "Create a new movie or series")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Title created successfully"),
-            @ApiResponse(responseCode = "400", description = "Invalid input - validation failed"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized - JWT token missing or invalid")
+            @ApiResponse(responseCode = "400", description = "Invalid input - validation failed",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - JWT token missing or invalid",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     public ResponseEntity<TitleResponse> create(@Valid @RequestBody CreateTitleRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(titleService.createTitle(request));
@@ -43,10 +48,11 @@ public class TitleController {
     @GetMapping(produces = {
             MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE, "text/csv"
     })
-    @Operation(summary = "Get all titles", description = "Get all movies and series. Supports JSON, XML, CSV.")
+    @Operation(operationId = "getTitles", summary = "Get all titles", description = "Get all movies and series. Supports JSON, XML, CSV.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Titles retrieved successfully"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized - JWT token missing or invalid")
+            @ApiResponse(responseCode = "401", description = "Unauthorized - JWT token missing or invalid",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     public ResponseEntity<List<TitleResponse>> getAll() {
         return ResponseEntity.ok(titleService.getAllTitles());
@@ -55,11 +61,13 @@ public class TitleController {
     @GetMapping(value = "/{id}", produces = {
             MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE, "text/csv"
     })
-    @Operation(summary = "Get title by ID", description = "Get specific movie or series. Supports JSON, XML, CSV.")
+    @Operation(operationId = "getTitleById", summary = "Get title by ID", description = "Get specific movie or series. Supports JSON, XML, CSV.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Title retrieved successfully"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized - JWT token missing or invalid"),
-            @ApiResponse(responseCode = "404", description = "Title not found")
+            @ApiResponse(responseCode = "401", description = "Unauthorized - JWT token missing or invalid",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "404", description = "Title not found",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     public ResponseEntity<TitleResponse> getById(@PathVariable String id) {
         return ResponseEntity.ok(titleService.getTitleById(id));
@@ -68,11 +76,13 @@ public class TitleController {
     @GetMapping(value = "/for-profile/{profileId}", produces = {
             MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE, "text/csv"
     })
-    @Operation(summary = "Get titles for profile", description = "Get titles filtered by profile age restrictions and viewing preferences.")
+    @Operation(operationId = "getTitlesForProfile", summary = "Get titles for profile", description = "Get titles filtered by profile age restrictions and viewing preferences.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Filtered titles retrieved successfully"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized - JWT token missing or invalid"),
-            @ApiResponse(responseCode = "404", description = "Profile not found")
+            @ApiResponse(responseCode = "401", description = "Unauthorized - JWT token missing or invalid",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "404", description = "Profile not found",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     public ResponseEntity<List<TitleResponse>> getForProfile(@PathVariable String profileId) {
         return ResponseEntity.ok(titleService.getTitlesForProfile(profileId));
@@ -86,7 +96,8 @@ public class TitleController {
     )
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Search results returned (may be empty if no match)"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized - JWT token missing or invalid")
+            @ApiResponse(responseCode = "401", description = "Unauthorized - JWT token missing or invalid",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     public ResponseEntity<List<TvMazeShowResponse>> searchTvMaze(@RequestParam String query) {
         return ResponseEntity.ok(tvMazeService.searchShows(query));
@@ -99,8 +110,10 @@ public class TitleController {
     )
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Show details returned"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized - JWT token missing or invalid"),
-            @ApiResponse(responseCode = "404", description = "No show found on TVmaze for the given query")
+            @ApiResponse(responseCode = "401", description = "Unauthorized - JWT token missing or invalid",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "404", description = "No show found on TVmaze for the given query",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     public ResponseEntity<TvMazeShowResponse> lookupTvMaze(@RequestParam String query) {
         return ResponseEntity.ok(tvMazeService.getShow(query));
