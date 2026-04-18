@@ -15,7 +15,7 @@ info:
     procedures using the technical API_user_account.
 
 servers:
-  - url: #tbd
+  - url: http://localhost:8080
 
 security:
   - BearerAuth: []
@@ -75,7 +75,7 @@ paths:
         '401':
           description: Invalid credentials or account locked.
 
-  #Profile Management
+  # Profile Management
   /profiles:
     get:
       summary: Get all profiles for the authenticated account
@@ -144,7 +144,7 @@ paths:
         '204':
           description: Profile removed.
 
-  #Content Browsing
+  # Content Browsing
   /content:
     get:
       summary: Get content available for a profile (age filtered)
@@ -180,7 +180,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ContentDetails"
 
-  #Viewing Progress
+  # Viewing Progress
   /profiles/{profileId}/progress:
     get:
       summary: Get viewing progress for a profile
@@ -212,7 +212,7 @@ paths:
         '200':
           description: Progress updated.
 
-  #Watchlist
+  # Watchlist
   /profiles/{profileId}/watchlist:
     get:
       summary: Get watchlist for profile
@@ -259,14 +259,14 @@ paths:
         '204':
           description: Removed.
 
-  #Subscriptions
+  # Subscriptions
   /subscriptions:
     get:
       summary: Get subscription types and prices
       tags: [Subscriptions]
       responses:
         '200':
-          description: List of available subscriotion types and their monthly prices.
+          description: List of available subscription types and their monthly prices.
           content:
             application/json:
               schema:
@@ -304,7 +304,7 @@ paths:
         '200':
           description: Subscription updated.
 
-  #Invitations
+  # Invitations
   /invitations:
     post:
       summary: Send an invitation link to a new user
@@ -333,7 +333,7 @@ paths:
         '200':
           description: Invitation accepted and discount applied.
 
-#Components
+# Components
 components:
 
   securitySchemes:
@@ -360,176 +360,196 @@ components:
 
   schemas:
 
-#Accounts
-AccountRegistration:
-  type: object
-  properties:
-    email:
-      type: string
-      format: email
-    password:
-      type: string
-      minLength: 8
-  required: [email, password]
+    # Accounts
+    AccountRegistration:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 8
+      required: [email, password]
 
-AccountActivation:
-  type: object
-  properties:
-    activationCode:
-      type: string
-  required: [activationCode]
+    AccountActivation:
+      type: object
+      properties:
+        activationCode:
+          type: string
+      required: [activationCode]
 
-LoginRequest:
-  type: object
-  properties:
-    email:
-      type: string
-      format: email
-    password:
-      type: string
-  required: [email, password]
+    LoginRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+      required: [email, password]
 
-AuthResponse:
-  type: object
-  properties:
-    token:
-      type: string
+    AuthResponse:
+      type: object
+      properties:
+        token:
+          type: string
 
-#Profiles
-Profile:
-  type: object
-  properties:
-    id:
-      type: string
-    name:
-      type: string
-    ageCategory:
-      type: string
-      enum: [kids, teen, adult]
-    imageUrl:
-      type: string
-      nullable: true
+    # Profiles
+    Profile:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        ageCategory:
+          type: string
+          enum: [kids, teen, adult]
+        imageUrl:
+          type: ['string', 'null']
 
-ProfileCreate:
-  type: object
-  properties:
-    name:
-      type: string
-    ageCategory:
-      type: string
-      enum: [kids, teen, adult]
-    imageUrl:
-      type: string
-      nullable: true
-  required: [name, ageCategory]
+    ProfileCreate:
+      type: object
+      properties:
+        name:
+          type: string
+        ageCategory:
+          type: string
+          enum: [kids, teen, adult]
+        imageUrl:
+          type: ['string', 'null']
+      required: [name, ageCategory]
 
-ProfileUpdate:
-  type: object
-  properties:
-    name:
-      type: string
-    ageCategory:
-      type: string
-      enum: [kids, teen, adult]
-    imageUrl:
-      type: string
-  nullable: true
+    ProfileUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        ageCategory:
+          type: string
+          enum: [kids, teen, adult]
+        imageUrl:
+          type: ['string', 'null']
 
-#Content
-ContentItem:
-  type: object
-  properties:
-    id: { type: string }
-    title: { type: string }
-    type:
-      type: string
-      enum: [movie, series]
-    minAge: { type: integer }
-    qualityAvailable:
-      type: array
-      items:
-        type: string
-        enum: [SD, HD, UHD]
+    # Content
+    ContentItem:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        type:
+          type: string
+          enum: [movie, series]
+        minAge:
+          type: integer
+        qualityAvailable:
+          type: array
+          items:
+            type: string
+            enum: [SD, HD, UHD]
 
-ContentDetails:
-  type: object
-  properties:
-    id: { type: string }
-    title: { type: string }
-    description: { type: string }
-    type:
-      type: string
-      enum: [movie, series]
-    seasons:
-      type: array
-      items:
-        $ref: "#/components/schemas/Season"
-    minAge: { type: integer }
-    qualityAvailable:
-      type: array
-      items:
-        type: string
-        enum: [SD, HD, UHD]
+    ContentDetails:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        type:
+          type: string
+          enum: [movie, series]
+        seasons:
+          type: array
+          items:
+            $ref: "#/components/schemas/Season"
+        minAge:
+          type: integer
+        qualityAvailable:
+          type: array
+          items:
+            type: string
+            enum: [SD, HD, UHD]
 
-Season:
-  type: object
-  properties:
-    seasonNumber:
-      type: integer
-    episodes:
-      type: array
-      items:
-        $ref: "#/components/schemas/Episode"
+    Season:
+      type: object
+      properties:
+        seasonNumber:
+          type: integer
+        episodes:
+          type: array
+          items:
+            $ref: "#/components/schemas/Episode"
 
-Episode:
-  type: object
-  properties:
-    episodeNumber: { type: integer }
-    title: { type: string }
-    durationSeconds: { type: integer }
+    Episode:
+      type: object
+      properties:
+        episodeNumber:
+          type: integer
+        title:
+          type: string
+        durationSeconds:
+          type: integer
 
-#Viewing progress
-ViewingProgress:
-  type: object
-  properties:
-    contentId: { type: string }
-    positionSeconds: { type: integer }
-    completed: { type: boolean }
+    # Viewing Progress
+    ViewingProgress:
+      type: object
+      properties:
+        contentId:
+          type: string
+        positionSeconds:
+          type: integer
+        completed:
+          type: boolean
 
-ViewingProgressUpdate:
-  type: object
-  properties:
-    contentId: { type: string }
-    positionSeconds: { type: integer }
-    completed: { type: boolean }
-  required: [contentId]
+    ViewingProgressUpdate:
+      type: object
+      properties:
+        contentId:
+          type: string
+        positionSeconds:
+          type: integer
+        completed:
+          type: boolean
+      required: [contentId]
 
-#Subscriptions
-SubscriptionType:
-  type: object
-  properties:
-    plan: { type: string, enum: [SD, HD, UHD] }
-    priceMonthly: { type: number }
+    # Subscriptions
+    SubscriptionType:
+      type: object
+      properties:
+        plan:
+          type: string
+          enum: [SD, HD, UHD]
+        priceMonthly:
+          type: number
 
-Subscription:
-  type: object
-  properties:
-    plan: { type: string, enum: [SD, HD, UHD] }
-    trialActive: { type: boolean }
-    discountActive: { type: boolean }
+    Subscription:
+      type: object
+      properties:
+        plan:
+          type: string
+          enum: [SD, HD, UHD]
+        trialActive:
+          type: boolean
+        discountActive:
+          type: boolean
 
-#Invitations
-InvitationCreate:
-  type: object
-  properties:
-    email:
-      type: string
-      format: email
-  required: [email]
+    # Invitations
+    InvitationCreate:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+      required: [email]
 
-InvitationAccept:
-  type: object
-  properties:
-    invitationCode:
-      type: string
-  required: [invitationCode]
+    InvitationAccept:
+      type: object
+      properties:
+        invitationCode:
+          type: string
+      required: [invitationCode]

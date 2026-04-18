@@ -79,7 +79,7 @@ You should see: `Database initialisation complete.`
 | Service | URL |
 |---|---|
 | Frontend | http://localhost:3001 |
-| API (Swagger UI) | http://localhost:8080/swagger-ui/index.html |
+| API (Swagger UI) | http://localhost:8080/swagger-ui.html |
 | API Docs (OpenAPI 3.1) | http://localhost:8080/v3/api-docs |
 | phpMyAdmin (DBMS) | http://localhost:8083 |
 | MySQL (DataGrip / DBeaver) | localhost:3306 |
@@ -204,7 +204,7 @@ The API integrates with the free [TVmaze public API](https://api.tvmaze.com) to 
 
 | Role | Permissions |
 |---|---|
-| junior_employee | SELECT on users, profiles, invitations |
+| junior_employee | SELECT on users, profile, profile_filters, invitations, employee, role_right |
 | mid_employee | SELECT on all non-financial tables + UPDATE profiles + activate/deactivate accounts |
 | senior_employee | Full SELECT/INSERT/UPDATE/DELETE on all tables |
 | API_user_account | SELECT on views + EXECUTE on stored procedures only |
