@@ -19,9 +19,12 @@ import java.util.List;
  * Runs automatically after Hibernate has created all tables (docker profile only).
  * Handles four things so that a plain "docker compose up" is enough:
  *   1. Create internal DB users and apply GRANT statements
- *   2. Create API_user_account with access to views and stored procedures
+ *   2. Create views, stored procedures and grant API_user_account access to them
  *   3. Add missing foreign key constraints
  *   4. Seed test data (idempotent – uses INSERT IGNORE)
+ *
+ * API_user_account is the MySQL user the Spring app connects as (MYSQL_USER env var).
+ * MySQL creates it on first startup; the initializer only sets up its views/SP grants.
  */
 @Slf4j
 @Component
@@ -48,9 +51,6 @@ public class DbEmployeeAccessInitializer implements ApplicationRunner {
 
     @Value("${EMPLOYEE_SENIOR_PASSWORD:Senior@Stream4!}")
     private String seniorPassword;
-
-    @Value("${API_USER_PASSWORD:Api@Stream4!}")
-    private String apiUserPassword;
 
     @Override
     public void run(ApplicationArguments args) {
@@ -93,11 +93,9 @@ public class DbEmployeeAccessInitializer implements ApplicationRunner {
         stmt.execute("CREATE USER IF NOT EXISTS 'junior_employee'@'%' IDENTIFIED BY '" + juniorPassword.replace("'", "\\'") + "'");
         stmt.execute("CREATE USER IF NOT EXISTS 'mid_employee'@'%'    IDENTIFIED BY '" + midPassword.replace("'", "\\'") + "'");
         stmt.execute("CREATE USER IF NOT EXISTS 'senior_employee'@'%' IDENTIFIED BY '" + seniorPassword.replace("'", "\\'") + "'");
-        stmt.execute("CREATE USER IF NOT EXISTS 'API_user_account'@'%' IDENTIFIED BY '" + apiUserPassword.replace("'", "\\'") + "'");
         stmt.execute("ALTER USER 'junior_employee'@'%' IDENTIFIED BY '" + juniorPassword.replace("'", "\\'") + "'");
         stmt.execute("ALTER USER 'mid_employee'@'%'    IDENTIFIED BY '" + midPassword.replace("'", "\\'") + "'");
         stmt.execute("ALTER USER 'senior_employee'@'%' IDENTIFIED BY '" + seniorPassword.replace("'", "\\'") + "'");
-        stmt.execute("ALTER USER 'API_user_account'@'%' IDENTIFIED BY '" + apiUserPassword.replace("'", "\\'") + "'");
     }
 
     // ── 2. EMPLOYEE GRANTS ────────────────────────────────────────────────────
