@@ -11,6 +11,9 @@ public class WatchEventResponse
     @JacksonXmlProperty (localName = "titleId")
     private String titleId;
 
+    @JacksonXmlProperty(localName = "titleName")
+    private String titleName;
+
     @JacksonXmlProperty(localName = "episodeId")
     private String episodeId;
 

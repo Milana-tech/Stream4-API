@@ -18,8 +18,8 @@ public class CreateProfileRequest {
     private String avatar;
 
     @NotNull(message = "Age is required")
-    @Min(value = 0, message = "Age must be 0 or greater")
-    @Max(value = 120, message = "Age must be 120 or less")
+    @Min(value = 3, message = "Age must be 3 or greater")
+    @Max(value = 95, message = "Age must be 95 or less")
     private Integer age;
 
     private List<ContentWarning> contentFilters;

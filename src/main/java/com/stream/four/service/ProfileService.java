@@ -18,7 +18,14 @@ public class ProfileService {
     private final ProfileRepository profileRepository;
     private final ProfileMapper profileMapper;
 
+    private static final int MAX_PROFILES = 5;
+
     public ProfileResponse createProfile(String userId, CreateProfileRequest request) {
+        long existing = profileRepository.findByUserIdAndDeletedFalse(userId).size();
+        if (existing >= MAX_PROFILES) {
+            throw new IllegalStateException("Maximum of " + MAX_PROFILES + " profiles allowed per account.");
+        }
+
         var profile = profileMapper.toEntity(request);
         profile.setUserId(userId);
         profile.setMaturityLevel(deriveMaturityLevel(request.getAge()));

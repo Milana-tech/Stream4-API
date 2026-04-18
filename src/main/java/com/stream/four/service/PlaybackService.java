@@ -12,6 +12,7 @@ import com.stream.four.repository.ProfileRepository;
 import com.stream.four.repository.TitleRepository;
 import com.stream.four.repository.UserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Set;
 
@@ -22,18 +23,29 @@ public class PlaybackService {
     private final TitleRepository titleRepository;
     private final ProfileRepository profileRepository;
     private final ContentService contentService;
+    private final TrialService trialService;
 
     public PlaybackService(UserRepository userRepository, TitleRepository titleRepository,
-                           ProfileRepository profileRepository, ContentService contentService) {
+                           ProfileRepository profileRepository, ContentService contentService,
+                           TrialService trialService) {
         this.userRepository = userRepository;
         this.titleRepository = titleRepository;
         this.profileRepository = profileRepository;
         this.contentService = contentService;
+        this.trialService = trialService;
     }
 
     public VideoQuality getAvailableQuality(User user, Title title) {
-        if (user.getSubscription() == null || !user.getSubscription().isActive()) {
+        boolean hasActiveSub = user.getSubscription() != null && user.getSubscription().isActive();
+        boolean hasActiveTrial = trialService.hasActiveTrial(user.getUserId());
+
+        if (!hasActiveSub && !hasActiveTrial) {
             return VideoQuality.SD;
+        }
+
+        // Trial users get HD at most
+        if (!hasActiveSub) {
+            return title.getSupportedQualities().contains(VideoQuality.HD) ? VideoQuality.HD : VideoQuality.SD;
         }
 
         Set<VideoQuality> supported = title.getSupportedQualities();
@@ -60,8 +72,10 @@ public class PlaybackService {
         Profile profile = profileRepository.findById(profileId)
                 .orElseThrow(() -> new ResourceNotFoundException("Profile not found"));
 
-        if (user.getSubscription() == null || !user.getSubscription().isActive()) {
-            return "User " + email + " has no active subscription. Quality: SD";
+        boolean hasAccess = (user.getSubscription() != null && user.getSubscription().isActive())
+                || trialService.hasActiveTrial(user.getUserId());
+        if (!hasAccess) {
+            return "User " + email + " has no active subscription or trial. Quality: SD";
         }
 
         if (!contentService.canProfileWatch(profile, title)) {

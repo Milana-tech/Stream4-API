@@ -18,6 +18,9 @@ public class EmailService {
     @Value("${app.verification.base-url}")
     private String baseUrl;
 
+    @Value("${app.frontend.base-url}")
+    private String frontendUrl;
+
     public void sendVerificationEmail(String to, String token) {
         String link = baseUrl + "/auth/verify?token=" + token;
 
@@ -42,7 +45,7 @@ public class EmailService {
     }
 
     public void sendPasswordResetEmail(String to, String token) {
-        String link = baseUrl + "/auth/reset-password?token=" + token;
+        String link = frontendUrl + "?reset-token=" + token;
 
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(from);

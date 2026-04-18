@@ -64,15 +64,21 @@ public class SubscriptionService {
 
         SubscriptionPlan plan = request.getPlan();
 
-        Subscription subscription = Subscription.builder()
-                .user(user)
-                .status(SubscriptionStatus.ACTIVE)
-                .plan(plan)
-                .totalPrice(plan.getMonthlyPrice())
-                .startDate(LocalDate.now())
-                .endDate(LocalDate.now().plusMonths(1))
-                .autoRenew(true)
-                .build();
+        // Reuse existing cancelled/expired record if present (UNIQUE constraint on userid)
+        Subscription subscription = subscriptionRepository.findByUser_UserId(userId)
+                .stream().findFirst()
+                .orElseGet(() -> Subscription.builder().user(user).build());
+
+        subscription.setStatus(SubscriptionStatus.ACTIVE);
+        subscription.setPlan(plan);
+        subscription.setTotalPrice(plan.getMonthlyPrice());
+        subscription.setStartDate(LocalDate.now());
+        subscription.setEndDate(LocalDate.now().plusMonths(1));
+        subscription.setAutoRenew(true);
+        subscription.setDiscountPercentage(null);
+        subscription.setDiscountEndDate(null);
+        subscription.setReferralDiscountApplied(false);
+        subscription.setReferralDiscountUsed(false);
 
         // Auto-apply referral discount if user was invited and discount not yet used
         if (user.getInvitedBy() != null && !user.isReferralDiscountUsed()) {
@@ -173,6 +179,7 @@ public class SubscriptionService {
                 .ifPresent(invitation -> {
                     invitation.setDiscountApplied(true);
                     invitation.setDiscountAppliedAt(LocalDate.now());
+                    invitation.setDiscountEndDate(LocalDate.now().plusMonths(1));
                     invitationRepository.save(invitation);
                 });
     }

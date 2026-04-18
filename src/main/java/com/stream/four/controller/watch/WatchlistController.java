@@ -34,9 +34,9 @@ public class WatchlistController {
     @GetMapping(produces = {
             MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE, "text/csv"
     })
-    @Operation(summary = "Get watchlist", description = "Get user's watchlist. Supports JSON, XML, CSV.")
-    public ResponseEntity<List<WatchlistItemResponse>> getAll(Principal principal) {
-        return ResponseEntity.ok(watchlistService.getAll(principal.getName()));
+    @Operation(summary = "Get watchlist", description = "Get profile's watchlist. Supports JSON, XML, CSV.")
+    public ResponseEntity<List<WatchlistItemResponse>> getAll(@RequestParam String profileId, Principal principal) {
+        return ResponseEntity.ok(watchlistService.getAll(principal.getName(), profileId));
     }
 
     @DeleteMapping("/{id}")

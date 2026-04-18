@@ -17,6 +17,8 @@ public class WatchlistItem {
 
     private String userId;
 
+    private String profileId;
+
     private String titleId;
 
     private long addedAt; // timestamp

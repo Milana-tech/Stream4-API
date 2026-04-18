@@ -17,6 +17,8 @@ public class WatchEvent {
 
     private String userId;
 
+    private String profileId;
+
     private String titleId;
     
     private String episodeId; // null for movies

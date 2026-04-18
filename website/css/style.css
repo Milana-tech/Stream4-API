@@ -6,14 +6,19 @@
     font-family: sans-serif;
 }
 
-body 
+body
 {
     background: #0f1115;
     color: #ffffff;
-    height: 100vh;
+    min-height: 100vh;
+}
+
+body:not(.home-page):not(.profiles-page)
+{
     display: flex;
     align-items: center;
     justify-content: center;
+    height: 100vh;
 }
 
 .auth-container 
@@ -110,9 +115,20 @@ input::placeholder
     text-decoration: underline;
 }
 
-.profiles-container 
+.profiles-page
+{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+.profiles-container
 {
     text-align: center;
+    width: 100%;
+    max-width: 900px;
+    padding: 2rem;
 }
 
 .profiles-container h1 
@@ -120,26 +136,218 @@ input::placeholder
     margin-bottom: 2rem;
 }
 
-.profiles-grid 
+.profiles-grid
 {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 1.5rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
     margin-bottom: 2rem;
 }
 
-.profile-card 
+.profile-card
 {
     cursor: pointer;
     transition: transform 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 120px;
 }
 
-.profile-card:hover 
+.profile-card:hover
 {
     transform: scale(1.05);
 }
 
-.avatar 
+.profile-card .edit-btn,
+.profile-card .delete-btn
+{
+    margin-top: 0.4rem;
+    width: 100%;
+    padding: 0.3rem 0;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+
+.profile-card .pref-btn
+{
+    margin-top: 0.4rem;
+    width: 100%;
+    padding: 0.3rem 0;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+    background: rgba(167, 139, 250, 0.15);
+    color: #a78bfa;
+    border: 1px solid rgba(167, 139, 250, 0.4);
+}
+
+.profile-card .pref-btn:hover
+{
+    background: rgba(167, 139, 250, 0.3);
+}
+
+.modal select
+{
+    background: #0f1115;
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    padding: 0.6rem;
+    width: 100%;
+    outline: none;
+}
+
+.profile-card .edit-btn
+{
+    background: rgba(45, 212, 191, 0.15);
+    color: #2dd4bf;
+    border: 1px solid rgba(45, 212, 191, 0.4);
+}
+
+.profile-card .edit-btn:hover
+{
+    background: rgba(45, 212, 191, 0.3);
+}
+
+.profile-card .delete-btn
+{
+    background: rgba(239, 68, 68, 0.15);
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, 0.4);
+}
+
+.profile-card .delete-btn:hover
+{
+    background: rgba(239, 68, 68, 0.3);
+}
+
+.modal-overlay
+{
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+}
+
+.modal
+{
+    background: #171a21;
+    padding: 2rem;
+    border-radius: 12px;
+    width: 380px;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    box-shadow: 0 0 40px rgba(0,0,0,0.6);
+}
+
+.modal h2
+{
+    color: #2dd4bf;
+    margin-bottom: 0.5rem;
+}
+
+.modal-label
+{
+    color: #9ca3af;
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+}
+
+.avatar-picker
+{
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.avatar-picker span
+{
+    font-size: 2rem;
+    cursor: pointer;
+    padding: 0.3rem;
+    border-radius: 8px;
+    border: 2px solid transparent;
+    transition: border-color 0.2s ease;
+}
+
+.avatar-picker span:hover
+{
+    border-color: rgba(45, 212, 191, 0.5);
+}
+
+.avatar-picker span.selected
+{
+    border-color: #2dd4bf;
+    background: rgba(45, 212, 191, 0.1);
+}
+
+.filters-grid
+{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+}
+
+.filters-grid label
+{
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    color: #e5e7eb;
+    cursor: pointer;
+}
+
+.filters-grid input[type="checkbox"]
+{
+    accent-color: #2dd4bf;
+    width: 14px;
+    height: 14px;
+}
+
+.modal-buttons
+{
+    display: flex;
+    gap: 1rem;
+    margin-top: 0.5rem;
+}
+
+.modal-buttons .primary-btn,
+.modal-buttons .secondary-btn
+{
+    flex: 1;
+}
+
+.profile-meta
+{
+    font-size: 0.75rem;
+    color: #9ca3af;
+    margin-bottom: 0.2rem;
+}
+
+.avatar-img
+{
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin: 0 auto 0.5rem;
+}
+
+.avatar
 {
     width: 100px;
     height: 100px;
@@ -221,14 +429,15 @@ input::placeholder
     color: #e5e7eb;
 }
 
-.row-scroll 
+.row-scroll
 {
     display: flex;
     gap: 1rem;
-    overflow-x: hidden;
+    overflow-x: auto;
     scroll-behavior: smooth;
     width: 100%;
-    padding-bottom: 0.5rem;
+    min-width: 0;
+    padding: 0.5rem 2rem;
 }
 
 .row-scroll::-webkit-scrollbar 
@@ -242,12 +451,13 @@ input::placeholder
     border-radius: 10px;
 }
 
-.row-wrapper 
+.row-wrapper
 {
     display: flex;
     align-items: center;
     width: 100%;
     position: relative;
+    overflow: hidden;
 }
 
 .arrow 
@@ -298,6 +508,7 @@ input::placeholder
     border-radius: 12px;
     display: flex;
     align-items: flex-end;
+    justify-content: center;
     padding: 1rem;
     cursor: pointer;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -332,10 +543,308 @@ input::placeholder
     opacity: 1;
 }
 
-.card-title 
+.card-info
+{
+    z-index: 2;
+    width: 100%;
+    text-align: center;
+}
+
+.card-title
 {
     font-size: 1rem;
     color: #ffffff;
     font-weight: 500;
-    z-index: 2
+}
+
+.card-meta
+{
+    font-size: 0.75rem;
+    color: #9ca3af;
+    margin-top: 0.2rem;
+}
+
+.card-badge
+{
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    background: rgba(45, 212, 191, 0.2);
+    color: #2dd4bf;
+    font-size: 0.7rem;
+    font-weight: bold;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    z-index: 2;
+}
+
+.card-icon
+{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -60%);
+    font-size: 2.5rem;
+    z-index: 1;
+    opacity: 0.6;
+}
+
+.title-modal
+{
+    max-width: 520px;
+    width: 100%;
+    max-height: 85vh;
+    overflow-y: auto;
+    position: relative;
+}
+
+.modal-close
+{
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    color: #9ca3af;
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+
+.modal-close:hover { color: #ffffff; }
+
+.title-modal-header
+{
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+}
+
+.title-icon-large
+{
+    font-size: 3.5rem;
+    flex-shrink: 0;
+}
+
+.modal-meta
+{
+    font-size: 0.8rem;
+    color: #9ca3af;
+    margin: 0.3rem 0 0.6rem;
+}
+
+.modal-desc
+{
+    font-size: 0.9rem;
+    color: #e5e7eb;
+    line-height: 1.5;
+}
+
+.modal-section
+{
+    margin-top: 1rem;
+}
+
+.quality-buttons
+{
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+}
+
+.quality-btn
+{
+    padding: 0.4rem 1.2rem;
+    border-radius: 6px;
+    border: 1px solid rgba(45, 212, 191, 0.4);
+    background: rgba(45, 212, 191, 0.1);
+    color: #2dd4bf;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.quality-btn:hover { background: rgba(45, 212, 191, 0.25); }
+.quality-btn.selected
+{
+    background: #2dd4bf;
+    color: #0f1115;
+}
+
+.modal select
+{
+    background: #0f1115;
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    padding: 0.6rem;
+    width: 100%;
+    outline: none;
+    margin-top: 0.5rem;
+}
+
+.episode-row
+{
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.6rem 0.8rem;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 0.4rem;
+    transition: background 0.2s;
+}
+
+.episode-row:hover { background: rgba(255,255,255,0.05); }
+.episode-row.selected { background: rgba(45, 212, 191, 0.1); border: 1px solid rgba(45,212,191,0.3); }
+
+.ep-number
+{
+    color: #2dd4bf;
+    font-size: 0.8rem;
+    font-weight: bold;
+    min-width: 30px;
+}
+
+.ep-name
+{
+    color: #e5e7eb;
+    font-size: 0.9rem;
+}
+
+.title-modal-actions
+{
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.title-modal-actions .primary-btn,
+.title-modal-actions .secondary-btn
+{
+    flex: 1;
+}
+
+.secondary-btn.active
+{
+    background: rgba(45, 212, 191, 0.15);
+    color: #2dd4bf;
+}
+
+.progress-slider
+{
+    width: 100%;
+    accent-color: #2dd4bf;
+    margin: 0.5rem 0;
+}
+
+.finished-label
+{
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: #e5e7eb;
+    cursor: pointer;
+}
+
+.finished-label input
+{
+    accent-color: #2dd4bf;
+    width: 16px;
+    height: 16px;
+}
+
+.status-box
+{
+    background: #0f1115;
+    border-radius: 8px;
+    padding: 0.8rem 1rem;
+    font-size: 0.95rem;
+}
+
+.status-active { color: #2dd4bf; }
+.status-trial  { color: #a78bfa; }
+.status-none   { color: #9ca3af; }
+
+.plan-cards
+{
+    display: flex;
+    gap: 1rem;
+    margin-top: 0.5rem;
+}
+
+.plan-card
+{
+    flex: 1;
+    background: #0f1115;
+    border: 2px solid transparent;
+    border-radius: 10px;
+    padding: 1rem 0.5rem;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+.plan-card:hover { border-color: rgba(45,212,191,0.4); }
+.plan-card.selected { border-color: #2dd4bf; background: rgba(45,212,191,0.08); }
+
+.plan-name
+{
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #2dd4bf;
+}
+
+.plan-price
+{
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #ffffff;
+    margin: 0.3rem 0;
+}
+
+.plan-price span { font-size: 0.8rem; color: #9ca3af; }
+
+.plan-desc { font-size: 0.75rem; color: #9ca3af; }
+
+.cancel-sub-btn
+{
+    background: rgba(239,68,68,0.15);
+    color: #f87171;
+    border: 1px solid rgba(239,68,68,0.4);
+    border-radius: 6px;
+    padding: 0.6rem 1.2rem;
+    cursor: pointer;
+    font-weight: bold;
+    width: 100%;
+    transition: background 0.2s;
+}
+
+.cancel-sub-btn:hover { background: rgba(239,68,68,0.3); }
+
+.invite-row
+{
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+}
+
+.invite-row input
+{
+    flex: 1;
+    padding: 0.6rem;
+    border-radius: 6px;
+    border: none;
+    background: #0f1115;
+    color: white;
+    outline: none;
+}
+
+.empty-row
+{
+    color: #9ca3af;
+    font-size: 0.9rem;
+    padding: 1rem;
+    white-space: nowrap;
 }

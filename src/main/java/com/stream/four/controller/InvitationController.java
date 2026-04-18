@@ -31,4 +31,12 @@ public class InvitationController {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(invitationService.createInvitation(principal.getName(), request));
     }
+
+    @GetMapping(produces = {
+            MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE, "text/csv"
+    })
+    @Operation(summary = "Get sent invitations", description = "Get all invitations sent by the current user, including discount status and validity period")
+    public ResponseEntity<java.util.List<InvitationResponse>> getSent(Principal principal) {
+        return ResponseEntity.ok(invitationService.getSentInvitations(principal.getName()));
+    }
 }
