@@ -88,6 +88,21 @@ public class SubscriptionService {
             }
         }
 
+        // Deferred inviter discount: invitee already subscribed before inviter did
+        if (!user.isReferralDiscountUsed()) {
+            invitationRepository.findByInviterUserId(userId).stream()
+                    .filter(inv -> inv.isDiscountApplied() && inv.getInviteeUserId() != null)
+                    .findFirst()
+                    .ifPresent(inv -> {
+                        subscription.setReferralDiscountApplied(true);
+                        subscription.setDiscountPercentage(REFERRAL_DISCOUNT_PERCENTAGE);
+                        subscription.setDiscountEndDate(LocalDate.now().plusMonths(1));
+                        subscription.setReferralDiscountUsed(true);
+                        user.setReferralDiscountUsed(true);
+                        userRepository.save(user);
+                    });
+        }
+
         Subscription saved = subscriptionRepository.save(subscription);
 
         if (trialService.hasActiveTrial(userId)) {
@@ -160,20 +175,22 @@ public class SubscriptionService {
         inviteeSub.setDiscountPercentage(REFERRAL_DISCOUNT_PERCENTAGE);
         inviteeSub.setDiscountEndDate(LocalDate.now().plusMonths(1));
         inviteeSub.setReferralDiscountUsed(true);
+        invitee.setReferralDiscountUsed(true);
+        userRepository.save(invitee);
 
-        subscriptionRepository.findByUser_UserIdAndStatus(inviter.getUserId(), SubscriptionStatus.ACTIVE)
-                .ifPresent(inviterSub -> {
+        boolean inviterGotDiscount = subscriptionRepository
+                .findByUser_UserIdAndStatus(inviter.getUserId(), SubscriptionStatus.ACTIVE)
+                .map(inviterSub -> {
                     inviterSub.setReferralDiscountApplied(true);
                     inviterSub.setDiscountPercentage(REFERRAL_DISCOUNT_PERCENTAGE);
                     inviterSub.setDiscountEndDate(LocalDate.now().plusMonths(1));
                     inviterSub.setReferralDiscountUsed(true);
                     subscriptionRepository.save(inviterSub);
-                });
-
-        invitee.setReferralDiscountUsed(true);
-        inviter.setReferralDiscountUsed(true);
-        userRepository.save(invitee);
-        userRepository.save(inviter);
+                    inviter.setReferralDiscountUsed(true);
+                    userRepository.save(inviter);
+                    return true;
+                })
+                .orElse(false);
 
         invitationRepository.findByInviteeUserId(invitee.getUserId())
                 .ifPresent(invitation -> {
