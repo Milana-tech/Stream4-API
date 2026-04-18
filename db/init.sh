@@ -1,8 +1,8 @@
 #!/bin/bash
 # StreamFlix – DBMS Employee Access
 # Creates internal MySQL users on first database initialisation.
-# GRANTs are applied by apply_grants.sh after the backend starts
-# and Hibernate has created all tables.
+# GRANTs and final passwords are applied by DbEmployeeAccessInitializer
+# after the backend starts and Hibernate has created all tables.
 
 mysql -u root -p"${MYSQL_ROOT_PASSWORD}" <<MYSQL
 CREATE USER IF NOT EXISTS 'junior_employee'@'%' IDENTIFIED BY 'Junior@Stream4!';

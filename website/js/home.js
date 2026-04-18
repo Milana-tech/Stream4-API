@@ -1,6 +1,7 @@
 const API_BASE_URL = "http://localhost:8080";
 
 const continueRow   = document.getElementById("continueRow");
+const watchedRow    = document.getElementById("watchedRow");
 const recommendedRow = document.getElementById("recommendedRow");
 const popularRow    = document.getElementById("popularRow");
 const watchlistRow  = document.getElementById("watchlistRow");
@@ -61,6 +62,8 @@ async function loadContinueWatching() {
         if (res.ok) {
             const history = await res.json();
             const unfinished = history.filter(e => !e.finished);
+            const finished   = history.filter(e => e.finished);
+
             continueRow.innerHTML = "";
             if (unfinished.length === 0) {
                 document.getElementById("continueSection").style.display = "none";
@@ -68,8 +71,34 @@ async function loadContinueWatching() {
                 document.getElementById("continueSection").style.display = "block";
                 unfinished.forEach(e => createHistoryCard(continueRow, e));
             }
+
+            watchedRow.innerHTML = "";
+            if (finished.length === 0) {
+                document.getElementById("watchedSection").style.display = "none";
+            } else {
+                document.getElementById("watchedSection").style.display = "block";
+                finished.forEach(e => createWatchedCard(watchedRow, e));
+            }
         }
     } catch (e) { console.error(e); }
+}
+
+function createWatchedCard(row, entry) {
+    const card = document.createElement("div");
+    card.classList.add("card");
+    card.innerHTML = `
+        <div class="card-badge">WATCHED</div>
+        <div class="card-info">
+            <p class="card-title">${entry.titleName || entry.titleId}</p>
+        </div>
+    `;
+    card.addEventListener("click", async () => {
+        const res = await fetch(`${API_BASE_URL}/titles/${entry.titleId}`, {
+            headers: { "Authorization": `Bearer ${token}`, "Accept": "application/json" }
+        });
+        if (res.ok) openTitleModal(await res.json());
+    });
+    row.appendChild(card);
 }
 
 function createHistoryCard(row, entry) {
@@ -368,9 +397,14 @@ document.getElementById("saveWatchBtn").addEventListener("click", async () => {
 let selectedPlan = null;
 
 document.getElementById("accountBtn").addEventListener("click", async () => {
-    await loadSubscriptionStatus();
+    await Promise.all([loadSubscriptionStatus(), loadAccountInfo()]);
     document.getElementById("accountModal").style.display = "flex";
 });
+
+async function loadAccountInfo() {
+    const current = localStorage.getItem("activeProfile") || "";
+    if (current) document.getElementById("editName").placeholder = `Current: ${current}`;
+}
 
 document.getElementById("closeAccountModal").addEventListener("click", () => {
     document.getElementById("accountModal").style.display = "none";
@@ -470,6 +504,48 @@ document.getElementById("cancelSubBtn").addEventListener("click", async () => {
     } catch (e) { alert("Could not reach the server."); }
 });
 
+function getUserIdFromToken() {
+    try {
+        const payload = token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
+        return JSON.parse(atob(payload)).sub;
+    } catch { return null; }
+}
+
+document.getElementById("saveNameBtn").addEventListener("click", async () => {
+    const name = document.getElementById("editName").value.trim();
+    if (!name) { alert("Please enter a new name."); return; }
+    if (!profileId) { alert("No active profile selected."); return; }
+    try {
+        const current = await fetch(`${API_BASE_URL}/profiles/${profileId}`, {
+            headers: { "Authorization": `Bearer ${token}`, "Accept": "application/json" }
+        });
+        if (!current.ok) { alert("Could not load profile."); return; }
+        const profile = await current.json();
+
+        const res = await fetch(`${API_BASE_URL}/profiles/${profileId}`, {
+            method: "PUT",
+            headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json", "Accept": "application/json" },
+            body: JSON.stringify({
+                name,
+                avatar: profile.avatar || null,
+                age: profile.age,
+                contentFilters: profile.contentFilters || []
+            })
+        });
+        if (res.ok) {
+            localStorage.setItem("activeProfile", name);
+            document.getElementById("activeProfile").textContent = `Profile: ${name}`;
+            document.getElementById("editName").value = "";
+            document.getElementById("editName").placeholder = `Current: ${name}`;
+            alert("Name updated!");
+        } else {
+            const err = await res.json().catch(() => null);
+            alert(err?.message || "Could not update name.");
+        }
+    } catch (e) { alert("Could not reach the server."); }
+});
+
+
 document.getElementById("sendInviteBtn").addEventListener("click", async () => {
     const email = document.getElementById("inviteEmail").value.trim();
     if (!email) { alert("Please enter an email address."); return; }
@@ -514,7 +590,7 @@ document.getElementById("logoutBtn").addEventListener("click", () => {
     window.location.href = "index.html";
 });
 
-[continueRow, recommendedRow, popularRow, watchlistRow].forEach(row => {
+[continueRow, watchedRow, recommendedRow, popularRow, watchlistRow].forEach(row => {
     row.addEventListener("scroll", () => updateArrows(row.id));
     updateArrows(row.id);
 });

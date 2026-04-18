@@ -1,18 +1,18 @@
 package com.stream.four.controller.user;
 
+import com.stream.four.dto.requests.UpdateUserRequest;
 import com.stream.four.dto.response.user.UserResponse;
 import com.stream.four.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -50,5 +50,23 @@ public class UserController {
     })
     public ResponseEntity<UserResponse> getUser(@PathVariable String userId) {
         return ResponseEntity.ok(userService.getUser(userId));
+    }
+
+    @PreAuthorize("hasRole('ADMINISTRATOR') or #userId == authentication.name")
+    @PutMapping(value = "/users/{userId}", produces = {
+            MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE, "text/csv"
+    })
+    @Operation(summary = "Update user", description = "Update a user's name or email. Users can only update their own account; administrators can update any account.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "User updated successfully"),
+            @ApiResponse(responseCode = "400", description = "Validation error"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - JWT token missing or invalid"),
+            @ApiResponse(responseCode = "403", description = "Forbidden - insufficient role"),
+            @ApiResponse(responseCode = "404", description = "User not found"),
+            @ApiResponse(responseCode = "409", description = "Email already in use")
+    })
+    public ResponseEntity<UserResponse> updateUser(@PathVariable String userId,
+                                                    @Valid @RequestBody UpdateUserRequest request) {
+        return ResponseEntity.ok(userService.updateUser(userId, request));
     }
 }
