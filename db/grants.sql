@@ -11,18 +11,18 @@
 -- (Hibernate) requires direct table access; the views and stored
 -- procedures exist on the DBMS for internal employee use only.
 -- ---------------------------------------------------------------
-CREATE USER IF NOT EXISTS 'api_user'@'%' IDENTIFIED BY 'api_user_pass';
+CREATE USER IF NOT EXISTS 'API_user_account'@'%' IDENTIFIED BY '${API_USER_PASSWORD}';
 
 -- Read-only access to predefined views
-GRANT SELECT ON stream4.v_active_subscriptions TO 'api_user'@'%';
-GRANT SELECT ON stream4.v_title_catalogue      TO 'api_user'@'%';
-GRANT SELECT ON stream4.v_user_profiles        TO 'api_user'@'%';
-GRANT SELECT ON stream4.v_viewing_history      TO 'api_user'@'%';
+GRANT SELECT ON stream4.v_active_subscriptions TO 'API_user_account'@'%';
+GRANT SELECT ON stream4.v_title_catalogue      TO 'API_user_account'@'%';
+GRANT SELECT ON stream4.v_user_profiles        TO 'API_user_account'@'%';
+GRANT SELECT ON stream4.v_viewing_history      TO 'API_user_account'@'%';
 
 -- Execute access to predefined stored procedures
-GRANT EXECUTE ON PROCEDURE stream4.sp_cancel_subscription      TO 'api_user'@'%';
-GRANT EXECUTE ON PROCEDURE stream4.sp_get_subscription_overview TO 'api_user'@'%';
-GRANT EXECUTE ON PROCEDURE stream4.sp_get_user_by_email        TO 'api_user'@'%';
+GRANT EXECUTE ON PROCEDURE stream4.sp_cancel_subscription       TO 'API_user_account'@'%';
+GRANT EXECUTE ON PROCEDURE stream4.sp_get_subscription_overview TO 'API_user_account'@'%';
+GRANT EXECUTE ON PROCEDURE stream4.sp_get_user_by_email         TO 'API_user_account'@'%';
 
 -- ---------------------------------------------------------------
 -- JUNIOR EMPLOYEE
@@ -46,6 +46,7 @@ GRANT SELECT ON stream4.profile                   TO 'mid_employee'@'%';
 GRANT SELECT ON stream4.profile_filters           TO 'mid_employee'@'%';
 GRANT SELECT ON stream4.preferences               TO 'mid_employee'@'%';
 GRANT SELECT ON stream4.preferences_genres        TO 'mid_employee'@'%';
+
 GRANT SELECT ON stream4.invitations               TO 'mid_employee'@'%';
 GRANT SELECT ON stream4.employee                  TO 'mid_employee'@'%';
 GRANT SELECT ON stream4.role_right                TO 'mid_employee'@'%';

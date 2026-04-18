@@ -118,6 +118,7 @@ public class DbEmployeeAccessInitializer implements ApplicationRunner {
             "GRANT SELECT ON " + d + ".`profile`                   TO 'mid_employee'@'%'",
             "GRANT SELECT ON " + d + ".`profile_filters`           TO 'mid_employee'@'%'",
             "GRANT SELECT ON " + d + ".`preferences`               TO 'mid_employee'@'%'",
+            "GRANT SELECT ON " + d + ".`preferences_genres`        TO 'mid_employee'@'%'",
             "GRANT SELECT ON " + d + ".`invitations`               TO 'mid_employee'@'%'",
             "GRANT SELECT ON " + d + ".`employee`                  TO 'mid_employee'@'%'",
             "GRANT SELECT ON " + d + ".`role_right`                TO 'mid_employee'@'%'",
