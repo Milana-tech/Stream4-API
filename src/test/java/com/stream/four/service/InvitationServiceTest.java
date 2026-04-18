@@ -40,6 +40,7 @@ class InvitationServiceTest {
     void createInvitation_validInviter_savesInvitationAndSendsEmail() {
         var inviter = new User();
         inviter.setUserId("inviter1");
+        inviter.setEmail("inviter@example.com");
 
         var request = new CreateInvitationRequest();
         request.setInviteeEmail("newuser@example.com");
@@ -51,9 +52,9 @@ class InvitationServiceTest {
 
         assertNotNull(result);
         assertEquals("newuser@example.com", result.getInviteeEmail());
-        assertTrue(result.getInvitationLink().contains("/auth/register?invitationToken="));
+        assertTrue(result.getInvitationLink().contains("/index.html?invitationToken="));
         verify(invitationRepository).save(any(Invitation.class));
-        verify(emailService).sendInvitationEmail(eq("newuser@example.com"), contains("/auth/register?invitationToken="));
+        verify(emailService).sendInvitationEmail(eq("newuser@example.com"), contains("/index.html?invitationToken="));
     }
 
     @Test
@@ -73,6 +74,7 @@ class InvitationServiceTest {
     void createInvitation_validInviter_generatesUniqueTokenEachTime() {
         var inviter = new User();
         inviter.setUserId("inviter1");
+        inviter.setEmail("inviter@example.com");
 
         var request = new CreateInvitationRequest();
         request.setInviteeEmail("someone@example.com");

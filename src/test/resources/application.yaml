@@ -33,6 +33,8 @@ app:
   verification:
     link-expiry-hours: 24
     base-url: http://localhost:8080
+  frontend:
+    base-url: http://localhost:3001
 
 cors:
   allowed-origins: http://localhost:3000

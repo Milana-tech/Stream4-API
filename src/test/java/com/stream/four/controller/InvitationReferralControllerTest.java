@@ -49,7 +49,7 @@ class InvitationReferralControllerTest {
 
     @Test
     void invite_valid_returns201() throws Exception {
-        var response = new InvitationResponse("http://link", "friend@example.com");
+        var response = new InvitationResponse(null, "http://link", "friend@example.com", null, false, false, null, null);
         when(invitationService.createInvitation(eq("user-001"), any())).thenReturn(response);
 
         invitationMvc.perform(post("/invitations")

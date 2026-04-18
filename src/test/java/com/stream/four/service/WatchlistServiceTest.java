@@ -4,6 +4,7 @@ import com.stream.four.dto.requests.CreateWatchlistItemRequest;
 import com.stream.four.dto.response.watch.WatchlistItemResponse;
 import com.stream.four.mapper.WatchlistMapper;
 import com.stream.four.model.watch.WatchlistItem;
+import com.stream.four.repository.TitleRepository;
 import com.stream.four.repository.WatchlistRepository;
 import org.junit.jupiter.api.Test;
 
@@ -17,15 +18,17 @@ class WatchlistServiceTest {
 
     private final WatchlistRepository watchlistRepository = mock(WatchlistRepository.class);
     private final WatchlistMapper watchlistMapper = mock(WatchlistMapper.class);
+    private final TitleRepository titleRepository = mock(TitleRepository.class);
 
-    private final WatchlistService watchlistService = new WatchlistService(watchlistRepository, watchlistMapper);
+    private final WatchlistService watchlistService = new WatchlistService(watchlistRepository, watchlistMapper, titleRepository);
 
     @Test
     void add_whenAlreadyExists_throws() {
         var req = new CreateWatchlistItemRequest();
         req.setTitleId("t");
+        req.setProfileId("p1");
 
-        when(watchlistRepository.existsByUserIdAndTitleId("u", "t")).thenReturn(true);
+        when(watchlistRepository.existsByUserIdAndProfileIdAndTitleId("u", "p1", "t")).thenReturn(true);
 
         assertThrows(RuntimeException.class, () -> watchlistService.add("u", req));
         verify(watchlistRepository, never()).save(any());
@@ -47,8 +50,9 @@ class WatchlistServiceTest {
     void add_setsUserIdAndAddedAt_andReturnsDto() {
         var req = new CreateWatchlistItemRequest();
         req.setTitleId("t");
+        req.setProfileId("p1");
 
-        when(watchlistRepository.existsByUserIdAndTitleId("u", "t")).thenReturn(false);
+        when(watchlistRepository.existsByUserIdAndProfileIdAndTitleId("u", "p1", "t")).thenReturn(false);
 
         var entity = new WatchlistItem();
         var dto = new WatchlistItemResponse();
@@ -68,10 +72,10 @@ class WatchlistServiceTest {
     void getAll_returnsMappedList() {
         var item = new WatchlistItem();
         var dto = new WatchlistItemResponse();
-        when(watchlistRepository.findByUserIdOrderByAddedAtDesc("u")).thenReturn(List.of(item));
+        when(watchlistRepository.findByUserIdAndProfileIdOrderByAddedAtDesc("u", "p1")).thenReturn(List.of(item));
         when(watchlistMapper.toDto(item)).thenReturn(dto);
 
-        var result = watchlistService.getAll("u");
+        var result = watchlistService.getAll("u", "p1");
 
         assertEquals(1, result.size());
         assertSame(dto, result.get(0));

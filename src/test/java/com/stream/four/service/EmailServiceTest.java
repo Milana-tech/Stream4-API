@@ -24,6 +24,10 @@ class EmailServiceTest {
             var baseUrlField = EmailService.class.getDeclaredField("baseUrl");
             baseUrlField.setAccessible(true);
             baseUrlField.set(service, "http://localhost:8080");
+
+            var frontendUrlField = EmailService.class.getDeclaredField("frontendUrl");
+            frontendUrlField.setAccessible(true);
+            frontendUrlField.set(service, "http://localhost:3001");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -89,7 +93,7 @@ class EmailServiceTest {
         SimpleMailMessage sent = captor.getValue();
         assertArrayEquals(new String[]{"user@example.com"}, sent.getTo());
         assertEquals("StreamFlix – Password reset request", sent.getSubject());
-        assertTrue(sent.getText().contains("/auth/reset-password?token=resetToken99"));
+        assertTrue(sent.getText().contains("?reset-token=resetToken99"));
     }
 
     @Test
