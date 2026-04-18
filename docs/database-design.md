@@ -24,7 +24,7 @@ Selects non-deleted titles with only the public-facing columns (id, name, descri
 **Why:** Hides internal columns (supported_qualities junction table, content_warnings junction table) that are irrelevant to catalogue browsing, and excludes the `deleted` flag so callers cannot see withdrawn titles.
 
 ### `v_viewing_history`
-Joins `watch_events` with `users` and `titles`.
+Joins `watch_events` with `users` and `titles`...
 
 **Why:** Watch-event rows only store foreign keys. The view resolves user names and title names at query time, so a reporting query does not need to write joins manually and cannot accidentally read columns outside the view definition.
 
