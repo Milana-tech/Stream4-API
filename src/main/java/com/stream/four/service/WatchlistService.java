@@ -6,6 +6,7 @@ import com.stream.four.exception.DuplicateResourceException;
 import com.stream.four.exception.ResourceNotFoundException;
 import com.stream.four.exception.UnauthorizedException;
 import com.stream.four.mapper.WatchlistMapper;
+import com.stream.four.repository.TitleRepository;
 import com.stream.four.repository.WatchlistRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,25 +19,35 @@ public class WatchlistService {
 
     private final WatchlistRepository watchlistRepository;
     private final WatchlistMapper watchlistMapper;
+    private final TitleRepository titleRepository;
 
     public WatchlistItemResponse add(String userId, CreateWatchlistItemRequest request) {
-        if (watchlistRepository.existsByUserIdAndTitleId(userId, request.getTitleId())) {
+        String profileId = request.getProfileId();
+        if (watchlistRepository.existsByUserIdAndProfileIdAndTitleId(userId, profileId, request.getTitleId())) {
             throw new DuplicateResourceException("Title already in watchlist");
         }
 
         var item = watchlistMapper.toEntity(request);
         item.setUserId(userId);
+        item.setProfileId(profileId);
         item.setAddedAt(System.currentTimeMillis());
 
         watchlistRepository.save(item);
-        return watchlistMapper.toDto(item);
+        return withTitleName(watchlistMapper.toDto(item));
     }
 
-    public List<WatchlistItemResponse> getAll(String userId) {
-        return watchlistRepository.findByUserIdOrderByAddedAtDesc(userId)
+    public List<WatchlistItemResponse> getAll(String userId, String profileId) {
+        return watchlistRepository.findByUserIdAndProfileIdOrderByAddedAtDesc(userId, profileId)
                 .stream()
                 .map(watchlistMapper::toDto)
+                .map(this::withTitleName)
                 .toList();
+    }
+
+    private WatchlistItemResponse withTitleName(WatchlistItemResponse dto) {
+        titleRepository.findById(dto.getTitleId())
+                .ifPresent(t -> dto.setTitleName(t.getName()));
+        return dto;
     }
 
     public void remove(String userId, String id) {

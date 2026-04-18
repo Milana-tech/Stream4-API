@@ -33,6 +33,7 @@ Then edit `.env` and replace every `change_me` placeholder with a real value.
 > **JWT_SECRET** — use any long random string (32+ characters).
 > **MAIL_PASSWORD** — use a Gmail App Password, not your regular password.
 > Generate one at: Google Account → Security → 2-Step Verification → App Passwords.
+> **CORS_ALLOWED_ORIGINS** — must include the frontend URL. The default (`http://localhost:3001`) is already set in `.env.example`. If you change the frontend port, update this value and restart the backend with `docker compose up -d --force-recreate backend`.
 
 ### 3. Start the containers
 

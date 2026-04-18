@@ -30,4 +30,6 @@ public class Invitation {
     private boolean discountApplied = false;  // set when invitee subscribes
 
     private LocalDate discountAppliedAt;
+
+    private LocalDate discountEndDate; // validity period of the discount
 }

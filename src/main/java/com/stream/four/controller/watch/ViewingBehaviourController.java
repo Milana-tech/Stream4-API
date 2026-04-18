@@ -34,9 +34,9 @@ public class ViewingBehaviourController {
     @GetMapping(value = "/history", produces = {
             MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE, "text/csv"
     })
-    @Operation(summary = "Get watch history", description = "Get user's viewing history. Supports JSON, XML, CSV.")
-    public ResponseEntity<List<WatchEventResponse>> history(Principal principal) {
-        return ResponseEntity.ok(viewingBehaviourService.history(principal.getName()));
+    @Operation(summary = "Get watch history", description = "Get profile's viewing history. Supports JSON, XML, CSV.")
+    public ResponseEntity<List<WatchEventResponse>> history(@RequestParam String profileId, Principal principal) {
+        return ResponseEntity.ok(viewingBehaviourService.history(principal.getName(), profileId));
     }
 
     @GetMapping(value = "/progress/{titleId}", produces = {

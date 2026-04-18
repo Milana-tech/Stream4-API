@@ -13,6 +13,9 @@ public class WatchlistItemResponse {
     @JacksonXmlProperty(localName = "titleId")
     private String titleId;
 
+    @JacksonXmlProperty(localName = "titleName")
+    private String titleName;
+
     @JacksonXmlProperty(localName = "addedAt")
     private long addedAt;
 }
