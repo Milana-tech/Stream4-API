@@ -318,12 +318,23 @@ public class DbEmployeeAccessInitializer implements ApplicationRunner {
 
         // Seasons & Episodes
         exec(stmt, "INSERT IGNORE INTO seasons (id,title_id,season_number,deleted) VALUES " +
-            "('season-001','title-001',1,0),('season-002','title-001',2,0)");
+            "('season-001','title-001',1,0),('season-002','title-001',2,0)," +
+            "('season-003','title-004',1,0),('season-004','title-004',2,0)," +
+            "('season-005','title-005',1,0),('season-006','title-005',2,0)");
 
         exec(stmt, "INSERT IGNORE INTO episodes (id,season_id,episode_number,name,description,deleted) VALUES " +
             "('ep-001','season-001',1,'Pilot','Walter White begins his transformation.',0)," +
             "('ep-002','season-001',2,'Cat''s in the Bag','Walt and Jesse deal with consequences.',0)," +
-            "('ep-003','season-002',1,'Seven Thirty-Seven','Walt receives a warning.',0)");
+            "('ep-003','season-002',1,'Seven Thirty-Seven','Walt receives a warning.',0)," +
+            "('ep-004','season-003',1,'The Vanishing of Will Byers','A boy goes missing in Hawkins.',0)," +
+            "('ep-005','season-003',2,'The Weirdo on Maple Street','The boys encounter a mysterious girl.',0)," +
+            "('ep-006','season-003',3,'Holly, Jolly','The investigation deepens.',0)," +
+            "('ep-007','season-004',1,'Vecna''s Curse','A new evil threatens Hawkins.',0)," +
+            "('ep-008','season-004',2,'Vecna''s Curse Part 2','The group uncovers more secrets.',0)," +
+            "('ep-009','season-005',1,'Wolferton Splash','Elizabeth becomes Queen.',0)," +
+            "('ep-010','season-005',2,'Hyde Park Corner','The new Queen faces her first crisis.',0)," +
+            "('ep-011','season-006',1,'Marionettes','The monarchy faces political pressure.',0)," +
+            "('ep-012','season-006',2,'The Hounding','Philip pursues a new passion.',0)");
 
         // Watchlist
         exec(stmt, "INSERT IGNORE INTO watchlist (id,user_id,title_id,added_at) VALUES " +
