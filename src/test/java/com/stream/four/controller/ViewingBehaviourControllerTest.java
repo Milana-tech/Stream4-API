@@ -61,9 +61,10 @@ class ViewingBehaviourControllerTest {
 
     @Test
     void history_returnsList() throws Exception {
-        when(service.history("user-001")).thenReturn(List.of(sample()));
+        when(service.history("user-001", "p1")).thenReturn(List.of(sample()));
 
         mockMvc.perform(get("/viewing-behaviour/history")
+                        .param("profileId", "p1")
                         .principal(principal())
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())

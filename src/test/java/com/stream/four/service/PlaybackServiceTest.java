@@ -19,11 +19,14 @@ import static org.mockito.Mockito.when;
 
 class PlaybackServiceTest {
 
+    private final TrialService trialService = mock(TrialService.class);
+
     private final PlaybackService playbackService = new PlaybackService(
             mock(UserRepository.class),
             mock(TitleRepository.class),
             mock(ProfileRepository.class),
-            mock(ContentService.class)
+            mock(ContentService.class),
+            trialService
     );
 
     private User userWithPlan(SubscriptionPlan plan) {
@@ -43,73 +46,50 @@ class PlaybackServiceTest {
 
     @Test
     void uhdPlan_titleSupportsUhd_returnsUhd() {
-        // Arrange
         User user = userWithPlan(SubscriptionPlan.UHD);
         Title title = titleWithQualities(VideoQuality.SD, VideoQuality.HD, VideoQuality.UHD);
 
-        // Act
-        VideoQuality result = playbackService.getAvailableQuality(user, title);
-
-        // Assert
-        assertEquals(VideoQuality.UHD, result);
+        assertEquals(VideoQuality.UHD, playbackService.getAvailableQuality(user, title));
     }
 
     @Test
     void uhdPlan_titleOnlySupportsHd_returnsHd() {
-        // Arrange
         User user = userWithPlan(SubscriptionPlan.UHD);
         Title title = titleWithQualities(VideoQuality.SD, VideoQuality.HD);
 
-        // Act
-        VideoQuality result = playbackService.getAvailableQuality(user, title);
-
-        // Assert
-        assertEquals(VideoQuality.HD, result);
+        assertEquals(VideoQuality.HD, playbackService.getAvailableQuality(user, title));
     }
 
     @Test
     void hdPlan_titleSupportsUhd_returnsHd() {
-        // Arrange
         User user = userWithPlan(SubscriptionPlan.HD);
         Title title = titleWithQualities(VideoQuality.SD, VideoQuality.HD, VideoQuality.UHD);
 
-        // Act
-        VideoQuality result = playbackService.getAvailableQuality(user, title);
-
-        // Assert
-        assertEquals(VideoQuality.HD, result);
+        assertEquals(VideoQuality.HD, playbackService.getAvailableQuality(user, title));
     }
 
     @Test
     void sdPlan_titleSupportsAllQualities_returnsSd() {
-        // Arrange
         User user = userWithPlan(SubscriptionPlan.SD);
         Title title = titleWithQualities(VideoQuality.SD, VideoQuality.HD, VideoQuality.UHD);
 
-        // Act
-        VideoQuality result = playbackService.getAvailableQuality(user, title);
-
-        // Assert
-        assertEquals(VideoQuality.SD, result);
+        assertEquals(VideoQuality.SD, playbackService.getAvailableQuality(user, title));
     }
 
     @Test
     void uhdPlan_titleOnlySupportsSd_returnsSd() {
-        // Arrange
         User user = userWithPlan(SubscriptionPlan.UHD);
         Title title = titleWithQualities(VideoQuality.SD);
 
-        // Act
-        VideoQuality result = playbackService.getAvailableQuality(user, title);
-
-        // Assert
-        assertEquals(VideoQuality.SD, result);
+        assertEquals(VideoQuality.SD, playbackService.getAvailableQuality(user, title));
     }
 
     @Test
-    void noSubscription_returnsSd() {
+    void noSubscription_noTrial_returnsSd() {
         User user = new User();
         Title title = titleWithQualities(VideoQuality.SD, VideoQuality.HD, VideoQuality.UHD);
+        when(trialService.hasActiveTrial(null)).thenReturn(false);
+
         assertEquals(VideoQuality.SD, playbackService.getAvailableQuality(user, title));
     }
 
@@ -119,7 +99,7 @@ class PlaybackServiceTest {
     void getPlaybackQuality_userNotFound_throws() {
         var userRepo = mock(UserRepository.class);
         var service = new PlaybackService(userRepo, mock(TitleRepository.class),
-                mock(ProfileRepository.class), mock(ContentService.class));
+                mock(ProfileRepository.class), mock(ContentService.class), mock(TrialService.class));
         when(userRepo.findByEmail("x@x.com")).thenReturn(java.util.Optional.empty());
         assertThrows(com.stream.four.exception.ResourceNotFoundException.class,
                 () -> service.getPlaybackQuality("x@x.com", "title", "p1"));
@@ -130,7 +110,7 @@ class PlaybackServiceTest {
         var userRepo = mock(UserRepository.class);
         var titleRepo = mock(TitleRepository.class);
         var service = new PlaybackService(userRepo, titleRepo,
-                mock(ProfileRepository.class), mock(ContentService.class));
+                mock(ProfileRepository.class), mock(ContentService.class), mock(TrialService.class));
         when(userRepo.findByEmail("a@a.com")).thenReturn(java.util.Optional.of(new User()));
         when(titleRepo.findByName("missing")).thenReturn(java.util.Optional.empty());
         assertThrows(com.stream.four.exception.ResourceNotFoundException.class,
@@ -142,7 +122,8 @@ class PlaybackServiceTest {
         var userRepo = mock(UserRepository.class);
         var titleRepo = mock(TitleRepository.class);
         var profileRepo = mock(ProfileRepository.class);
-        var service = new PlaybackService(userRepo, titleRepo, profileRepo, mock(ContentService.class));
+        var mockTrialService = mock(TrialService.class);
+        var service = new PlaybackService(userRepo, titleRepo, profileRepo, mock(ContentService.class), mockTrialService);
 
         var user = new User();
         var title = titleWithQualities(VideoQuality.HD);
@@ -152,6 +133,7 @@ class PlaybackServiceTest {
         when(userRepo.findByEmail("a@a.com")).thenReturn(java.util.Optional.of(user));
         when(titleRepo.findByName("Test")).thenReturn(java.util.Optional.of(title));
         when(profileRepo.findById("p1")).thenReturn(java.util.Optional.of(profile));
+        when(mockTrialService.hasActiveTrial(null)).thenReturn(false);
 
         var result = service.getPlaybackQuality("a@a.com", "Test", "p1");
         assertTrue(result.contains("SD"));

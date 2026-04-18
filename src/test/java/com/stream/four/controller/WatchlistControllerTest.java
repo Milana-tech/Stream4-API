@@ -46,9 +46,10 @@ class WatchlistControllerTest {
 
     @Test
     void getAll_returnsList() throws Exception {
-        when(watchlistService.getAll("user-001")).thenReturn(List.of(sample()));
+        when(watchlistService.getAll("user-001", "p1")).thenReturn(List.of(sample()));
 
         mockMvc.perform(get("/watchlists")
+                        .param("profileId", "p1")
                         .principal(principal())
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
