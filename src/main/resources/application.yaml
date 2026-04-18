@@ -33,6 +33,10 @@ spring:
 springdoc:
   api-docs:
     version: openapi_3_1
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
 
 server:
   port: 8080
