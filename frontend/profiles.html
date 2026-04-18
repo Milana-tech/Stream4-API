@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/style.css">
+    <title>StreamFlix – Profiles</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎬</text></svg>">
+</head>
+<body class="profiles-page">
+
+    <div class="profiles-container">
+        <h1>Who's watching?</h1>
+        <div class="profiles-grid" id="profilesGrid"></div>
+        <button class="secondary-btn" id="addProfileBtn">+ Add Profile</button>
+    </div>
+
+    <!-- PREFERENCES MODAL -->
+    <div id="preferencesModal" class="modal-overlay" style="display:none">
+        <div class="modal">
+            <h2>Preferences</h2>
+            <form id="preferencesForm">
+                <input type="hidden" id="prefProfileId">
+
+                <p class="modal-label">Preferred type:</p>
+                <div class="filters-grid">
+                    <label><input type="radio" name="preferredType" value=""> Both</label>
+                    <label><input type="radio" name="preferredType" value="MOVIE"> Movies</label>
+                    <label><input type="radio" name="preferredType" value="SERIES"> Series</label>
+                </div>
+
+                <p class="modal-label">Minimum maturity rating:</p>
+                <select id="prefMaturity">
+                    <option value="">No minimum</option>
+                    <option value="ALL">ALL – General Audience</option>
+                    <option value="PG">PG – Parental Guidance</option>
+                    <option value="TEEN">TEEN – 13+</option>
+                    <option value="MATURE">MATURE – 18+</option>
+                </select>
+
+                <p class="modal-label">Preferred genres:</p>
+                <div class="filters-grid">
+                    <label><input type="checkbox" value="ACTION"> Action</label>
+                    <label><input type="checkbox" value="COMEDY"> Comedy</label>
+                    <label><input type="checkbox" value="DRAMA"> Drama</label>
+                    <label><input type="checkbox" value="HORROR"> Horror</label>
+                    <label><input type="checkbox" value="THRILLER"> Thriller</label>
+                    <label><input type="checkbox" value="ROMANCE"> Romance</label>
+                    <label><input type="checkbox" value="DOCUMENTARY"> Documentary</label>
+                    <label><input type="checkbox" value="ANIMATION"> Animation</label>
+                    <label><input type="checkbox" value="SCIENCE_FICTION"> Sci-Fi</label>
+                    <label><input type="checkbox" value="FANTASY"> Fantasy</label>
+                    <label><input type="checkbox" value="CRIME"> Crime</label>
+                    <label><input type="checkbox" value="MYSTERY"> Mystery</label>
+                </div>
+
+                <div class="modal-buttons">
+                    <button type="submit" class="primary-btn">Save</button>
+                    <button type="button" class="secondary-btn" id="cancelPrefBtn">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ADD PROFILE MODAL -->
+    <div id="profileModal" class="modal-overlay" style="display:none">
+        <div class="modal">
+            <h2>New Profile</h2>
+            <form id="profileForm">
+                <input type="text" id="profileName" placeholder="Name" required>
+                <input type="number" id="profileAge" placeholder="Age (3–95)" min="3" max="95" required>
+                <p class="modal-label">Pick an avatar:</p>
+                <div class="avatar-picker" id="avatarPicker">
+                    <span data-emoji="🦁">🦁</span>
+                    <span data-emoji="🐼">🐼</span>
+                    <span data-emoji="🦊">🦊</span>
+                    <span data-emoji="🐸">🐸</span>
+                    <span data-emoji="🐯">🐯</span>
+                    <span data-emoji="🐧">🐧</span>
+                    <span data-emoji="🦄">🦄</span>
+                    <span data-emoji="🐻">🐻</span>
+                </div>
+                <input type="hidden" id="profileAvatar">
+                <p class="modal-label">Block content warnings (optional):</p>
+                <div class="filters-grid">
+                    <label><input type="checkbox" value="VIOLENCE"> Violence</label>
+                    <label><input type="checkbox" value="FEAR"> Fear</label>
+                    <label><input type="checkbox" value="COARSE_LANGUAGE"> Coarse Language</label>
+                    <label><input type="checkbox" value="NUDITY"> Nudity</label>
+                    <label><input type="checkbox" value="DRUG_USE"> Drug Use</label>
+                    <label><input type="checkbox" value="SEXUAL_CONTENT"> Sexual Content</label>
+                </div>
+                <div class="modal-buttons">
+                    <button type="submit" class="primary-btn">Create</button>
+                    <button type="button" class="secondary-btn" id="cancelProfileBtn">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/profiles.js"></script>
+</body>
+</html>

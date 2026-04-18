@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/style.css">
+    <title>StreamFlix – Home</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎬</text></svg>">
+</head>
+<body class="home-page">
+
+    <nav class="navbar">
+        <h1>StreamFlix</h1>
+
+        <div class="nav-right">
+            <span id="activeProfile"></span>
+            <button id="switchProfileBtn" class="logout-btn">Switch Profile</button>
+            <button id="accountBtn" class="logout-btn">Account</button>
+            <button id="logoutBtn" class="logout-btn">Logout</button>
+        </div>
+    </nav>
+
+    <main class="home-layout">
+
+        <section class="row" id="continueSection">
+            <h2>Continue Watching</h2>
+            <div class="row-wrapper">
+                <button class="arrow left" onclick="scrollRow('continueRow', -1)">❮</button>
+                <div class="row-scroll" id="continueRow"></div>
+                <button class="arrow right" onclick="scrollRow('continueRow', 1)">❯</button>
+            </div>
+        </section>
+
+        <section class="row" id="watchedSection">
+            <h2>Watched</h2>
+            <div class="row-wrapper">
+                <button class="arrow left" onclick="scrollRow('watchedRow', -1)">❮</button>
+                <div class="row-scroll" id="watchedRow"></div>
+                <button class="arrow right" onclick="scrollRow('watchedRow', 1)">❯</button>
+            </div>
+        </section>
+
+        <section class="row" id="watchlistSection">
+            <h2>My Watchlist</h2>
+            <div class="row-wrapper">
+                <button class="arrow left" onclick="scrollRow('watchlistRow', -1)">❮</button>
+                <div class="row-scroll" id="watchlistRow"></div>
+                <button class="arrow right" onclick="scrollRow('watchlistRow', 1)">❯</button>
+            </div>
+        </section>
+
+        <section class="row">
+            <h2>Recommended</h2>
+
+            <div class="row-wrapper">
+                <button class="arrow left" onclick="scrollRow('recommendedRow', -1)">❮</button>
+                <div class="row-scroll" id="recommendedRow"></div>
+                <button class="arrow right" onclick="scrollRow('recommendedRow', 1)">❯</button>
+            </div>
+        </section>
+
+        <section class="row">
+            <h2>Popular</h2>
+            
+            <div class="row-wrapper">
+                <button class="arrow left" onclick="scrollRow('popularRow', -1)">❮</button>
+                <div class="row-scroll" id="popularRow"></div>
+                <button class="arrow right" onclick="scrollRow('popularRow', 1)">❯</button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ACCOUNT MODAL -->
+    <div id="accountModal" class="modal-overlay" style="display:none">
+        <div class="modal title-modal">
+            <button class="modal-close" id="closeAccountModal">✕</button>
+            <h2>My Account</h2>
+
+            <!-- Status -->
+            <div class="modal-section">
+                <p class="modal-label">Current status</p>
+                <div id="subscriptionStatus" class="status-box">Loading...</div>
+            </div>
+
+            <!-- Subscribe -->
+            <div class="modal-section" id="subscribeSection">
+                <p class="modal-label">Choose a plan:</p>
+                <div class="plan-cards">
+                    <div class="plan-card" data-plan="SD">
+                        <p class="plan-name">SD</p>
+                        <p class="plan-price">€7.99<span>/mo</span></p>
+                        <p class="plan-desc">Standard Definition</p>
+                    </div>
+                    <div class="plan-card" data-plan="HD">
+                        <p class="plan-name">HD</p>
+                        <p class="plan-price">€12.99<span>/mo</span></p>
+                        <p class="plan-desc">High Definition</p>
+                    </div>
+                    <div class="plan-card" data-plan="UHD">
+                        <p class="plan-name">UHD</p>
+                        <p class="plan-price">€17.99<span>/mo</span></p>
+                        <p class="plan-desc">Ultra HD 4K</p>
+                    </div>
+                </div>
+                <button class="primary-btn" id="subscribeBtn" style="margin-top:1rem">Subscribe</button>
+            </div>
+
+            <!-- Cancel -->
+            <div class="modal-section" id="cancelSection" style="display:none">
+                <button class="cancel-sub-btn" id="cancelSubBtn">Cancel Subscription</button>
+            </div>
+
+            <!-- Edit Account -->
+            <div class="modal-section">
+                <p class="modal-label">Edit account details:</p>
+                <div class="invite-row">
+                    <input type="text" id="editName" placeholder="New name">
+                    <button class="primary-btn" id="saveNameBtn">Save</button>
+                </div>
+
+            </div>
+
+            <!-- Invite -->
+            <div class="modal-section">
+                <p class="modal-label">Invite a friend:</p>
+                <div class="invite-row">
+                    <input type="email" id="inviteEmail" placeholder="Friend's email address">
+                    <button class="primary-btn" id="sendInviteBtn">Send</button>
+                </div>
+                <p class="modal-label" style="margin-top:0.5rem">Both of you get a discount when they subscribe!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- TITLE DETAIL MODAL -->
+    <div id="titleModal" class="modal-overlay" style="display:none">
+        <div class="modal title-modal">
+            <button class="modal-close" id="closeTitleModal">✕</button>
+
+            <div class="title-modal-header">
+                <div class="title-icon-large" id="modalIcon"></div>
+                <div>
+                    <h2 id="modalTitle"></h2>
+                    <p class="modal-meta" id="modalMeta"></p>
+                    <p class="modal-desc" id="modalDesc"></p>
+                </div>
+            </div>
+
+            <div class="modal-section">
+                <p class="modal-label">Available quality:</p>
+                <div class="quality-buttons" id="qualityButtons"></div>
+            </div>
+
+            <!-- Series only -->
+            <div class="modal-section" id="seriesSection" style="display:none">
+                <p class="modal-label">Season:</p>
+                <select id="seasonSelect"></select>
+                <div id="episodesList"></div>
+            </div>
+
+            <div class="title-modal-actions">
+                <button class="primary-btn" id="playBtn">▶ Play</button>
+                <button class="secondary-btn" id="watchlistBtn">+ Watchlist</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PLAYER MODAL -->
+    <div id="playerModal" class="modal-overlay" style="display:none">
+        <div class="modal">
+            <h2>Now Playing</h2>
+            <p class="modal-label" id="playerTitle"></p>
+            <p class="modal-label">How far did you watch?</p>
+            <input type="range" id="progressSlider" min="0" max="100" value="0" class="progress-slider">
+            <p class="modal-label" id="progressLabel">0%</p>
+            <label class="finished-label">
+                <input type="checkbox" id="finishedCheck"> Watched entirely
+            </label>
+            <div class="modal-buttons" style="margin-top:1rem">
+                <button class="primary-btn" id="saveWatchBtn">Save</button>
+                <button class="secondary-btn" id="cancelPlayerBtn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/home.js?v=8"></script>
+
+</body>
+</html>

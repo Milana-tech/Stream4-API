@@ -95,7 +95,7 @@ CASCADE delete is used where the child record has no meaning without its parent 
 
 **Location:** `SubscriptionService.createSubscription()`
 
-**Isolation level:** `REPEATABLE_READ`
+**Isolation level:** `REPEATABLE_READ`.
 
 **What the transaction does (in order):**
 1. Reads the user record.
