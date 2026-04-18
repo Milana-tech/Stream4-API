@@ -1,555 +1,2262 @@
 openapi: 3.1.0
 info:
-  title: StreamFlix Public API
-  version: 1.0.0
-  description: >
-    NOTE: This file is the original design-phase specification written before
-    implementation. It documents the intended API contract and architecture decisions.
-    The live, auto-generated Swagger documentation that reflects the actual
-    implementation is available at http://localhost:8080/swagger-ui.html when
-    the application is running.
-
-    StreamFlix REST API for account management, profiles, content browsing,
-    subscription handling, invitations and viewing progress.
-    All database access is performed through predefined views and stored
-    procedures using the technical API_user_account.
-
+  title: StreamFlix API
+  version: v1
 servers:
   - url: http://localhost:8080
-
+    description: Generated server url
 security:
-  - BearerAuth: []
-
+  - bearerAuth: []
+tags:
+  - name: profiles
+    description: Endpoints to manage user profiles (supports JSON, XML, CSV)
+  - name: seasons
+    description: Manage series seasons (supports JSON, XML, CSV)
+  - name: trial-management
+    description: Manage 7-day trial period (supports JSON, XML, CSV)
+  - name: viewing-behaviour
+    description: Track user viewing behaviour and progress (supports JSON, XML, CSV)
+  - name: employees
+    description: Employee-specific operations (supports JSON, XML, CSV)
+  - name: preferences
+    description: Manage profile viewing preferences (supports JSON, XML, CSV)
+  - name: playback
+    description: Playback quality resolution based on user subscription and profile
+  - name: episodes
+    description: Manage series episodes (supports JSON, XML, CSV)
+  - name: titles
+    description: Endpoints to manage movies and series (supports JSON, XML, CSV)
+  - name: watchlists
+    description: Manage user watchlist (supports JSON, XML, CSV)
+  - name: invitations
+    description: Invite new users to StreamFlix
+  - name: users
+    description: Endpoints to manage users
+  - name: subscription-management
+    description: Manage paid subscriptions (supports JSON, XML, CSV)
+  - name: auth
+    description: Endpoints for login and logout
+  - name: referral-management
+    description: Manage invite discounts (supports JSON, XML, CSV)
 paths:
-
-  # Account Management
-  /accounts/register:
-    post:
-      summary: Register a new account
-      tags: [Accounts]
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/AccountRegistration"
-      responses:
-        '201':
-          description: Account created. Verification link sent.
-        '400':
-          description: Email already exists or invalid payload.
-
-  /accounts/activate:
-    post:
-      summary: Activate account
-      tags: [Accounts]
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/AccountActivation"
-      responses:
-        '200':
-          description: Account activated.
-        '400':
-          description: Invalid or expired activation link.
-
-  /auth/login:
-    post:
-      summary: Log a user in and return a JWT token
-      tags: [Authentication]
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/LoginRequest"
-      responses:
-        '200':
-          description: Authentication successful
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/AuthResponse"
-        '401':
-          description: Invalid credentials or account locked.
-
-  # Profile Management
-  /profiles:
+  /profiles/{profileId}/preferences:
     get:
-      summary: Get all profiles for the authenticated account
-      tags: [Profiles]
-      responses:
-        '200':
-          description: List of profiles.
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Profile"
-    post:
-      summary: Create a new profile
-      tags: [Profiles]
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/ProfileCreate"
-      responses:
-        '201':
-          description: Profile created.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Profile"
-
-  /profiles/{profileId}:
-    get:
-      summary: Get profile by ID
-      tags: [Profiles]
+      tags:
+        - preferences
+      summary: Get preferences
+      description: Get viewing preferences for a profile. Supports JSON, XML, CSV.
+      operationId: getPreferences
       parameters:
-        - $ref: "#/components/parameters/ProfileId"
-      responses:
-        '200':
-          description: Profile data
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Profile"
-
-    put:
-      summary: Update profile
-      tags: [Profiles]
-      parameters:
-        - $ref: "#/components/parameters/ProfileId"
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/ProfileUpdate"
-      responses:
-        '200':
-          description: Profile updated.
-
-    delete:
-      summary: Delete profile
-      tags: [Profiles]
-      parameters:
-        - $ref: "#/components/parameters/ProfileId"
-      responses:
-        '204':
-          description: Profile removed.
-
-  # Content Browsing
-  /content:
-    get:
-      summary: Get content available for a profile (age filtered)
-      tags: [Content]
-      parameters:
-        - in: query
-          name: profileId
+        - name: profileId
+          in: path
           required: true
           schema:
             type: string
-          description: Profile to filter results for.
       responses:
         '200':
-          description: Available content list.
+          description: OK
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/ContentItem"
-
-  /content/{contentId}:
-    get:
-      summary: Get detailed info about one movie or series
-      tags: [Content]
-      parameters:
-        - $ref: "#/components/parameters/ContentId"
-      responses:
-        '200':
-          description: Content details
-          content:
-            application/json:
+                $ref: '#/components/schemas/PreferencesResponse'
+            application/xml:
               schema:
-                $ref: "#/components/schemas/ContentDetails"
-
-  # Viewing Progress
-  /profiles/{profileId}/progress:
-    get:
-      summary: Get viewing progress for a profile
-      tags: [Viewing Progress]
-      parameters:
-        - $ref: "#/components/parameters/ProfileId"
-      responses:
-        '200':
-          description: Viewing progress list
-          content:
-            application/json:
+                $ref: '#/components/schemas/PreferencesResponse'
+            text/csv:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/ViewingProgress"
-
-    post:
-      summary: Update or insert viewing progress
-      tags: [Viewing Progress]
+                $ref: '#/components/schemas/PreferencesResponse'
+    put:
+      tags:
+        - preferences
+      summary: Update preferences
+      description: Update viewing preferences for a profile. Supports JSON, XML, CSV.
+      operationId: updatePreferences
       parameters:
-        - $ref: "#/components/parameters/ProfileId"
+        - name: profileId
+          in: path
+          required: true
+          schema:
+            type: string
       requestBody:
-        required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/ViewingProgressUpdate"
+              $ref: '#/components/schemas/UpdatePreferencesRequest'
+        required: true
       responses:
         '200':
-          description: Progress updated.
-
-  # Watchlist
-  /profiles/{profileId}/watchlist:
-    get:
-      summary: Get watchlist for profile
-      tags: [Watchlist]
-      parameters:
-        - $ref: "#/components/parameters/ProfileId"
-      responses:
-        '200':
-          description: Successful response returning the list of content items.
+          description: OK
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/ContentItem"
-
-    post:
-      summary: Add content to watchlist
-      tags: [Watchlist]
+                $ref: '#/components/schemas/PreferencesResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/PreferencesResponse'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/PreferencesResponse'
+  /profiles/{id}:
+    get:
+      tags:
+        - profiles
+      summary: Get profile by ID
+      description: Get specific profile. Supports JSON, XML, CSV.
+      operationId: getProfile
       parameters:
-        - $ref: "#/components/parameters/ProfileId"
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Profile retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfileResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ProfileResponse'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/ProfileResponse'
+        '401':
+          description: Unauthorized - JWT token missing or invalid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfileResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ProfileResponse'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/ProfileResponse'
+        '403':
+          description: Forbidden - profile belongs to another user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfileResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ProfileResponse'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/ProfileResponse'
+        '404':
+          description: Profile not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfileResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ProfileResponse'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/ProfileResponse'
+    put:
+      tags:
+        - profiles
+      summary: Update profile
+      description: Update a profile
+      operationId: updateProfile
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
       requestBody:
-        required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                contentId:
-                  type: string
-              required: [contentId]
+              $ref: '#/components/schemas/UpdateProfileRequest'
+        required: true
       responses:
-        '201':
-          description: Added to watchlist.
-
-  /profiles/{profileId}/watchlist/{contentId}:
+        '200':
+          description: Profile updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfileResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ProfileResponse'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/ProfileResponse'
+        '400':
+          description: Invalid input - validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfileResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ProfileResponse'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/ProfileResponse'
+        '401':
+          description: Unauthorized - JWT token missing or invalid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfileResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ProfileResponse'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/ProfileResponse'
+        '403':
+          description: Forbidden - profile belongs to another user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfileResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ProfileResponse'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/ProfileResponse'
+        '404':
+          description: Profile not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfileResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ProfileResponse'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/ProfileResponse'
     delete:
-      summary: Remove content from watchlist
-      tags: [Watchlist]
+      tags:
+        - profiles
+      summary: Delete profile
+      description: Delete a profile
+      operationId: deleteProfile
       parameters:
-        - $ref: "#/components/parameters/ProfileId"
-        - $ref: "#/components/parameters/ContentId"
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         '204':
-          description: Removed.
-
-  # Subscriptions
-  /subscriptions:
-    get:
-      summary: Get subscription types and prices
-      tags: [Subscriptions]
+          description: Profile deleted successfully
+        '401':
+          description: Unauthorized - JWT token missing or invalid
+        '403':
+          description: Forbidden - profile belongs to another user
+        '404':
+          description: Profile not found
+  /employees/profile/{id}/deactivate:
+    put:
+      tags:
+        - employees
+      summary: Deactivate profile
+      description: Deactivate a user profile. Supports JSON, XML, CSV.
+      operationId: deactivateProfile
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         '200':
-          description: List of available subscription types and their monthly prices.
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfileStatusResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ProfileStatusResponse'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/ProfileStatusResponse'
+  /employees/profile/{id}/activate:
+    put:
+      tags:
+        - employees
+      summary: Activate profile
+      description: Activate a user profile. Supports JSON, XML, CSV.
+      operationId: activateProfile
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfileStatusResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ProfileStatusResponse'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/ProfileStatusResponse'
+  /watchlists:
+    get:
+      tags:
+        - watchlists
+      summary: Get watchlist
+      description: Get profile's watchlist. Supports JSON, XML, CSV.
+      operationId: getAll
+      parameters:
+        - name: profileId
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/SubscriptionType"
-
-  /accounts/subscription:
-    get:
-      summary: Get subscription for current account
-      tags: [Subscriptions]
+                  $ref: '#/components/schemas/WatchlistItemResponse'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WatchlistItemResponse'
+            text/csv:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WatchlistItemResponse'
+    post:
+      tags:
+        - watchlists
+      summary: Add to watchlist
+      description: Add a title to user's watchlist. Supports JSON, XML, CSV.
+      operationId: add
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateWatchlistItemRequest'
+        required: true
       responses:
         '200':
-          description: Current account subscription retrieved.
+          description: OK
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Subscription"
-
-    put:
-      summary: Change subscription plan
-      tags: [Subscriptions]
+                $ref: '#/components/schemas/WatchlistItemResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/WatchlistItemResponse'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/WatchlistItemResponse'
+  /viewing-behaviour/watch:
+    post:
+      tags:
+        - viewing-behaviour
+      summary: Record watch event
+      description: Record a viewing event with progress. Supports JSON, XML, CSV.
+      operationId: watch
       requestBody:
-        required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                type:
-                  type: string
-                  enum: [SD, HD, UHD]
-              required: [type]
+              $ref: '#/components/schemas/CreateWatchEventRequest'
+        required: true
       responses:
         '200':
-          description: Subscription updated.
-
-  # Invitations
-  /invitations:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WatchEventResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/WatchEventResponse'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/WatchEventResponse'
+  /titles:
+    get:
+      tags:
+        - titles
+      summary: Get all titles
+      description: Get all movies and series. Supports JSON, XML, CSV.
+      operationId: getAll_1
+      responses:
+        '200':
+          description: Titles retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TitleResponse'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TitleResponse'
+            text/csv:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TitleResponse'
+        '401':
+          description: Unauthorized - JWT token missing or invalid
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TitleResponse'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TitleResponse'
+            text/csv:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TitleResponse'
     post:
-      summary: Send an invitation link to a new user
-      tags: [Invitations]
+      tags:
+        - titles
+      summary: Create title
+      description: Create a new movie or series
+      operationId: create
       requestBody:
-        required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/InvitationCreate"
+              $ref: '#/components/schemas/CreateTitleRequest'
+        required: true
       responses:
         '201':
-          description: Invitation sent.
-
-  /invitations/accept:
+          description: Title created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TitleResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/TitleResponse'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/TitleResponse'
+        '400':
+          description: Invalid input - validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TitleResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/TitleResponse'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/TitleResponse'
+        '401':
+          description: Unauthorized - JWT token missing or invalid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TitleResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/TitleResponse'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/TitleResponse'
+  /titles/{titleId}/seasons:
+    get:
+      tags:
+        - seasons
+      summary: Get seasons
+      description: Get all seasons for a series. Supports JSON, XML, CSV.
+      operationId: getAll_2
+      parameters:
+        - name: titleId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SeasonResponse'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SeasonResponse'
+            text/csv:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SeasonResponse'
     post:
-      summary: Accept invitation and apply discount
-      tags: [Invitations]
+      tags:
+        - seasons
+      summary: Create season
+      description: Create a new season for a series. Supports JSON, XML, CSV.
+      operationId: create_1
+      parameters:
+        - name: titleId
+          in: path
+          required: true
+          schema:
+            type: string
       requestBody:
-        required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/InvitationAccept"
+              $ref: '#/components/schemas/CreateSeasonRequest'
+        required: true
       responses:
         '200':
-          description: Invitation accepted and discount applied.
-
-# Components
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SeasonResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/SeasonResponse'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/SeasonResponse'
+  /subscriptions:
+    post:
+      tags:
+        - subscription-management
+      summary: Create subscription
+      description: Create a paid subscription (converts trial if active). Supports JSON, XML, CSV.
+      operationId: createSubscription
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSubscriptionRequest'
+        required: true
+      responses:
+        '201':
+          description: Subscription created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubscriptionResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/SubscriptionResponse'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/SubscriptionResponse'
+        '400':
+          description: Invalid input - validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubscriptionResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/SubscriptionResponse'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/SubscriptionResponse'
+        '401':
+          description: Unauthorized - JWT token missing or invalid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubscriptionResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/SubscriptionResponse'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/SubscriptionResponse'
+        '409':
+          description: User already has an active subscription
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubscriptionResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/SubscriptionResponse'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/SubscriptionResponse'
+      security:
+        - bearerAuth: []
+  /seasons/{seasonId}/episodes:
+    get:
+      tags:
+        - episodes
+      summary: Get episodes
+      description: Get all episodes for a season. Supports JSON, XML, CSV.
+      operationId: getAll_3
+      parameters:
+        - name: seasonId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EpisodeResponse'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EpisodeResponse'
+            text/csv:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EpisodeResponse'
+    post:
+      tags:
+        - episodes
+      summary: Create episode
+      description: Create a new episode for a season. Supports JSON, XML, CSV.
+      operationId: create_2
+      parameters:
+        - name: seasonId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateEpisodeRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EpisodeResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/EpisodeResponse'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/EpisodeResponse'
+  /referrals/apply-discount/{inviteeId}:
+    post:
+      tags:
+        - referral-management
+      summary: Apply referral discount
+      description: Apply referral discount to both inviter and invitee. Supports JSON, XML, CSV.
+      operationId: applyReferralDiscount
+      parameters:
+        - name: inviteeId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReferralDiscountResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ReferralDiscountResponse'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/ReferralDiscountResponse'
+      security:
+        - bearerAuth: []
+  /profiles:
+    get:
+      tags:
+        - profiles
+      summary: Get profiles
+      description: Get all profiles for the authenticated user. Supports JSON, XML, CSV.
+      operationId: getProfiles
+      responses:
+        '200':
+          description: Profiles retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProfileResponse'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProfileResponse'
+            text/csv:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProfileResponse'
+        '401':
+          description: Unauthorized - JWT token missing or invalid
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProfileResponse'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProfileResponse'
+            text/csv:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProfileResponse'
+    post:
+      tags:
+        - profiles
+      summary: Create profile
+      description: Create a new profile for the authenticated user
+      operationId: createProfile
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProfileRequest'
+        required: true
+      responses:
+        '201':
+          description: Profile created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfileResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ProfileResponse'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/ProfileResponse'
+        '400':
+          description: Invalid input - validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfileResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ProfileResponse'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/ProfileResponse'
+        '401':
+          description: Unauthorized - JWT token missing or invalid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfileResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ProfileResponse'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/ProfileResponse'
+  /invitations:
+    get:
+      tags:
+        - invitations
+      summary: Get sent invitations
+      description: Get all invitations sent by the current user, including discount status and validity period
+      operationId: getSent
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/InvitationResponse'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/InvitationResponse'
+            text/csv:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/InvitationResponse'
+    post:
+      tags:
+        - invitations
+      summary: Send invitation
+      description: Send an invitation link to a new user by email
+      operationId: invite
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateInvitationRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvitationResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/InvitationResponse'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/InvitationResponse'
+  /auth/reset-password:
+    post:
+      tags:
+        - auth
+      operationId: resetPassword
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResetPasswordRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+  /auth/register:
+    post:
+      tags:
+        - auth
+      summary: Register as a user
+      description: Register a user in the system
+      operationId: register
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUserRequest'
+        required: true
+      responses:
+        '201':
+          description: Successfully created a user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserLoginResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/UserLoginResponse'
+  /auth/login:
+    post:
+      tags:
+        - auth
+      summary: Login as a user
+      description: Logins a user into the system
+      operationId: login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+        required: true
+      responses:
+        '200':
+          description: Successfully logged in
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserLoginResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/UserLoginResponse'
+  /auth/forgot-password:
+    post:
+      tags:
+        - auth
+      operationId: forgotPassword
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ForgotPasswordRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+  /viewing-behaviour/progress/{titleId}:
+    get:
+      tags:
+        - viewing-behaviour
+      summary: Get viewing progress
+      description: Get viewing progress for a specific title. Supports JSON, XML, CSV.
+      operationId: progress
+      parameters:
+        - name: titleId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WatchEventResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/WatchEventResponse'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/WatchEventResponse'
+  /viewing-behaviour/history:
+    get:
+      tags:
+        - viewing-behaviour
+      summary: Get watch history
+      description: Get profile's viewing history. Supports JSON, XML, CSV.
+      operationId: history
+      parameters:
+        - name: profileId
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WatchEventResponse'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WatchEventResponse'
+            text/csv:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WatchEventResponse'
+  /users:
+    get:
+      tags:
+        - users
+      summary: Get all users
+      description: Retrieve a list of all users. Supports JSON, XML, and CSV formats via Accept header.
+      operationId: getAllUsers
+      responses:
+        '200':
+          description: Successfully retrieved list of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserResponse'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserResponse'
+            text/csv:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserResponse'
+        '401':
+          description: Unauthorized - JWT token missing or invalid
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserResponse'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserResponse'
+            text/csv:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserResponse'
+        '403':
+          description: Forbidden - insufficient role
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserResponse'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserResponse'
+            text/csv:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserResponse'
+  /users/{userId}:
+    get:
+      tags:
+        - users
+      summary: Get user by id
+      description: Retrieve a user by id. Supports JSON, XML, and CSV formats via Accept header.
+      operationId: getUser
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully retrieved user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '401':
+          description: Unauthorized - JWT token missing or invalid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '403':
+          description: Forbidden - insufficient role
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+  /trials:
+    get:
+      tags:
+        - trial-management
+      summary: Get trial status
+      description: Get trial information for current user. Supports JSON, XML, CSV.
+      operationId: getTrial
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrialResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/TrialResponse'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/TrialResponse'
+      security:
+        - bearerAuth: []
+  /trials/active:
+    get:
+      tags:
+        - trial-management
+      summary: Check if trial is active
+      description: Check if user has active trial. Supports JSON, XML, CSV.
+      operationId: hasActiveTrial
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: boolean
+            application/xml:
+              schema:
+                type: boolean
+            text/csv:
+              schema:
+                type: boolean
+      security:
+        - bearerAuth: []
+  /titles/{id}:
+    get:
+      tags:
+        - titles
+      summary: Get title by ID
+      description: Get specific movie or series. Supports JSON, XML, CSV.
+      operationId: getById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Title retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TitleResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/TitleResponse'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/TitleResponse'
+        '401':
+          description: Unauthorized - JWT token missing or invalid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TitleResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/TitleResponse'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/TitleResponse'
+        '404':
+          description: Title not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TitleResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/TitleResponse'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/TitleResponse'
+  /titles/tvmaze/search:
+    get:
+      tags:
+        - titles
+      summary: Search shows via TVmaze
+      description: >-
+        Search for TV shows using the external TVmaze public API (https://api.tvmaze.com). Returns show details such as
+        name, status, rating, and premiere date.
+      operationId: searchTvMaze
+      parameters:
+        - name: query
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Search results returned (may be empty if no match)
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TvMazeShowResponse'
+        '401':
+          description: Unauthorized - JWT token missing or invalid
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TvMazeShowResponse'
+  /titles/tvmaze/lookup:
+    get:
+      tags:
+        - titles
+      summary: Look up a single show via TVmaze
+      description: Fetch detailed information for a single show by name from the external TVmaze public API.
+      operationId: lookupTvMaze
+      parameters:
+        - name: query
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Show details returned
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/TvMazeShowResponse'
+        '401':
+          description: Unauthorized - JWT token missing or invalid
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/TvMazeShowResponse'
+        '404':
+          description: No show found on TVmaze for the given query
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/TvMazeShowResponse'
+  /titles/for-profile/{profileId}:
+    get:
+      tags:
+        - titles
+      summary: Get titles for profile
+      description: Get titles filtered by profile age restrictions and viewing preferences.
+      operationId: getForProfile
+      parameters:
+        - name: profileId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Filtered titles retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TitleResponse'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TitleResponse'
+            text/csv:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TitleResponse'
+        '401':
+          description: Unauthorized - JWT token missing or invalid
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TitleResponse'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TitleResponse'
+            text/csv:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TitleResponse'
+        '404':
+          description: Profile not found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TitleResponse'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TitleResponse'
+            text/csv:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TitleResponse'
+  /subscriptions/history:
+    get:
+      tags:
+        - subscription-management
+      summary: Get subscription history
+      description: Get all subscriptions for current user. Supports JSON, XML, CSV.
+      operationId: getHistory
+      responses:
+        '200':
+          description: Subscription history retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SubscriptionResponse'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SubscriptionResponse'
+            text/csv:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SubscriptionResponse'
+        '401':
+          description: Unauthorized - JWT token missing or invalid
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SubscriptionResponse'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SubscriptionResponse'
+            text/csv:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SubscriptionResponse'
+      security:
+        - bearerAuth: []
+  /subscriptions/current:
+    get:
+      tags:
+        - subscription-management
+      summary: Get current subscription
+      description: Get active subscription for current user. Supports JSON, XML, CSV.
+      operationId: getCurrentSubscription
+      responses:
+        '200':
+          description: Active subscription retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubscriptionResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/SubscriptionResponse'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/SubscriptionResponse'
+        '401':
+          description: Unauthorized - JWT token missing or invalid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubscriptionResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/SubscriptionResponse'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/SubscriptionResponse'
+        '404':
+          description: No active subscription found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubscriptionResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/SubscriptionResponse'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/SubscriptionResponse'
+      security:
+        - bearerAuth: []
+  /playback/test-playback:
+    get:
+      tags:
+        - playback
+      summary: Resolve playback quality
+      description: Returns the allowed playback quality for a given user and profile based on their active subscription
+      operationId: testPlayback
+      parameters:
+        - name: email
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: titleName
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: profileId
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Playback quality resolved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+  /employees/subscriptions:
+    get:
+      tags:
+        - employees
+      summary: Get subscription overview
+      description: Get subscription and payment overview. Supports JSON, XML, CSV.
+      operationId: getSubscriptionOverview
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubscriptionOverviewResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/SubscriptionOverviewResponse'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/SubscriptionOverviewResponse'
+  /employees/basic-info:
+    get:
+      tags:
+        - employees
+      summary: Get basic info
+      description: Get employee basic information. Supports JSON, XML, CSV.
+      operationId: getBasicInfo
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmployeeBasicInfoResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/EmployeeBasicInfoResponse'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/EmployeeBasicInfoResponse'
+  /auth/verify:
+    get:
+      tags:
+        - auth
+      summary: Verify account
+      description: Activate account using the token sent by email
+      operationId: verify
+      parameters:
+        - name: token
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Account successfully verified
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+  /watchlists/{id}:
+    delete:
+      tags:
+        - watchlists
+      summary: Remove from watchlist
+      description: Remove a title from user's watchlist
+      operationId: remove
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+  /subscriptions/cancel:
+    delete:
+      tags:
+        - subscription-management
+      summary: Cancel subscription
+      description: Cancel current subscription. Supports JSON, XML, CSV.
+      operationId: cancelSubscription
+      responses:
+        '200':
+          description: Subscription cancelled successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubscriptionResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/SubscriptionResponse'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/SubscriptionResponse'
+        '401':
+          description: Unauthorized - JWT token missing or invalid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubscriptionResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/SubscriptionResponse'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/SubscriptionResponse'
+        '404':
+          description: No active subscription found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubscriptionResponse'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/SubscriptionResponse'
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/SubscriptionResponse'
+      security:
+        - bearerAuth: []
 components:
-
-  securitySchemes:
-    BearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
-
-  parameters:
-
-    ProfileId:
-      name: profileId
-      in: path
-      required: true
-      schema:
-        type: string
-
-    ContentId:
-      name: contentId
-      in: path
-      required: true
-      schema:
-        type: string
-
   schemas:
-
-    # Accounts
-    AccountRegistration:
-      type: object
+    UpdatePreferencesRequest:
       properties:
-        email:
-          type: string
-          format: email
-        password:
-          type: string
-          minLength: 8
-      required: [email, password]
-
-    AccountActivation:
-      type: object
-      properties:
-        activationCode:
-          type: string
-      required: [activationCode]
-
-    LoginRequest:
-      type: object
-      properties:
-        email:
-          type: string
-          format: email
-        password:
-          type: string
-      required: [email, password]
-
-    AuthResponse:
-      type: object
-      properties:
-        token:
-          type: string
-
-    # Profiles
-    Profile:
-      type: object
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        ageCategory:
-          type: string
-          enum: [kids, teen, adult]
-        imageUrl:
-          type: ['string', 'null']
-
-    ProfileCreate:
-      type: object
-      properties:
-        name:
-          type: string
-        ageCategory:
-          type: string
-          enum: [kids, teen, adult]
-        imageUrl:
-          type: ['string', 'null']
-      required: [name, ageCategory]
-
-    ProfileUpdate:
-      type: object
-      properties:
-        name:
-          type: string
-        ageCategory:
-          type: string
-          enum: [kids, teen, adult]
-        imageUrl:
-          type: ['string', 'null']
-
-    # Content
-    ContentItem:
-      type: object
-      properties:
-        id:
-          type: string
-        title:
-          type: string
-        type:
-          type: string
-          enum: [movie, series]
-        minAge:
-          type: integer
-        qualityAvailable:
+        preferredGenres:
           type: array
           items:
             type: string
-            enum: [SD, HD, UHD]
-
-    ContentDetails:
-      type: object
+            enum:
+              - ACTION
+              - COMEDY
+              - DRAMA
+              - HORROR
+              - THRILLER
+              - ROMANCE
+              - DOCUMENTARY
+              - ANIMATION
+              - SCIENCE_FICTION
+              - FANTASY
+              - CRIME
+              - MYSTERY
+          uniqueItems: true
+        preferredType:
+          type: string
+          enum:
+            - MOVIE
+            - SERIES
+        minimumMaturityRating:
+          type: string
+          enum:
+            - ALL
+            - PG
+            - TEEN
+            - MATURE
+    PreferencesResponse:
+      properties:
+        profileId:
+          type: string
+        preferredGenres:
+          type: array
+          items:
+            type: string
+            enum:
+              - ACTION
+              - COMEDY
+              - DRAMA
+              - HORROR
+              - THRILLER
+              - ROMANCE
+              - DOCUMENTARY
+              - ANIMATION
+              - SCIENCE_FICTION
+              - FANTASY
+              - CRIME
+              - MYSTERY
+          uniqueItems: true
+        preferredType:
+          type: string
+          enum:
+            - MOVIE
+            - SERIES
+        minimumMaturityRating:
+          type: string
+          enum:
+            - ALL
+            - PG
+            - TEEN
+            - MATURE
+    UpdateProfileRequest:
+      properties:
+        name:
+          type: string
+          maxLength: 100
+          minLength: 0
+        avatar:
+          type: string
+          maxLength: 500
+          minLength: 0
+        age:
+          type: integer
+          format: int32
+          maximum: 120
+          minimum: 0
+        contentFilters:
+          type: array
+          items:
+            type: string
+            enum:
+              - VIOLENCE
+              - FEAR
+              - COARSE_LANGUAGE
+              - NUDITY
+              - DRUG_USE
+              - SEXUAL_CONTENT
+      required:
+        - age
+        - name
+    ProfileResponse:
       properties:
         id:
           type: string
-        title:
+        name:
+          type: string
+        avatar:
+          type: string
+        age:
+          type: integer
+          format: int32
+        maturityLevel:
+          type: string
+        contentFilters:
+          type: array
+          items:
+            type: string
+            enum:
+              - VIOLENCE
+              - FEAR
+              - COARSE_LANGUAGE
+              - NUDITY
+              - DRUG_USE
+              - SEXUAL_CONTENT
+    ProfileStatusResponse:
+      properties:
+        profileId:
+          type: string
+        status:
+          type: string
+      xml:
+        name: ProfileStatusResponse
+    CreateWatchlistItemRequest:
+      properties:
+        titleId:
+          type: string
+          maxLength: 64
+          minLength: 0
+        profileId:
+          type: string
+      required:
+        - profileId
+        - titleId
+    WatchlistItemResponse:
+      properties:
+        id:
+          type: string
+        titleId:
+          type: string
+        titleName:
+          type: string
+        addedAt:
+          type: integer
+          format: int64
+    CreateWatchEventRequest:
+      properties:
+        titleId:
+          type: string
+          maxLength: 64
+          minLength: 0
+        episodeId:
+          type: string
+          maxLength: 64
+          minLength: 0
+        autoContinued:
+          type: boolean
+        profileId:
+          type: string
+        progressSeconds:
+          type: integer
+          format: int32
+          minimum: 0
+        finished:
+          type: boolean
+      required:
+        - finished
+        - profileId
+        - titleId
+    WatchEventResponse:
+      properties:
+        titleId:
+          type: string
+        titleName:
+          type: string
+        episodeId:
+          type: string
+        autoContinued:
+          type: boolean
+        startedAt:
+          type: integer
+          format: int64
+        progressSeconds:
+          type: integer
+          format: int32
+        finished:
+          type: boolean
+        lastUpdated:
+          type: integer
+          format: int64
+    CreateTitleRequest:
+      properties:
+        name:
+          type: string
+          maxLength: 200
+          minLength: 0
+        description:
+          type: string
+          maxLength: 2000
+          minLength: 0
+        releaseYear:
+          type: integer
+          format: int32
+          minimum: 1888
+        durationSeconds:
+          type: integer
+          format: int32
+          minimum: 1
+        type:
+          type: string
+          enum:
+            - MOVIE
+            - SERIES
+        genre:
+          type: string
+          enum:
+            - ACTION
+            - COMEDY
+            - DRAMA
+            - HORROR
+            - THRILLER
+            - ROMANCE
+            - DOCUMENTARY
+            - ANIMATION
+            - SCIENCE_FICTION
+            - FANTASY
+            - CRIME
+            - MYSTERY
+        maturityRating:
+          type: string
+          enum:
+            - ALL
+            - PG
+            - TEEN
+            - MATURE
+        contentWarnings:
+          type: array
+          items:
+            type: string
+            enum:
+              - VIOLENCE
+              - FEAR
+              - COARSE_LANGUAGE
+              - NUDITY
+              - DRUG_USE
+              - SEXUAL_CONTENT
+          uniqueItems: true
+        supportedQualities:
+          type: array
+          items:
+            type: string
+            enum:
+              - SD
+              - HD
+              - UHD
+          uniqueItems: true
+      required:
+        - name
+        - releaseYear
+        - supportedQualities
+        - type
+    TitleResponse:
+      properties:
+        id:
+          type: string
+        name:
           type: string
         description:
           type: string
+        releaseYear:
+          type: integer
+          format: int32
+        durationSeconds:
+          type: integer
+          format: int32
         type:
           type: string
-          enum: [movie, series]
-        seasons:
-          type: array
-          items:
-            $ref: "#/components/schemas/Season"
-        minAge:
-          type: integer
-        qualityAvailable:
+          enum:
+            - MOVIE
+            - SERIES
+        genre:
+          type: string
+          enum:
+            - ACTION
+            - COMEDY
+            - DRAMA
+            - HORROR
+            - THRILLER
+            - ROMANCE
+            - DOCUMENTARY
+            - ANIMATION
+            - SCIENCE_FICTION
+            - FANTASY
+            - CRIME
+            - MYSTERY
+        maturityRating:
+          type: string
+          enum:
+            - ALL
+            - PG
+            - TEEN
+            - MATURE
+        contentWarnings:
           type: array
           items:
             type: string
-            enum: [SD, HD, UHD]
-
-    Season:
-      type: object
+            enum:
+              - VIOLENCE
+              - FEAR
+              - COARSE_LANGUAGE
+              - NUDITY
+              - DRUG_USE
+              - SEXUAL_CONTENT
+          uniqueItems: true
+        supportedQualities:
+          type: array
+          items:
+            type: string
+            enum:
+              - SD
+              - HD
+              - UHD
+          uniqueItems: true
+    CreateSeasonRequest:
       properties:
         seasonNumber:
           type: integer
-        episodes:
-          type: array
-          items:
-            $ref: "#/components/schemas/Episode"
-
-    Episode:
-      type: object
+          format: int32
+          maximum: 10000
+          minimum: 1
+    SeasonResponse:
+      properties:
+        id:
+          type: string
+        seasonNumber:
+          type: integer
+          format: int32
+    CreateSubscriptionRequest:
+      properties:
+        plan:
+          type: string
+          enum:
+            - SD
+            - HD
+            - UHD
+      required:
+        - plan
+    SubscriptionResponse:
+      properties:
+        subscriptionId:
+          type: integer
+          format: int64
+        userId:
+          type: string
+        plan:
+          type: string
+        status:
+          type: string
+        totalPrice:
+          type: number
+        discountPercentage:
+          type: number
+        discountedPrice:
+          type: number
+        discountEndDate:
+          type: string
+          format: date
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+        autoRenew:
+          type: boolean
+        daysRemaining:
+          type: integer
+          format: int32
+    CreateEpisodeRequest:
       properties:
         episodeNumber:
           type: integer
-        title:
-          type: string
+          format: int32
+          maximum: 10000
+          minimum: 1
         durationSeconds:
           type: integer
-
-    # Viewing Progress
-    ViewingProgress:
-      type: object
-      properties:
-        contentId:
+          format: int32
+          minimum: 1
+        title:
           type: string
-        positionSeconds:
+          maxLength: 200
+          minLength: 0
+        description:
+          type: string
+          maxLength: 2000
+          minLength: 0
+      required:
+        - title
+    EpisodeResponse:
+      properties:
+        id:
+          type: string
+        episodeNumber:
           type: integer
-        completed:
-          type: boolean
-
-    ViewingProgressUpdate:
-      type: object
-      properties:
-        contentId:
-          type: string
-        positionSeconds:
+          format: int32
+        durationSeconds:
           type: integer
-        completed:
-          type: boolean
-      required: [contentId]
-
-    # Subscriptions
-    SubscriptionType:
-      type: object
-      properties:
-        plan:
+          format: int32
+        name:
           type: string
-          enum: [SD, HD, UHD]
-        priceMonthly:
-          type: number
-
-    Subscription:
-      type: object
-      properties:
-        plan:
+        description:
           type: string
-          enum: [SD, HD, UHD]
-        trialActive:
+    ReferralDiscountResponse:
+      properties:
+        inviterId:
+          type: string
+        inviteeId:
+          type: string
+        inviterDiscountApplied:
           type: boolean
-        discountActive:
+        inviteeDiscountApplied:
           type: boolean
-
-    # Invitations
-    InvitationCreate:
-      type: object
+        message:
+          type: string
+      xml:
+        name: ReferralDiscountResponse
+    CreateProfileRequest:
+      properties:
+        name:
+          type: string
+        avatar:
+          type: string
+        age:
+          type: integer
+          format: int32
+          maximum: 95
+          minimum: 3
+        contentFilters:
+          type: array
+          items:
+            type: string
+            enum:
+              - VIOLENCE
+              - FEAR
+              - COARSE_LANGUAGE
+              - NUDITY
+              - DRUG_USE
+              - SEXUAL_CONTENT
+      required:
+        - age
+        - name
+    CreateInvitationRequest:
+      properties:
+        inviteeEmail:
+          type: string
+      required:
+        - inviteeEmail
+    InvitationResponse:
+      properties:
+        id:
+          type: string
+        invitationLink:
+          type: string
+        inviteeEmail:
+          type: string
+        inviteeUserId:
+          type: string
+        used:
+          type: boolean
+        discountApplied:
+          type: boolean
+        discountAppliedAt:
+          type: string
+          format: date
+        discountEndDate:
+          type: string
+          format: date
+    ResetPasswordRequest:
+      properties:
+        token:
+          type: string
+        newPassword:
+          type: string
+          maxLength: 2147483647
+          minLength: 8
+      required:
+        - newPassword
+        - token
+    MessageResponse:
+      properties:
+        message:
+          type: string
+    CreateUserRequest:
+      properties:
+        name:
+          type: string
+          maxLength: 100
+          minLength: 0
+        password:
+          type: string
+          maxLength: 2147483647
+          minLength: 8
+        email:
+          type: string
+        role:
+          type: string
+          enum:
+            - JUNIOR_EMPLOYEE
+            - MID_EMPLOYEE
+            - SENIOR_EMPLOYEE
+            - USER
+            - ADMINISTRATOR
+        invitationToken:
+          type: string
+          description: Optional. Provide only if registering via an invitation link.
+      required:
+        - email
+        - name
+        - password
+        - role
+    UserLoginResponse:
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+        role:
+          type: string
+          enum:
+            - JUNIOR_EMPLOYEE
+            - MID_EMPLOYEE
+            - SENIOR_EMPLOYEE
+            - USER
+            - ADMINISTRATOR
+        token:
+          type: string
+    LoginRequest:
+      properties:
+        login:
+          type: string
+        password:
+          type: string
+      required:
+        - login
+        - password
+    ForgotPasswordRequest:
       properties:
         email:
           type: string
-          format: email
-      required: [email]
-
-    InvitationAccept:
-      type: object
+      required:
+        - email
+    UserResponse:
       properties:
-        invitationCode:
+        id:
           type: string
-      required: [invitationCode]
+        name:
+          type: string
+        email:
+          type: string
+        role:
+          type: string
+          enum:
+            - JUNIOR_EMPLOYEE
+            - MID_EMPLOYEE
+            - SENIOR_EMPLOYEE
+            - USER
+            - ADMINISTRATOR
+        deleted:
+          type: boolean
+    TrialResponse:
+      properties:
+        trialId:
+          type: integer
+          format: int64
+        userId:
+          type: string
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+        status:
+          type: string
+        daysRemaining:
+          type: integer
+          format: int32
+        convertedToPaid:
+          type: boolean
+        convertedDate:
+          type: string
+          format: date
+    ImageInfo:
+      properties:
+        medium:
+          type: string
+        original:
+          type: string
+    NetworkInfo:
+      properties:
+        name:
+          type: string
+    RatingInfo:
+      properties:
+        average:
+          type: number
+          format: double
+    TvMazeShowResponse:
+      properties:
+        id:
+          type: integer
+          format: int32
+        name:
+          type: string
+        status:
+          type: string
+        type:
+          type: string
+        language:
+          type: string
+        rating:
+          $ref: '#/components/schemas/RatingInfo'
+        network:
+          $ref: '#/components/schemas/NetworkInfo'
+        image:
+          $ref: '#/components/schemas/ImageInfo'
+        summary:
+          type: string
+        premiered:
+          type: string
+        officialSite:
+          type: string
+    SubscriptionOverviewResponse:
+      properties:
+        subscriptionSummary:
+          type: string
+        paymentHistory:
+          type: string
+      xml:
+        name: SubscriptionOverviewResponse
+    EmployeeBasicInfoResponse:
+      properties:
+        userId:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+        role:
+          type: string
+      xml:
+        name: EmployeeBasicInfo
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

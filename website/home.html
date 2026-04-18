@@ -31,6 +31,15 @@
             </div>
         </section>
 
+        <section class="row" id="watchedSection">
+            <h2>Watched</h2>
+            <div class="row-wrapper">
+                <button class="arrow left" onclick="scrollRow('watchedRow', -1)">❮</button>
+                <div class="row-scroll" id="watchedRow"></div>
+                <button class="arrow right" onclick="scrollRow('watchedRow', 1)">❯</button>
+            </div>
+        </section>
+
         <section class="row" id="watchlistSection">
             <h2>My Watchlist</h2>
             <div class="row-wrapper">
@@ -102,6 +111,16 @@
                 <button class="cancel-sub-btn" id="cancelSubBtn">Cancel Subscription</button>
             </div>
 
+            <!-- Edit Account -->
+            <div class="modal-section">
+                <p class="modal-label">Edit account details:</p>
+                <div class="invite-row">
+                    <input type="text" id="editName" placeholder="New name">
+                    <button class="primary-btn" id="saveNameBtn">Save</button>
+                </div>
+
+            </div>
+
             <!-- Invite -->
             <div class="modal-section">
                 <p class="modal-label">Invite a friend:</p>
@@ -165,7 +184,7 @@
         </div>
     </div>
 
-    <script src="js/home.js?v=2"></script>
+    <script src="js/home.js?v=8"></script>
 
 </body>
 </html>

@@ -135,7 +135,7 @@ Each employee only sees the data their role permits at the database level.
 
 | DB Username | DB Password | Access |
 |---|---|---|
-| API_user_account | See `API_USER_PASSWORD` in `.env` | Views and stored procedures only — no direct table access |
+| API_user_account | See `MYSQL_PASSWORD` in `.env` | Full application access (the user the Spring Boot API connects as) |
 
 ### DataGrip / DBeaver Connection
 
@@ -144,7 +144,7 @@ Each employee only sees the data their role permits at the database level.
 | Host | localhost |
 | Port | 3306 |
 | Database | stream4 |
-| User | admin (or any employee DB user) |
+| User | API_user_account (or any employee DB user) |
 | Password | See `MYSQL_PASSWORD` in `.env` (or the relevant employee password) |
 
 ---
@@ -207,7 +207,7 @@ The API integrates with the free [TVmaze public API](https://api.tvmaze.com) to 
 | junior_employee | SELECT on users, profile, profile_filters, invitations, employee, role_right |
 | mid_employee | SELECT on all non-financial tables + UPDATE profiles + activate/deactivate accounts |
 | senior_employee | Full SELECT/INSERT/UPDATE/DELETE on all tables |
-| API_user_account | SELECT on views + EXECUTE on stored procedures only |
+| API_user_account | Full table access — the MySQL user the Spring Boot API connects as |
 
 ### Views
 - `v_active_subscriptions` — active subscriptions with user info

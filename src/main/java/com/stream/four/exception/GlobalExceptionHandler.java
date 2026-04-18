@@ -68,9 +68,16 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ErrorResponse> handleNotReadable(HttpMessageNotReadableException ex) {
-        String message = ex.getMessage() != null && ex.getMessage().contains("not one of the values accepted")
-                ? ex.getMostSpecificCause().getMessage()
-                : "Invalid request body";
+        String raw = ex.getMostSpecificCause() != null ? ex.getMostSpecificCause().getMessage() : "";
+        String message;
+        if (raw.contains("not one of the values accepted for Enum class")) {
+            // Extract "not one of the values accepted for Enum class: [A, B, C]" and drop Jackson internals
+            int start = raw.indexOf("not one of the values accepted");
+            int end   = raw.indexOf('\n', start);
+            message = end > start ? raw.substring(start, end).trim() : raw.substring(start).trim();
+        } else {
+            message = "Invalid request body";
+        }
         return new ResponseEntity<>(new ErrorResponse(message, null), HttpStatus.BAD_REQUEST);
     }
 

@@ -78,7 +78,7 @@ public class TitleController {
         return ResponseEntity.ok(titleService.getTitlesForProfile(profileId));
     }
 
-    @GetMapping("/tvmaze/search")
+    @GetMapping(value = "/tvmaze/search", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE, "text/csv"})
     @Operation(
             summary = "Search shows via TVmaze",
             description = "Search for TV shows using the external TVmaze public API (https://api.tvmaze.com). " +
@@ -92,7 +92,7 @@ public class TitleController {
         return ResponseEntity.ok(tvMazeService.searchShows(query));
     }
 
-    @GetMapping("/tvmaze/lookup")
+    @GetMapping(value = "/tvmaze/lookup", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE, "text/csv"})
     @Operation(
             summary = "Look up a single show via TVmaze",
             description = "Fetch detailed information for a single show by name from the external TVmaze public API."

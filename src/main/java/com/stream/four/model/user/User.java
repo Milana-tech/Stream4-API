@@ -51,6 +51,8 @@ public class User extends Auditable
 
     private String verificationToken;
 
+    private LocalDateTime verificationTokenExpiry;
+
     private boolean verified = false;
 
     public boolean isAccountLocked() {

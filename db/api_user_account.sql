@@ -1,14 +1,16 @@
 -- =============================================================
 --  StreamFlix – API_user_account Setup
 --
---  The API_user_account is the dedicated MySQL user for all
---  application (API) access. It has no direct table access;
---  it may only use predefined views and stored procedures.
+--  API_user_account is the dedicated MySQL user for all
+--  application (Spring Boot / Hibernate) access. It is created
+--  automatically by MySQL on first startup via the MYSQL_USER
+--  environment variable and is granted full privileges on the
+--  stream4 database by MySQL init.
 --
---  NOTE: StreamFlix uses Hibernate ORM, which requires direct
---  table access and therefore deviates from this rule in practice.
---  The views, stored procedures, and trigger below exist on the
---  DBMS to demonstrate the intended access control design.
+--  This file documents and (re-)creates the views, stored
+--  procedures, and trigger that provide structured, read-optimised
+--  access on top of the base tables. These objects are also
+--  applied automatically at startup by DbEmployeeAccessInitializer.
 --
 --  Run after the backend has started and Hibernate has created
 --  all tables.
@@ -18,9 +20,9 @@ USE stream4;
 
 -- ---------------------------------------------------------------
 -- 1. API_user_account
+--    Created automatically by MySQL from MYSQL_USER env var.
+--    No manual CREATE USER needed here.
 -- ---------------------------------------------------------------
-CREATE USER IF NOT EXISTS 'API_user_account'@'%' IDENTIFIED BY 'Api@Stream4!';
--- No direct table grants — access is restricted to views and procedures only.
 
 
 -- ---------------------------------------------------------------
