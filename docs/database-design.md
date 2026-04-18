@@ -37,7 +37,7 @@ Three stored procedures are granted EXECUTE to `API_user_account`. The account c
 ### `sp_get_user_by_email(p_email)`
 Looks up a non-deleted user by email and returns only the columns needed for authentication: userid, name, email, role, verified, deleted.
 
-**Why:** Centralises the email-lookup logic. Any caller using this procedure cannot accidentally select the password hash or the reset token because those columns are not in the SELECT list.
+**Why:** Centralisess the email-lookup logic. Any caller using this procedure cannot accidentally select the password hash or the reset token because those columns are not in the SELECT list.
 
 ### `sp_cancel_subscription(p_user_id)`
 Sets `status = 'CANCELLED'` and `auto_renew = 0` on the user's active subscription.
