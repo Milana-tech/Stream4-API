@@ -24,6 +24,7 @@ Selects non-deleted titles with only the public-facing columns (id, name, descri
 **Why:** Hides internal columns (supported_qualities junction table, content_warnings junction table) that are irrelevant to catalogue browsing, and excludes the `deleted` flag so callers cannot see withdrawn titles.
 
 ### `v_viewing_history`
+Joins `watch_events` with `users` and `titles`...
 
 **Why:** Watch-event rows only store foreign keys. The view resolves user names and title names at query time, so a reporting query does not need to write joins manually and cannot accidentally read columns outside the view definition.
 
@@ -36,6 +37,7 @@ Three stored procedures are granted EXECUTE to `API_user_account`. The account c
 ### `sp_get_user_by_email(p_email)`
 Looks up a non-deleted user by email and returns only the columns needed for authentication: userid, name, email, role, verified, deleted.
 
+**Why:** Centralisess the email-lookup logic. Any caller using this procedure cannot accidentally select the password hash or the reset token because those columns are not in the SELECT list.
 
 ### `sp_cancel_subscription(p_user_id)`
 Sets `status = 'CANCELLED'` and `auto_renew = 0` on the user's active subscription.
